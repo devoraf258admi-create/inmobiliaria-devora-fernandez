@@ -352,7 +352,8 @@ function handleSaveSiteContent(e) {
       email: getVal('edit-cnt-email'),
       hours: getVal('edit-cnt-hours'),
       license: getVal('edit-cnt-license')
-    }
+    },
+    carousel: (siteContent && siteContent.carousel) || getCarouselSlides()
   };
 
   localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
@@ -919,4 +920,229 @@ function showToast(message, type = 'success') {
   setTimeout(() => {
     toast.classList.add('translate-y-24', 'opacity-0');
   }, 4000);
+}
+
+
+// ==========================================
+// CAROUSEL MANAGEMENT (ADMIN)
+// ==========================================
+const DEFAULT_CAROUSEL_SLIDES = [
+  {
+    image: 'https://static.kiteprop.com/kp/properties/588719/96371f/lg/96371f46e01b1eb449bd53842cca9df1.jpg',
+    tag: 'Chalet de Categoría',
+    location: 'Castelar Norte'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/564309/76c263/lg/76c263d122244f4e4891a441da18a487.jpg',
+    tag: 'Residencia Familiar',
+    location: 'Hurlingham / Villa Tesei'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/405103/c77901/lg/c7790139e6f4d194c7dce4f7859e0ce1.jpg',
+    tag: 'Dúplex Moderno',
+    location: 'Morón Sur'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/577961/d99c5b/lg/d99c5b595017ff4cbb489064e50e4316.jpg',
+    tag: 'Departamento Céntrico',
+    location: 'Morón Centro'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/548736/e1ae2b/lg/e1ae2b6ac8403ccd24bcdd516cb77b14.jpg',
+    tag: 'Casa Americana',
+    location: 'Castelar / Morón'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/536342/9c9bbb/lg/9c9bbb3e30823140b488fa9314b26171.jpg',
+    tag: 'Edificio Residencial',
+    location: 'Villa Sarmiento / Ramos Mejía'
+  }
+];
+
+function getCarouselSlides() {
+  if (siteContent && Array.isArray(siteContent.carousel) && siteContent.carousel.length > 0) {
+    return siteContent.carousel;
+  }
+  return DEFAULT_CAROUSEL_SLIDES;
+}
+
+function renderCarouselAdminList() {
+  const container = document.getElementById('carousel-admin-grid');
+  const countBadge = document.getElementById('carousel-count-badge');
+  if (!container) return;
+
+  const slides = getCarouselSlides();
+  if (countBadge) {
+    countBadge.textContent = `${slides.length} foto(s) configurada(s)`;
+  }
+
+  if (slides.length === 0) {
+    container.innerHTML = `<div class="col-span-full py-8 text-center text-xs text-slate-500">
+      No hay fotos en el carrusel. Subí fotos desde tu PC o ingresá un enlace arriba.
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = slides.map((slide, index) => `
+    <div class="bg-slate-950/80 border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col group hover:border-slate-700 transition">
+      <div class="relative h-44 bg-slate-900 overflow-hidden">
+        <img src="${slide.image}" alt="${slide.tag || ''}" class="w-full h-full object-cover">
+        <span class="absolute top-2 left-2 px-2.5 py-1 bg-slate-900/80 backdrop-blur-md text-cyan-300 text-[11px] font-extrabold rounded-lg border border-white/10">
+          #${index + 1}
+        </span>
+      </div>
+      <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+        <div>
+          <h5 class="text-xs font-bold text-white truncate">${slide.tag || 'Foto ' + (index + 1)}</h5>
+          <p class="text-[11px] text-slate-400 truncate">${slide.location || 'Dévora Fernández Propiedades'}</p>
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-800/80 pt-3">
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="moveCarouselSlide(${index}, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center transition" title="Mover arriba" ${index === 0 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''}>
+              <i class="fas fa-arrow-up"></i>
+            </button>
+            <button type="button" onclick="moveCarouselSlide(${index}, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center transition" title="Mover abajo" ${index === slides.length - 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''}>
+              <i class="fas fa-arrow-down"></i>
+            </button>
+          </div>
+          <button type="button" onclick="deleteCarouselSlide(${index})" class="px-2.5 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-300 text-xs font-semibold flex items-center gap-1 transition">
+            <i class="fas fa-trash-alt text-[10px]"></i>
+            <span>Eliminar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function handleCarouselUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  try {
+    showToast('Procesando foto de tu PC...', 'info');
+    const optimized = await compressImageFile(file, 1920, 0.85);
+
+    if (!siteContent) siteContent = {};
+    if (!Array.isArray(siteContent.carousel)) {
+      siteContent.carousel = [...DEFAULT_CAROUSEL_SLIDES];
+    }
+
+    const tagInput = document.getElementById('carousel-new-tag');
+    const locInput = document.getElementById('carousel-new-loc');
+
+    const newSlide = {
+      image: optimized,
+      tag: (tagInput && tagInput.value.trim()) || 'Propiedad Destacada',
+      location: (locInput && locInput.value.trim()) || 'Morón y Zona Oeste'
+    };
+
+    siteContent.carousel.push(newSlide);
+    localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+
+    if (tagInput) tagInput.value = '';
+    if (locInput) locInput.value = '';
+
+    renderCarouselAdminList();
+    showToast('¡Foto cargada exitosamente al carrusel!', 'success');
+  } catch(err) {
+    console.error('Error al subir foto:', err);
+    showToast('Error procesando la imagen', 'error');
+  } finally {
+    event.target.value = '';
+  }
+}
+
+function addCarouselSlideFromInputs() {
+  const urlInput = document.getElementById('carousel-new-url');
+  const tagInput = document.getElementById('carousel-new-tag');
+  const locInput = document.getElementById('carousel-new-loc');
+
+  const url = urlInput ? urlInput.value.trim() : '';
+  if (!url) {
+    showToast('Ingresá una URL de imagen o subí una foto desde tu PC', 'error');
+    return;
+  }
+
+  if (!siteContent) siteContent = {};
+  if (!Array.isArray(siteContent.carousel)) {
+    siteContent.carousel = [...DEFAULT_CAROUSEL_SLIDES];
+  }
+
+  siteContent.carousel.push({
+    image: url,
+    tag: (tagInput && tagInput.value.trim()) || 'Propiedad Destacada',
+    location: (locInput && locInput.value.trim()) || 'Morón y Zona Oeste'
+  });
+
+  localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+
+  if (urlInput) urlInput.value = '';
+  if (tagInput) tagInput.value = '';
+  if (locInput) locInput.value = '';
+
+  renderCarouselAdminList();
+  showToast('Foto agregada al carrusel', 'success');
+}
+
+function previewUrlSlide() {
+  const url = document.getElementById('carousel-new-url')?.value.trim();
+  if (!url) {
+    showToast('Ingresá una URL primero', 'info');
+    return;
+  }
+  const img = new Image();
+  img.onload = () => showToast('¡Enlace de imagen válido!', 'success');
+  img.onerror = () => showToast('No se pudo cargar la imagen desde ese enlace', 'error');
+  img.src = url;
+}
+
+function moveCarouselSlide(index, direction) {
+  if (!siteContent) siteContent = {};
+  if (!Array.isArray(siteContent.carousel)) {
+    siteContent.carousel = [...DEFAULT_CAROUSEL_SLIDES];
+  }
+
+  const slides = siteContent.carousel;
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= slides.length) return;
+
+  const item = slides.splice(index, 1)[0];
+  slides.splice(targetIndex, 0, item);
+
+  localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+  renderCarouselAdminList();
+  showToast('Orden actualizado', 'info');
+}
+
+function deleteCarouselSlide(index) {
+  if (!confirm('¿Deseás eliminar esta foto del carrusel?')) return;
+
+  if (!siteContent) siteContent = {};
+  if (!Array.isArray(siteContent.carousel)) {
+    siteContent.carousel = [...DEFAULT_CAROUSEL_SLIDES];
+  }
+
+  siteContent.carousel.splice(index, 1);
+  localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+  renderCarouselAdminList();
+  showToast('Foto eliminada del carrusel', 'info');
+}
+
+function resetDefaultCarousel() {
+  if (!confirm('¿Restablecer el carrusel a las 6 fotos originales?')) return;
+  if (!siteContent) siteContent = {};
+  siteContent.carousel = [...DEFAULT_CAROUSEL_SLIDES];
+  localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+  renderCarouselAdminList();
+  showToast('Carrusel restablecido a valores por defecto', 'info');
+}
+
+function saveCarouselChanges() {
+  if (!siteContent) siteContent = {};
+  if (!Array.isArray(siteContent.carousel)) {
+    siteContent.carousel = [...DEFAULT_CAROUSEL_SLIDES];
+  }
+  localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+  showToast('¡Cambios del carrusel guardados! Hacé clic en "Publicar en Web" para aplicarlos en internet.', 'success');
 }

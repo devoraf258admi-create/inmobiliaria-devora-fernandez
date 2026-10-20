@@ -206,7 +206,114 @@
 
       </div><!-- END TAB 1 -->
 
-      <!-- TAB 2: SITE CONTENT EDITOR -->
+      
+      <!-- TAB 2: CAROUSEL MANAGEMENT -->
+      <div id="tab-carousel-view" class="hidden space-y-8">
+        
+        <!-- Header & Action Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+          <div>
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <i class="fas fa-images text-cyan-400"></i>
+              <span>Gestión del Carrusel de Portada</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">
+              Agregá, cambiá o eliminá las fotos que rotan en la parte superior del sitio web. Podés subir imágenes desde tu PC o ingresar enlaces web.
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="saveCarouselChanges()" class="px-5 py-2.5 bg-gradient-gold hover:opacity-95 text-slate-950 text-xs font-black uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition">
+              <i class="fas fa-save"></i>
+              <span>Guardar Carrusel</span>
+            </button>
+            <button type="button" onclick="syncToCloud()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span>Publicar en Web</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Add New Photo Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <h4 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+            <i class="fas fa-plus-circle text-teal-400"></i>
+            <span>Agregar Nueva Foto al Carrusel</span>
+          </h4>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Upload from PC Box -->
+            <div class="lg:col-span-5 bg-slate-950/60 border-2 border-dashed border-slate-700 hover:border-teal-500/70 rounded-2xl p-6 text-center transition group cursor-pointer relative">
+              <input type="file" id="carousel-file-input" accept="image/*" onchange="handleCarouselUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+              <div class="w-14 h-14 bg-teal-500/10 text-cyan-400 group-hover:scale-110 rounded-2xl flex items-center justify-center mx-auto mb-3 transition">
+                <i class="fas fa-cloud-upload-alt text-2xl"></i>
+              </div>
+              <p class="text-xs font-bold text-white mb-1">Subir foto desde tu computadora</p>
+              <p class="text-[11px] text-slate-400">Formatos JPG, PNG, WebP (se optimiza automáticamente)</p>
+              <span class="inline-block mt-3 px-3 py-1 bg-teal-600/20 text-cyan-300 text-[11px] font-semibold rounded-lg border border-teal-500/30">
+                Seleccionar Archivo
+              </span>
+            </div>
+
+            <!-- Alternative URL & Meta Box -->
+            <div class="lg:col-span-7 space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">O pegar enlace de foto (URL)</label>
+                <div class="flex gap-2">
+                  <input type="url" id="carousel-new-url" placeholder="https://ejemplo.com/foto-casa.jpg" class="flex-1 px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500">
+                  <button type="button" onclick="previewUrlSlide()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700">
+                    Probar
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">Etiqueta / Tipo (Opcional)</label>
+                  <input type="text" id="carousel-new-tag" placeholder="Ej: Chalet de Categoría" class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">Ubicación (Opcional)</label>
+                  <input type="text" id="carousel-new-loc" placeholder="Ej: Castelar Norte" class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500">
+                </div>
+              </div>
+
+              <div class="pt-1 flex items-center justify-between">
+                <span id="carousel-add-status" class="text-xs text-slate-400"></span>
+                <button type="button" onclick="addCarouselSlideFromInputs()" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-teal-600/20 transition flex items-center gap-1.5">
+                  <i class="fas fa-plus"></i>
+                  <span>Agregar al Carrusel</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Current Slides List -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+            <div>
+              <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="fas fa-list text-cyan-400"></i>
+                <span>Fotos Actuales del Carrusel</span>
+              </h4>
+              <span id="carousel-count-badge" class="text-xs text-slate-400">0 fotos configuradas</span>
+            </div>
+            <button type="button" onclick="resetDefaultCarousel()" class="text-xs text-slate-400 hover:text-rose-400 transition flex items-center gap-1.5">
+              <i class="fas fa-undo"></i> Restaurar fotos iniciales
+            </button>
+          </div>
+
+          <!-- Slides Grid Container -->
+          <div id="carousel-admin-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Injected dynamically via admin.js -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 3: SITE CONTENT EDITOR -->
       <div id="tab-content-view" class="hidden">
         
         <div class="flex items-center justify-between mb-6">

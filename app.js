@@ -1,6 +1,6 @@
 
 // Hero Background Dynamic Photo Carousel
-const HERO_SLIDES = [
+let HERO_SLIDES = [
   {
     image: 'https://static.kiteprop.com/kp/properties/588719/96371f/lg/96371f46e01b1eb449bd53842cca9df1.jpg',
     tag: 'Chalet de Categoría',
@@ -153,6 +153,13 @@ async function loadSiteContent() {
 }
 
 function applySiteContent(content) {
+  // Update Carousel if provided in site content
+  if (content.carousel && Array.isArray(content.carousel) && content.carousel.length > 0) {
+    HERO_SLIDES = content.carousel;
+    if (typeof initHeroCarousel === 'function') {
+      initHeroCarousel();
+    }
+  }
   document.querySelectorAll('[data-content]').forEach(el => {
     const key = el.getAttribute('data-content');
     const val = getNestedValue(content, key);
