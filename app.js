@@ -3360,3 +3360,22 @@ window.EMBEDDED_PROPERTIES = [
     "originalUrl": "https://devorafernandezpropiedades.kitepropcrm.com/site/properties/117123/dos-casas-estilo-ph-moron-a-5-cuadras-de-la-estacion"
   }
 ];
+
+
+// Toggle FAQ Accordion
+function toggleFaq(index) {
+  const answer = document.getElementById(`faq-answer-${index}`);
+  const icon = document.getElementById(`faq-icon-${index}`);
+  if (!answer) return;
+
+  const isClosed = answer.classList.contains('hidden');
+
+  // Optional: close other open questions
+  document.querySelectorAll('.faq-answer').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.faq-icon').forEach(ic => ic.style.transform = 'rotate(0deg)');
+
+  if (isClosed) {
+    answer.classList.remove('hidden');
+    if (icon) icon.style.transform = 'rotate(180deg)';
+  }
+}

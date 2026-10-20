@@ -79,6 +79,7 @@
         <a href="#propiedades" class="hover:text-cyan-400 transition-colors">Propiedades</a>
         <a href="#servicios" class="hover:text-cyan-400 transition-colors">Servicios</a>
         <a href="#tasaciones" class="hover:text-cyan-400 transition-colors">Tasaciones</a>
+        <a href="#faq" class="hover:text-cyan-400 transition-colors">Preguntas</a>
         <a href="#contacto" class="hover:text-cyan-400 transition-colors">Contacto</a>
       </nav>
 
@@ -103,6 +104,7 @@
       <a href="#propiedades" class="block hover:text-cyan-400">Propiedades</a>
       <a href="#servicios" class="block hover:text-cyan-400">Servicios</a>
       <a href="#tasaciones" class="block hover:text-cyan-400">Tasaciones</a>
+      <a href="#faq" class="block hover:text-cyan-400">Preguntas Frecuentes</a>
       <a href="#contacto" class="block hover:text-cyan-400">Contacto</a>
       <a href="https://api.whatsapp.com/send?phone=5491164108048" target="_blank" class="block text-center py-3 bg-gradient-gold text-slate-950 font-bold rounded-xl">
         Consultar por WhatsApp
@@ -577,6 +579,161 @@
   </section>
 
   
+
+    <!-- PREGUNTAS FRECUENTES (FAQ) SECTION -->
+  <section id="faq" class="py-20 bg-slate-50 border-t border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-700 text-xs font-bold uppercase tracking-widest mb-3">
+          <i class="fas fa-question-circle text-teal-600"></i>
+          <span>Guía para Alquilar</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Preguntas Frecuentes
+        </h2>
+        <p class="text-slate-500 text-sm mt-2 max-w-xl mx-auto">
+          Información clara y transparente para inquilinos y propietarios sobre requisitos, plazos y costos de alquiler.
+        </p>
+      </div>
+
+      <!-- FAQ Accordion List -->
+      <div class="space-y-4">
+        
+        <!-- FAQ 1: Documentación para alquilar -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200">
+          <button type="button" onclick="toggleFaq(1)" class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none">
+            <span class="font-bold text-slate-900 text-base sm:text-lg flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 text-xs font-extrabold flex items-center justify-center shrink-0">1</span>
+              <span>¿Qué documentación necesito para poder alquilar?</span>
+            </span>
+            <i id="faq-icon-1" class="faq-icon fas fa-chevron-down text-teal-600 text-sm transition-transform duration-300"></i>
+          </button>
+          <div id="faq-answer-1" class="faq-answer px-5 sm:px-6 pb-6 pt-1 text-slate-600 text-sm leading-relaxed border-t border-slate-100 space-y-3">
+            <p class="font-semibold text-slate-800">Hay tres opciones:</p>
+            
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2">
+              <p class="font-bold text-slate-900 text-xs uppercase tracking-wider text-teal-700 flex items-center gap-1.5">
+                <i class="fas fa-home"></i> 1. Garantía propietaria
+              </p>
+              <p class="text-xs text-slate-600">
+                Fotocopia de la Escritura se presenta con un servicio de la misma (puede ser gas, luz, agua).
+              </p>
+              <div class="text-xs space-y-1 pt-1 pl-2 border-l-2 border-amber-500 text-slate-700">
+                <p class="font-semibold text-slate-900">Requerimientos de la propiedad:</p>
+                <p><i class="fas fa-times-circle text-rose-500 mr-1"></i> <strong>NO</strong> tiene que estar como bien de familia.</p>
+                <p><i class="fas fa-times-circle text-rose-500 mr-1"></i> <strong>NO</strong> tiene que estar hipotecada.</p>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-1">
+              <p class="font-bold text-slate-900 text-xs uppercase tracking-wider text-teal-700 flex items-center gap-1.5">
+                <i class="fas fa-file-invoice-dollar"></i> 2. Dos recibos de Sueldo
+              </p>
+              <p class="text-xs text-slate-600">
+                Recibos de sueldo con antigüedad mínima de tres años.
+              </p>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-1">
+              <p class="font-bold text-slate-900 text-xs uppercase tracking-wider text-teal-700 flex items-center gap-1.5">
+                <i class="fas fa-shield-alt"></i> 3. Garantía Finaer
+              </p>
+              <p class="text-xs text-slate-600">
+                Aceptamos garantía de fianza digital Finaer con gestión rápida y aprobación online.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ 2: Plazo de tiempo para alquilar -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200">
+          <button type="button" onclick="toggleFaq(2)" class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none">
+            <span class="font-bold text-slate-900 text-base sm:text-lg flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 text-xs font-extrabold flex items-center justify-center shrink-0">2</span>
+              <span>¿Cuál es el plazo de tiempo para alquilar?</span>
+            </span>
+            <i id="faq-icon-2" class="faq-icon fas fa-chevron-down text-teal-600 text-sm transition-transform duration-300"></i>
+          </button>
+          <div id="faq-answer-2" class="faq-answer hidden px-5 sm:px-6 pb-6 pt-1 text-slate-600 text-sm leading-relaxed border-t border-slate-100">
+            <p>
+              El mínimo es <strong>2 años en contratos de vivienda</strong> y <strong>3 años en contratos comerciales</strong>. Para el contrato comercial se puede convenir el plazo de común acuerdo entre las partes.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 3: Gastos para iniciar contrato -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200">
+          <button type="button" onclick="toggleFaq(3)" class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none">
+            <span class="font-bold text-slate-900 text-base sm:text-lg flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 text-xs font-extrabold flex items-center justify-center shrink-0">3</span>
+              <span>¿Qué gastos voy a tener para iniciar un contrato de alquiler?</span>
+            </span>
+            <i id="faq-icon-3" class="faq-icon fas fa-chevron-down text-teal-600 text-sm transition-transform duration-300"></i>
+          </button>
+          <div id="faq-answer-3" class="faq-answer hidden px-5 sm:px-6 pb-6 pt-1 text-slate-600 text-sm leading-relaxed border-t border-slate-100 space-y-2">
+            <p class="font-semibold text-slate-800 mb-2">Para ingresar se abona:</p>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-700">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-check-circle text-teal-600 mt-0.5"></i>
+                <span><strong>Dos meses adelantado</strong> de Alquiler.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-check-circle text-teal-600 mt-0.5"></i>
+                <span><strong>Mes de Depósito:</strong> este dinero será devuelto cuando termina el contrato si deja la vivienda en buen estado.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-check-circle text-teal-600 mt-0.5"></i>
+                <span><strong>Gastos de escribanía:</strong> por certificar tu firma y la de tu garante en el contrato.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- FAQ 4: Arreglos de la casa -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200">
+          <button type="button" onclick="toggleFaq(4)" class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none">
+            <span class="font-bold text-slate-900 text-base sm:text-lg flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 text-xs font-extrabold flex items-center justify-center shrink-0">4</span>
+              <span>¿Quién tiene que pagar los arreglos de la casa en alquiler?</span>
+            </span>
+            <i id="faq-icon-4" class="faq-icon fas fa-chevron-down text-teal-600 text-sm transition-transform duration-300"></i>
+          </button>
+          <div id="faq-answer-4" class="faq-answer hidden px-5 sm:px-6 pb-6 pt-1 text-slate-600 text-sm leading-relaxed border-t border-slate-100 space-y-3">
+            <div class="bg-teal-50/60 p-4 rounded-xl border border-teal-100 text-xs sm:text-sm">
+              <p class="font-bold text-teal-900 mb-1 flex items-center gap-1.5">
+                <i class="fas fa-user-tie text-teal-700"></i> El Dueño (Propietario):
+              </p>
+              <p class="text-slate-700">
+                Debe pagar los gastos de reparación que sean necesarios para que la vivienda pueda ser usada como se acordó (roturas estructurales, cañerías maestras, humedad previa, filtraciones, etc.).
+              </p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 text-xs sm:text-sm">
+              <p class="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                <i class="fas fa-user text-slate-600"></i> El Inquilino:
+              </p>
+              <p class="text-slate-700">
+                Sólo debe pagar los arreglos de mero mantenimiento del inmueble (cueritos de canillas, luminarias, etc.) y los que surjan de su responsabilidad por uso diario.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Contact Banner below FAQs -->
+      <div class="mt-10 p-6 bg-white rounded-2xl border border-slate-200 text-center shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">¿Tenés alguna otra duda sobre tu contrato?</p>
+        <h4 class="text-base font-bold text-slate-900 mb-3">Estamos a tu disposición para asesorarte sin compromiso</h4>
+        <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20tengo%20una%20consulta%20sobre%20los%20requisitos%20para%20alquilar" target="_blank" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-brand hover:opacity-95 text-slate-950 font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md transition transform hover:-translate-y-0.5">
+          <i class="fab fa-whatsapp text-sm"></i>
+          <span>Consultar por WhatsApp</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
 
   <!-- CONTACT & LOCATION MAP -->
   <section id="contacto" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
