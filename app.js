@@ -142,7 +142,7 @@ async function loadSiteContent() {
   }
   if (!content) {
     try {
-      const res = await fetch('./data/site-content.json');
+      const res = await fetch('./data/site-content.json?v=' + Date.now(), { cache: 'no-store' });
       if (res.ok) {
         content = await res.json();
       }
@@ -233,7 +233,7 @@ async function loadProperties() {
   }
 
   try {
-    const response = await fetch('./data/properties.json');
+    const response = await fetch('./data/properties.json?v=' + Date.now(), { cache: 'no-store' });
     if (!response.ok) throw new Error('No se pudo cargar el catálogo');
     propertiesData = await response.json();
     renderProperties();

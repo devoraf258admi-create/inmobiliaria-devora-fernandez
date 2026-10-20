@@ -199,7 +199,22 @@ function switchTab(tab) {
     if (contentView) contentView.classList.remove('hidden');
     if (btnContent) btnContent.className = activeCls;
     loadSiteContentData();
+    setupAutoSaveContent();
   }
+}
+
+// Auto-save site content on input
+let autoSaveContentTimer = null;
+function setupAutoSaveContent() {
+  const form = document.getElementById('site-content-form');
+  if (!form || form.dataset.autosaveBound) return;
+  form.dataset.autosaveBound = 'true';
+  form.addEventListener('input', () => {
+    clearTimeout(autoSaveContentTimer);
+    autoSaveContentTimer = setTimeout(() => {
+      handleSaveSiteContent(null, true);
+    }, 400);
+  });
 }
 
 // Load Site Content for Editor
@@ -286,6 +301,11 @@ function populateContentForm() {
   setVal('edit-cnt-email', siteContent.contact?.email || siteContent.topbar?.email);
   setVal('edit-cnt-hours', siteContent.contact?.hours || siteContent.topbar?.hours);
   setVal('edit-cnt-license', siteContent.contact?.license);
+
+  // FAQs
+  if (typeof renderAdminFaqs === 'function') {
+    renderAdminFaqs();
+  }
 }
 
 function setVal(id, val) {
@@ -299,8 +319,14 @@ function getVal(id) {
 }
 
 // Save Site Content
-function handleSaveSiteContent(e) {
+function handleSaveSiteContent(e, silent = false) {
   if (e) e.preventDefault();
+
+  // If the content form hasn't been rendered or inputs don't exist yet, preserve existing
+  const heroBadge = document.getElementById('edit-hero-badge');
+  if (!heroBadge && siteContent) {
+    return;
+  }
 
   siteContent = {
     topbar: {
@@ -372,7 +398,9 @@ function handleSaveSiteContent(e) {
   };
 
   localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
-  showToast('Textos del sitio guardados con éxito', 'success');
+  if (!silent) {
+    showToast('Textos del sitio guardados con éxito', 'success');
+  }
 }
 // admin.js - Panel de Administración Dévora Fernández Propiedades
 
@@ -788,6 +816,23 @@ function handleSaveProperty(e) {
 
 // Cloud Sync to GitHub -> Triggers Vercel Auto Deploy
 async function syncToCloud() {
+  // 0. Auto-save current site content if form is present so no changes are lost
+  try {
+    handleSaveSiteContent(null, true);
+  } catch (err) {
+    console.warn('Auto-save site content before sync:', err);
+  }
+
+  // Ensure siteContent is in memory from localStorage if available
+  if (!siteContent) {
+    const localContent = localStorage.getItem('devora_site_content');
+    if (localContent) {
+      try {
+        siteContent = JSON.parse(localContent);
+      } catch(e) {}
+    }
+  }
+
   let token = localStorage.getItem('devora_gh_token');
   if (!token) {
     const inputToken = prompt('Para publicar en la web automáticamente, ingresá tu Token de GitHub (solo se pide la primera vez):');
@@ -801,9 +846,9 @@ async function syncToCloud() {
 
   try {
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Publicando...</span>';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Publicando catálogo...</span>';
 
-    // 1. Get current SHA from GitHub
+    // 1. Get current SHA from GitHub for properties.json
     const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
     const getRes = await fetch(getUrl, {
       headers: {
@@ -815,9 +860,9 @@ async function syncToCloud() {
     if (!getRes.ok) {
       if (getRes.status === 401 || getRes.status === 403) {
         localStorage.removeItem('devora_gh_token');
-        throw new Error('Token no válido o vencido. Por favor volvé a ingresarlo.');
+        throw new Error('Token de GitHub no válido o vencido. Por favor volvé a ingresarlo.');
       }
-      throw new Error(`Error obteniendo datos de GitHub (${getRes.status})`);
+      throw new Error(`Error conectando con GitHub (${getRes.status})`);
     }
 
     const fileInfo = await getRes.json();
@@ -830,7 +875,7 @@ async function syncToCloud() {
     utf8Bytes.forEach(b => binary += String.fromCharCode(b));
     const base64Content = btoa(binary);
 
-    // 3. PUT updated file to GitHub
+    // 3. PUT updated properties to GitHub
     const putRes = await fetch(getUrl, {
       method: 'PUT',
       headers: {
@@ -848,52 +893,54 @@ async function syncToCloud() {
 
     if (!putRes.ok) {
       const errData = await putRes.json();
-      throw new Error(errData.message || 'Error guardando en GitHub');
+      throw new Error(errData.message || 'Error guardando catálogo en GitHub');
     }
 
-    // 4. Also sync site-content.json if modified
+    // 4. Sync site-content.json if present
     if (siteContent) {
-      try {
-        const contentPath = 'data/site-content.json';
-        const getContentUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${contentPath}`;
-        const getContentRes = await fetch(getContentUrl, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-          }
-        });
-        let contentSha = null;
-        if (getContentRes.ok) {
-          const cInfo = await getContentRes.json();
-          contentSha = cInfo.sha;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Publicando textos...</span>';
+      const contentPath = 'data/site-content.json';
+      const getContentUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${contentPath}`;
+      const getContentRes = await fetch(getContentUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
         }
+      });
+      let contentSha = null;
+      if (getContentRes.ok) {
+        const cInfo = await getContentRes.json();
+        contentSha = cInfo.sha;
+      }
 
-        const contentJson = JSON.stringify(siteContent, null, 2);
-        const cUtf8 = new TextEncoder().encode(contentJson);
-        let cBin = '';
-        cUtf8.forEach(b => cBin += String.fromCharCode(b));
-        const cB64 = btoa(cBin);
+      const contentJson = JSON.stringify(siteContent, null, 2);
+      const cUtf8 = new TextEncoder().encode(contentJson);
+      let cBin = '';
+      cUtf8.forEach(b => cBin += String.fromCharCode(b));
+      const cB64 = btoa(cBin);
 
-        await fetch(getContentUrl, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: 'Actualización de textos desde Panel de Administración',
-            content: cB64,
-            sha: contentSha || undefined,
-            branch: 'main'
-          })
-        });
-      } catch(cErr) {
-        console.warn('Error sincronizando site-content.json:', cErr);
+      const putContentRes = await fetch(getContentUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'Actualización de textos desde Panel de Administración',
+          content: cB64,
+          sha: contentSha || undefined,
+          branch: 'main'
+        })
+      });
+
+      if (!putContentRes.ok) {
+        const cErrData = await putContentRes.json();
+        throw new Error(cErrData.message || 'Error guardando textos del sitio en GitHub');
       }
     }
 
-    showToast('¡Catálogo y textos publicados en Vercel! Se actualizará la web en ~15 segundos', 'success');
+    showToast('¡Publicado con éxito! Vercel actualizará la web en unos 30-45 segundos (recargá con Ctrl+F5)', 'success');
   } catch (err) {
     console.error('Error en syncToCloud:', err);
     showToast(`Error de publicación: ${err.message}`, 'error');
