@@ -1,15 +1,15 @@
 {
   "topbar": {
-    "address": "Cabildo 258, Morón, Buenos Aires",
-    "phone": "11 7708 0208",
+    "address": "Cabildo 258, B1708 Morón, Provincia de Buenos Aires, Argentina",
+    "phone": "11 7708 0280",
     "whatsapp": "+54 9 11 6410 8048",
-    "hours": "Lun a Vie: 9:00 a 18:00 hs",
+    "hours": "Atención telefónica de Lun a Vie de 9 a 18 hs",
     "email": "devorafernandezpropiedades@gmail.com"
   },
   "hero": {
     "badge": "Empresa Inmobiliaria Familiar en Morón",
     "title": "Encontrá el lugar donde escribir tu próxima historia",
-    "subtitle": "Especialistas en compra, venta, alquileres y administración de consorcios en Morón, Castelar, Hurlingham, Ituzaingó y Costa Atlántica. Tasaciones reales a valor de mercado."
+    "subtitle": "Especialistas en venta, alquileres y administración de consorcios en Morón, Castelar, Hurlingham, Ituzaingó y Costa Atlántica. Tasaciones reales a valor de mercado."
   },
   "stats": {
     "stat1_number": "+15",
@@ -30,8 +30,10 @@
     "service3_desc": "Gestión transparente y rigurosa para edificios y conjuntos habitacionales. Rendición de cuentas clara, mantenimiento oportuno y solución de expensas."
   },
   "nosotros": {
+    "quote_title": "",
+    "quote_desc": "",
     "title": "¿PORQUE ELEGIR DEVORA FERNANDEZ PROPIEDADES?",
-    "p1": "Somos una empresa Inmobiliaria familiar dedicada a la compra, venta, tasaciones, alquileres y administración de Propiedades.",
+    "p1": "Somos una empresa Inmobiliaria familiar dedicada a la venta, tasaciones, alquileres y administración de Propiedades.",
     "p2": "Fuimos impulsados por el ejemplo de trabajo de nuestros Padres, y agradecidos a Dios por esta profesión, ejercitamos este servicio a la comunidad, con compromiso, seriedad y responsabilidad.",
     "p3": "Estamos para ayudarte a lograr tus sueños, y que adquieras lo que estas buscando en Bienes Inmuebles.",
     "p4": "Contáctese con nosotros sin compromiso, estamos a su servicio.",
