@@ -1,6 +1,6 @@
 
-// Photo Carousel in Nosotros Section
-const NOSOTROS_SLIDES = [
+// Hero Background Dynamic Photo Carousel
+const HERO_SLIDES = [
   {
     image: 'https://static.kiteprop.com/kp/properties/588719/96371f/lg/96371f46e01b1eb449bd53842cca9df1.jpg',
     tag: 'Chalet de Categoría',
@@ -33,99 +33,102 @@ const NOSOTROS_SLIDES = [
   }
 ];
 
-let currentNosotrosIndex = 0;
-let nosotrosCarouselTimer = null;
+let currentHeroIndex = 0;
+let heroCarouselTimer = null;
 
-function initNosotrosCarousel() {
-  const container = document.getElementById('nosotros-carousel');
-  const indicators = document.getElementById('nosotros-carousel-indicators');
+function initHeroCarousel() {
+  const container = document.getElementById('hero-carousel');
+  const indicators = document.getElementById('hero-carousel-indicators');
+  const tagEl = document.getElementById('hero-slide-tag');
   if (!container) return;
 
-  container.innerHTML = NOSOTROS_SLIDES.map((slide, i) => `
-    <div class="nosotros-slide absolute inset-0 transition-opacity duration-700 ease-in-out ${i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-slide="${i}">
-      <img src="${slide.image}" alt="${slide.tag}" class="w-full h-full object-cover">
-      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-      <div class="absolute bottom-8 left-8 right-8 text-white z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-        <div>
-          <span class="inline-block px-3 py-1 bg-teal-600/90 backdrop-blur-md text-white text-[11px] font-extrabold uppercase tracking-wider rounded-lg mb-1 shadow-md">
-            ${slide.tag}
-          </span>
-          <h3 class="text-xl sm:text-2xl font-black text-white drop-shadow-md">
-            ${slide.location}
-          </h3>
-        </div>
-        <span class="text-xs text-slate-300 font-semibold bg-slate-900/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 w-fit">
-          Dévora Fernández Propiedades
-        </span>
-      </div>
+  container.innerHTML = HERO_SLIDES.map((slide, i) => `
+    <div class="hero-slide ${i === 0 ? 'active' : ''}" data-slide="${i}">
+      <img src="${slide.image}" alt="${slide.tag} - ${slide.location}">
     </div>
   `).join('');
 
   if (indicators) {
-    indicators.innerHTML = NOSOTROS_SLIDES.map((_, i) => `
-      <button type="button" onclick="goToNosotrosSlide(${i})" class="w-3 h-3 rounded-full transition-all duration-300 ${i === 0 ? 'bg-cyan-400 w-8' : 'bg-white/50 hover:bg-white'}" aria-label="Ir a diapositiva ${i + 1}"></button>
+    indicators.innerHTML = HERO_SLIDES.map((_, i) => `
+      <button type="button" onclick="goToHeroSlide(${i})" class="h-2.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-cyan-400 w-8' : 'bg-white/40 hover:bg-white/80 w-2.5'}" aria-label="Foto ${i + 1}"></button>
     `).join('');
   }
 
-  startNosotrosCarouselAutoplay();
+  if (tagEl && HERO_SLIDES[0]) {
+    tagEl.innerHTML = `<i class="fas fa-map-marker-alt text-cyan-400 mr-1.5"></i> <strong>${HERO_SLIDES[0].tag}</strong> &bull; ${HERO_SLIDES[0].location}`;
+  }
 
-  if (container.parentElement) {
-    container.parentElement.addEventListener('mouseenter', stopNosotrosCarouselAutoplay);
-    container.parentElement.addEventListener('mouseleave', startNosotrosCarouselAutoplay);
+  startHeroCarouselAutoplay();
+
+  const heroSection = document.getElementById('inicio');
+  if (heroSection) {
+    heroSection.addEventListener('mouseenter', stopHeroCarouselAutoplay);
+    heroSection.addEventListener('mouseleave', startHeroCarouselAutoplay);
   }
 }
 
-function showNosotrosSlide(index) {
-  const slides = document.querySelectorAll('.nosotros-slide');
-  const indicators = document.querySelectorAll('#nosotros-carousel-indicators button');
+function showHeroSlide(index) {
+  const slides = document.querySelectorAll('.hero-slide');
+  const indicators = document.querySelectorAll('#hero-carousel-indicators button');
+  const tagEl = document.getElementById('hero-slide-tag');
   if (slides.length === 0) return;
 
-  currentNosotrosIndex = (index + slides.length) % slides.length;
+  currentHeroIndex = (index + slides.length) % slides.length;
 
   slides.forEach((s, i) => {
-    if (i === currentNosotrosIndex) {
-      s.classList.remove('opacity-0', 'z-0');
-      s.classList.add('opacity-100', 'z-10');
+    if (i === currentHeroIndex) {
+      s.classList.add('active');
     } else {
-      s.classList.remove('opacity-100', 'z-10');
-      s.classList.add('opacity-0', 'z-0');
+      s.classList.remove('active');
     }
   });
 
   indicators.forEach((ind, i) => {
-    if (i === currentNosotrosIndex) {
-      ind.className = 'w-8 h-3 rounded-full transition-all duration-300 bg-cyan-400';
+    if (i === currentHeroIndex) {
+      ind.className = 'h-2.5 rounded-full transition-all duration-300 bg-cyan-400 w-8';
     } else {
-      ind.className = 'w-3 h-3 rounded-full transition-all duration-300 bg-white/50 hover:bg-white';
+      ind.className = 'h-2.5 rounded-full transition-all duration-300 bg-white/40 hover:bg-white/80 w-2.5';
     }
   });
-}
 
-function nextNosotrosSlide() {
-  showNosotrosSlide(currentNosotrosIndex + 1);
-}
-
-function prevNosotrosSlide() {
-  showNosotrosSlide(currentNosotrosIndex - 1);
-}
-
-function goToNosotrosSlide(index) {
-  showNosotrosSlide(index);
-}
-
-function startNosotrosCarouselAutoplay() {
-  stopNosotrosCarouselAutoplay();
-  nosotrosCarouselTimer = setInterval(() => {
-    nextNosotrosSlide();
-  }, 3800);
-}
-
-function stopNosotrosCarouselAutoplay() {
-  if (nosotrosCarouselTimer) {
-    clearInterval(nosotrosCarouselTimer);
-    nosotrosCarouselTimer = null;
+  if (tagEl && HERO_SLIDES[currentHeroIndex]) {
+    const s = HERO_SLIDES[currentHeroIndex];
+    tagEl.innerHTML = `<i class="fas fa-map-marker-alt text-cyan-400 mr-1.5"></i> <strong>${s.tag}</strong> &bull; ${s.location}`;
   }
 }
+
+function nextHeroSlide() {
+  showHeroSlide(currentHeroIndex + 1);
+}
+
+function prevHeroSlide() {
+  showHeroSlide(currentHeroIndex - 1);
+}
+
+function goToHeroSlide(index) {
+  showHeroSlide(index);
+}
+
+function startHeroCarouselAutoplay() {
+  stopHeroCarouselAutoplay();
+  heroCarouselTimer = setInterval(() => {
+    nextHeroSlide();
+  }, 4500);
+}
+
+function stopHeroCarouselAutoplay() {
+  if (heroCarouselTimer) {
+    clearInterval(heroCarouselTimer);
+    heroCarouselTimer = null;
+  }
+}
+
+// Backwards compatibility aliases
+const NOSOTROS_SLIDES = HERO_SLIDES;
+function initNosotrosCarousel() { initHeroCarousel(); }
+function nextNosotrosSlide() { nextHeroSlide(); }
+function prevNosotrosSlide() { prevHeroSlide(); }
+function goToNosotrosSlide(i) { goToHeroSlide(i); }
 
 // Load and Apply Site Text Content
 async function loadSiteContent() {
@@ -199,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
   setupMobileMenu();
   setupScrollEffects();
-  initNosotrosCarousel();
+  initHeroCarousel();
 });
 
 // Fetch Properties Data

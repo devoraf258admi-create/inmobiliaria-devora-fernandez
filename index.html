@@ -75,10 +75,10 @@
       <!-- DESKTOP MENU -->
       <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-200">
         <a href="#inicio" class="hover:text-cyan-400 transition-colors">Inicio</a>
+        <a href="#nosotros" class="hover:text-cyan-400 transition-colors">Nosotros</a>
         <a href="#propiedades" class="hover:text-cyan-400 transition-colors">Propiedades</a>
         <a href="#servicios" class="hover:text-cyan-400 transition-colors">Servicios</a>
         <a href="#tasaciones" class="hover:text-cyan-400 transition-colors">Tasaciones</a>
-        <a href="#nosotros" class="hover:text-cyan-400 transition-colors">Nosotros</a>
         <a href="#contacto" class="hover:text-cyan-400 transition-colors">Contacto</a>
       </nav>
 
@@ -99,10 +99,10 @@
     <!-- MOBILE MENU CONTAINER -->
     <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-6 py-6 space-y-4 text-slate-200 font-semibold text-base">
       <a href="#inicio" class="block hover:text-cyan-400">Inicio</a>
+      <a href="#nosotros" class="block hover:text-cyan-400">Nosotros</a>
       <a href="#propiedades" class="block hover:text-cyan-400">Propiedades</a>
       <a href="#servicios" class="block hover:text-cyan-400">Servicios</a>
       <a href="#tasaciones" class="block hover:text-cyan-400">Tasaciones</a>
-      <a href="#nosotros" class="block hover:text-cyan-400">Nosotros</a>
       <a href="#contacto" class="block hover:text-cyan-400">Contacto</a>
       <a href="https://api.whatsapp.com/send?phone=5491164108048" target="_blank" class="block text-center py-3 bg-gradient-gold text-slate-950 font-bold rounded-xl">
         Consultar por WhatsApp
@@ -111,11 +111,35 @@
   </header>
 
   <!-- HERO SECTION -->
-  <section id="inicio" class="relative pt-32 pb-24 md:pt-44 md:pb-36 bg-slate-900 overflow-hidden flex items-center min-h-[85vh]">
-    <!-- Background Image with Overlay -->
-    <div class="absolute inset-0 z-0">
-      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80" alt="Casas Inmobiliaria Moron" class="w-full h-full object-cover">
-      <div class="hero-overlay absolute inset-0"></div>
+  <section id="inicio" class="relative pt-32 pb-24 md:pt-44 md:pb-36 bg-slate-950 overflow-hidden flex items-center min-h-[85vh]">
+    <!-- Dynamic Hero Background Photo Carousel -->
+    <div class="hero-carousel-container select-none">
+      <div id="hero-carousel" class="w-full h-full relative">
+        <!-- Injected slides by app.js with real property photos -->
+      </div>
+      <div class="hero-overlay absolute inset-0 z-10 pointer-events-none"></div>
+    </div>
+
+    <!-- Hero Carousel Nav Controls -->
+    <button type="button" onclick="prevHeroSlide()" aria-label="Foto anterior" class="hidden sm:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-950/60 hover:bg-teal-600 text-white border border-white/20 backdrop-blur-md items-center justify-center transition shadow-2xl hover:scale-110">
+      <i class="fas fa-chevron-left text-sm"></i>
+    </button>
+    <button type="button" onclick="nextHeroSlide()" aria-label="Foto siguiente" class="hidden sm:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-950/60 hover:bg-teal-600 text-white border border-white/20 backdrop-blur-md items-center justify-center transition shadow-2xl hover:scale-110">
+      <i class="fas fa-chevron-right text-sm"></i>
+    </button>
+
+    <!-- Slide Property Tag (Bottom Right) -->
+    <div class="absolute bottom-4 right-6 z-20 hidden md:block">
+      <span id="hero-slide-tag" class="px-3.5 py-1.5 rounded-xl bg-slate-950/70 border border-white/15 text-xs text-slate-200 font-semibold backdrop-blur-md shadow-lg inline-flex items-center">
+        <i class="fas fa-map-marker-alt text-cyan-400 mr-1.5"></i> Chalet de Categoría &bull; Castelar Norte
+      </span>
+    </div>
+
+    <!-- Slide Indicators (Bottom Center) -->
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+      <div id="hero-carousel-indicators" class="flex items-center gap-1.5 bg-slate-950/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+        <!-- Indicators injected by app.js -->
+      </div>
     </div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -262,6 +286,70 @@
           <button type="button" onclick="resetFilters()" class="font-bold text-slate-500 hover:text-teal-600 flex items-center gap-1.5 transition">
             <i class="fas fa-undo text-xs"></i> Restablecer Filtros
           </button>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT US SECTION (INSTITUTIONAL COPY DIRECTLY BELOW HERO) -->
+  <section id="nosotros" class="py-20 bg-white text-slate-800 border-b border-slate-200 relative">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="max-w-4xl mx-auto text-center space-y-6">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-700 text-xs font-bold uppercase tracking-widest">
+          <i class="fas fa-certificate text-teal-600"></i>
+          <span>Nuestra Identidad</span>
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight uppercase" data-content="nosotros.title">
+          ¿PORQUE ELEGIR DEVORA FERNANDEZ PROPIEDADES?
+        </h2>
+
+        <div class="space-y-4 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+          <p data-content="nosotros.p1">
+            Somos una empresa Inmobiliaria familiar dedicada a la compra, venta, tasaciones, alquileres y administración de Propiedades.
+          </p>
+          <p data-content="nosotros.p2">
+            Fuimos impulsados por el ejemplo de trabajo de nuestros Padres, y agradecidos a Dios por esta profesión, ejercitamos este servicio a la comunidad, con compromiso, seriedad y responsabilidad.
+          </p>
+          <p class="font-medium text-slate-700" data-content="nosotros.p3">
+            Estamos para ayudarte a lograr tus sueños, y que adquieras lo que estas buscando en Bienes Inmuebles.
+          </p>
+          <p class="font-bold text-teal-700 text-lg sm:text-xl pt-2" data-content="nosotros.p4">
+            Contáctese con nosotros sin compromiso, estamos a su servicio.
+          </p>
+        </div>
+
+        <!-- 2 Pillars / Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 max-w-2xl mx-auto text-left">
+          <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200/80 shadow-sm flex items-start gap-4 hover:border-teal-400 transition">
+            <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl shrink-0">
+              <i class="fas fa-handshake"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm mb-1" data-content="nosotros.feature1_title">Trato Personalizado</h4>
+              <p class="text-xs text-slate-500" data-content="nosotros.feature1_desc">Sin intermediarios opacos, respuesta directa.</p>
+            </div>
+          </div>
+
+          <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200/80 shadow-sm flex items-start gap-4 hover:border-teal-400 transition">
+            <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl shrink-0">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm mb-1" data-content="nosotros.feature2_title">Respaldo Jurídico</h4>
+              <p class="text-xs text-slate-500" data-content="nosotros.feature2_desc">Documentación y contratos supervisados.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20me%20gustaria%20realizar%20una%20consulta" target="_blank" class="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-brand hover:opacity-95 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-xl shadow-teal-500/20 transition transform hover:-translate-y-0.5">
+            <i class="fab fa-whatsapp text-base"></i>
+            <span>Contactanos por WhatsApp</span>
+          </a>
         </div>
 
       </div>
@@ -514,91 +602,7 @@
     </div>
   </section>
 
-  <!-- ABOUT US & PHOTO CAROUSEL SECTION -->
-  <section id="nosotros" class="py-24 bg-slate-100 overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <!-- PHOTO CAROUSEL -->
-      <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl mb-16 bg-slate-900 border border-slate-200/80">
-        <!-- Carousel Slides Container -->
-        <div id="nosotros-carousel" class="relative h-[320px] sm:h-[460px] md:h-[520px] w-full overflow-hidden">
-          <!-- Slides injected dynamically by app.js -->
-        </div>
-
-        <!-- Carousel Navigation Controls -->
-        <button type="button" onclick="prevNosotrosSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/70 hover:bg-teal-600 text-white backdrop-blur-md flex items-center justify-center transition shadow-lg z-20" aria-label="Foto anterior">
-          <i class="fas fa-chevron-left text-sm"></i>
-        </button>
-        <button type="button" onclick="nextNosotrosSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/70 hover:bg-teal-600 text-white backdrop-blur-md flex items-center justify-center transition shadow-lg z-20" aria-label="Foto siguiente">
-          <i class="fas fa-chevron-right text-sm"></i>
-        </button>
-
-        <!-- Slide Indicators -->
-        <div id="nosotros-carousel-indicators" class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-          <!-- Indicators injected by app.js -->
-        </div>
-      </div>
-
-      <!-- TEXT BELOW CAROUSEL -->
-      <div class="max-w-4xl mx-auto text-center space-y-6">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-700 text-xs font-bold uppercase tracking-widest">
-          <i class="fas fa-certificate text-teal-600"></i>
-          <span>Nuestra Identidad</span>
-        </div>
-
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight uppercase" data-content="nosotros.title">
-          ¿PORQUE ELEGIR DEVORA FERNANDEZ PROPIEDADES?
-        </h2>
-
-        <div class="space-y-4 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-          <p data-content="nosotros.p1">
-            Somos una empresa Inmobiliaria familiar dedicada a la compra, venta, tasaciones, alquileres y administración de Propiedades.
-          </p>
-          <p data-content="nosotros.p2">
-            Fuimos impulsados por el ejemplo de trabajo de nuestros Padres, y agradecidos a Dios por esta profesión, ejercitamos este servicio a la comunidad, con compromiso, seriedad y responsabilidad.
-          </p>
-          <p class="font-medium text-slate-700" data-content="nosotros.p3">
-            Estamos para ayudarte a lograr tus sueños, y que adquieras lo que estas buscando en Bienes Inmuebles.
-          </p>
-          <p class="font-bold text-teal-700 text-lg sm:text-xl pt-2" data-content="nosotros.p4">
-            Contáctese con nosotros sin compromiso, estamos a su servicio.
-          </p>
-        </div>
-
-        <!-- 2 Pillars / Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 max-w-2xl mx-auto text-left">
-          <div class="p-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex items-start gap-4">
-            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-xl shrink-0">
-              <i class="fas fa-handshake"></i>
-            </div>
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm mb-1" data-content="nosotros.feature1_title">Trato Personalizado</h4>
-              <p class="text-xs text-slate-500" data-content="nosotros.feature1_desc">Sin intermediarios opacos, respuesta directa.</p>
-            </div>
-          </div>
-
-          <div class="p-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex items-start gap-4">
-            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-xl shrink-0">
-              <i class="fas fa-shield-alt"></i>
-            </div>
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm mb-1" data-content="nosotros.feature2_title">Respaldo Jurídico</h4>
-              <p class="text-xs text-slate-500" data-content="nosotros.feature2_desc">Documentación y contratos supervisados.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="pt-6">
-          <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20me%20gustaria%20realizar%20una%20consulta" target="_blank" class="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-brand hover:opacity-95 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-xl shadow-teal-500/20 transition transform hover:-translate-y-0.5">
-            <i class="fab fa-whatsapp text-base"></i>
-            <span>Contactanos por WhatsApp</span>
-          </a>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
+  
 
   <!-- CONTACT & LOCATION MAP -->
   <section id="contacto" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
