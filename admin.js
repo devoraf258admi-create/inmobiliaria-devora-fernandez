@@ -243,6 +243,8 @@ function populateContentForm() {
   setVal('edit-nos-title', siteContent.nosotros?.title);
   setVal('edit-nos-p1', siteContent.nosotros?.p1);
   setVal('edit-nos-p2', siteContent.nosotros?.p2);
+  setVal('edit-nos-p3', siteContent.nosotros?.p3);
+  setVal('edit-nos-p4', siteContent.nosotros?.p4);
   setVal('edit-nos-feat1-title', siteContent.nosotros?.feature1_title);
   setVal('edit-nos-feat1-desc', siteContent.nosotros?.feature1_desc);
   setVal('edit-nos-feat2-title', siteContent.nosotros?.feature2_title);
@@ -323,6 +325,8 @@ function handleSaveSiteContent(e) {
       title: getVal('edit-nos-title'),
       p1: getVal('edit-nos-p1'),
       p2: getVal('edit-nos-p2'),
+      p3: getVal('edit-nos-p3'),
+      p4: getVal('edit-nos-p4'),
       feature1_title: getVal('edit-nos-feat1-title'),
       feature1_desc: getVal('edit-nos-feat1-desc'),
       feature2_title: getVal('edit-nos-feat2-title'),

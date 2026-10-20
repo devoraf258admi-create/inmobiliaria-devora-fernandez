@@ -1,4 +1,132 @@
 
+// Photo Carousel in Nosotros Section
+const NOSOTROS_SLIDES = [
+  {
+    image: 'https://static.kiteprop.com/kp/properties/588719/96371f/lg/96371f46e01b1eb449bd53842cca9df1.jpg',
+    tag: 'Chalet de Categoría',
+    location: 'Castelar Norte'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/564309/76c263/lg/76c263d122244f4e4891a441da18a487.jpg',
+    tag: 'Residencia Familiar',
+    location: 'Hurlingham / Villa Tesei'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/405103/c77901/lg/c7790139e6f4d194c7dce4f7859e0ce1.jpg',
+    tag: 'Dúplex Moderno',
+    location: 'Morón Sur'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/577961/d99c5b/lg/d99c5b595017ff4cbb489064e50e4316.jpg',
+    tag: 'Departamento Céntrico',
+    location: 'Morón Centro'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/548736/e1ae2b/lg/e1ae2b6ac8403ccd24bcdd516cb77b14.jpg',
+    tag: 'Casa Americana',
+    location: 'Castelar / Morón'
+  },
+  {
+    image: 'https://static.kiteprop.com/kp/properties/536342/9c9bbb/lg/9c9bbb3e30823140b488fa9314b26171.jpg',
+    tag: 'Edificio Residencial',
+    location: 'Villa Sarmiento / Ramos Mejía'
+  }
+];
+
+let currentNosotrosIndex = 0;
+let nosotrosCarouselTimer = null;
+
+function initNosotrosCarousel() {
+  const container = document.getElementById('nosotros-carousel');
+  const indicators = document.getElementById('nosotros-carousel-indicators');
+  if (!container) return;
+
+  container.innerHTML = NOSOTROS_SLIDES.map((slide, i) => `
+    <div class="nosotros-slide absolute inset-0 transition-opacity duration-700 ease-in-out ${i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}" data-slide="${i}">
+      <img src="${slide.image}" alt="${slide.tag}" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+      <div class="absolute bottom-8 left-8 right-8 text-white z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+        <div>
+          <span class="inline-block px-3 py-1 bg-teal-600/90 backdrop-blur-md text-white text-[11px] font-extrabold uppercase tracking-wider rounded-lg mb-1 shadow-md">
+            ${slide.tag}
+          </span>
+          <h3 class="text-xl sm:text-2xl font-black text-white drop-shadow-md">
+            ${slide.location}
+          </h3>
+        </div>
+        <span class="text-xs text-slate-300 font-semibold bg-slate-900/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 w-fit">
+          Dévora Fernández Propiedades
+        </span>
+      </div>
+    </div>
+  `).join('');
+
+  if (indicators) {
+    indicators.innerHTML = NOSOTROS_SLIDES.map((_, i) => `
+      <button type="button" onclick="goToNosotrosSlide(${i})" class="w-3 h-3 rounded-full transition-all duration-300 ${i === 0 ? 'bg-cyan-400 w-8' : 'bg-white/50 hover:bg-white'}" aria-label="Ir a diapositiva ${i + 1}"></button>
+    `).join('');
+  }
+
+  startNosotrosCarouselAutoplay();
+
+  if (container.parentElement) {
+    container.parentElement.addEventListener('mouseenter', stopNosotrosCarouselAutoplay);
+    container.parentElement.addEventListener('mouseleave', startNosotrosCarouselAutoplay);
+  }
+}
+
+function showNosotrosSlide(index) {
+  const slides = document.querySelectorAll('.nosotros-slide');
+  const indicators = document.querySelectorAll('#nosotros-carousel-indicators button');
+  if (slides.length === 0) return;
+
+  currentNosotrosIndex = (index + slides.length) % slides.length;
+
+  slides.forEach((s, i) => {
+    if (i === currentNosotrosIndex) {
+      s.classList.remove('opacity-0', 'z-0');
+      s.classList.add('opacity-100', 'z-10');
+    } else {
+      s.classList.remove('opacity-100', 'z-10');
+      s.classList.add('opacity-0', 'z-0');
+    }
+  });
+
+  indicators.forEach((ind, i) => {
+    if (i === currentNosotrosIndex) {
+      ind.className = 'w-8 h-3 rounded-full transition-all duration-300 bg-cyan-400';
+    } else {
+      ind.className = 'w-3 h-3 rounded-full transition-all duration-300 bg-white/50 hover:bg-white';
+    }
+  });
+}
+
+function nextNosotrosSlide() {
+  showNosotrosSlide(currentNosotrosIndex + 1);
+}
+
+function prevNosotrosSlide() {
+  showNosotrosSlide(currentNosotrosIndex - 1);
+}
+
+function goToNosotrosSlide(index) {
+  showNosotrosSlide(index);
+}
+
+function startNosotrosCarouselAutoplay() {
+  stopNosotrosCarouselAutoplay();
+  nosotrosCarouselTimer = setInterval(() => {
+    nextNosotrosSlide();
+  }, 3800);
+}
+
+function stopNosotrosCarouselAutoplay() {
+  if (nosotrosCarouselTimer) {
+    clearInterval(nosotrosCarouselTimer);
+    nosotrosCarouselTimer = null;
+  }
+}
+
 // Load and Apply Site Text Content
 async function loadSiteContent() {
   let content = null;
@@ -71,6 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
   setupMobileMenu();
   setupScrollEffects();
+  initNosotrosCarousel();
 });
 
 // Fetch Properties Data
@@ -262,13 +391,13 @@ function renderProperties() {
               <i class="fas fa-clock"></i> Reservado
             </span>
           ` : `
-          <span class="badge-operation px-3 py-1.5 rounded-lg text-white shadow-md ${prop.operation === 'Venta' ? 'bg-amber-600' : 'bg-emerald-600'}">
+          <span class="badge-operation px-3 py-1.5 rounded-lg text-white shadow-md ${prop.operation === 'Venta' ? 'bg-teal-700' : 'bg-emerald-600'}">
             ${prop.operation}
           </span>
           `))}
           ${prop.featured ? `
-            <span class="px-3 py-1.5 bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs font-semibold rounded-lg shadow-md flex items-center gap-1">
-              <i class="fas fa-star text-amber-400"></i> Destacado
+            <span class="px-3 py-1.5 bg-slate-900/80 backdrop-blur-md text-cyan-400 text-xs font-semibold rounded-lg shadow-md flex items-center gap-1">
+              <i class="fas fa-star text-cyan-400"></i> Destacado
             </span>
           ` : ''}
         </div>
@@ -282,11 +411,11 @@ function renderProperties() {
       <div class="p-6 flex-1 flex flex-col justify-between">
         <div>
           <div class="flex items-center gap-1.5 text-slate-400 text-xs font-medium mb-2">
-            <i class="fas fa-map-marker-alt text-amber-500"></i>
+            <i class="fas fa-map-marker-alt text-teal-500"></i>
             <span>${prop.address}</span>
           </div>
 
-          <h3 class="text-lg font-bold text-slate-900 group-hover:text-amber-600 transition mb-3 line-clamp-1" title="${prop.title}">
+          <h3 class="text-lg font-bold text-slate-900 group-hover:text-teal-600 transition mb-3 line-clamp-1" title="${prop.title}">
             ${prop.title}
           </h3>
 
@@ -318,7 +447,7 @@ function renderProperties() {
             <span class="text-xl font-extrabold text-slate-900">${prop.priceDisplay}</span>
           </div>
 
-          <button onclick="openPropertyModal(${prop.id})" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-amber-600 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm">
+          <button onclick="openPropertyModal(${prop.id})" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-teal-600 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm">
             <span>Ver Detalle</span>
             <i class="fas fa-arrow-right text-xs"></i>
           </button>
@@ -524,7 +653,7 @@ function openPropertyModal(id) {
           </span>
           <h2 class="text-2xl font-extrabold text-slate-900">${prop.title}</h2>
           <p class="text-slate-500 text-sm flex items-center gap-1 mt-1">
-            <i class="fas fa-map-marker-alt text-amber-500"></i> ${prop.address}
+            <i class="fas fa-map-marker-alt text-teal-500"></i> ${prop.address}
           </p>
         </div>
 
@@ -566,7 +695,7 @@ function openPropertyModal(id) {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           ${prop.features.map(feat => `
             <div class="flex items-center gap-2 text-xs font-medium text-slate-700">
-              <i class="fas fa-check-circle text-amber-500 text-sm"></i>
+              <i class="fas fa-check-circle text-teal-500 text-sm"></i>
               <span>${feat}</span>
             </div>
           `).join('')}

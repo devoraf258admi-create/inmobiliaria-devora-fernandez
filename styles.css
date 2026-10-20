@@ -2,10 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary-navy: #0F172A;
-  --secondary-navy: #1E293B;
-  --accent-gold: #D97706;
-  --accent-gold-hover: #B45309;
+  --primary-navy: #0B1727;
+  --secondary-navy: #15253A;
+  --brand-teal: #6DCACD;
+  --brand-teal-hover: #52B3B6;
+  --brand-teal-dark: #0D9488;
   --light-bg: #F8FAFC;
   --card-bg: #FFFFFF;
 }
@@ -19,7 +20,7 @@ body {
 
 /* Glassmorphism Navigation & Search Filter */
 .glass-nav {
-  background: rgba(15, 23, 42, 0.88);
+  background: rgba(11, 23, 39, 0.90);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -44,27 +45,29 @@ body {
   background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #94A3B8;
+  background: #6DCACD;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748B;
+  background: #0D9488;
 }
 
-/* Gold Gradient Effects */
-.bg-gradient-gold {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+/* Brand Teal Gradient Effects (Paleta Oficial del Logo) */
+.bg-gradient-gold,
+.bg-gradient-brand {
+  background: linear-gradient(135deg, #6DCACD 0%, #0D9488 100%);
 }
 
-.text-gradient-gold {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+.text-gradient-gold,
+.text-gradient-brand {
+  background: linear-gradient(135deg, #6DCACD 0%, #0D9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 /* Hero Overlay */
 .hero-overlay {
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.75) 0%, rgba(15, 23, 42, 0.92) 100%);
+  background: linear-gradient(180deg, rgba(11, 23, 39, 0.78) 0%, rgba(11, 23, 39, 0.94) 100%);
 }
 
 /* Property Card Effects */
@@ -74,7 +77,7 @@ body {
 
 .property-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 20px 30px -10px rgba(11, 23, 39, 0.15);
 }
 
 .property-card .img-zoom {
@@ -87,7 +90,7 @@ body {
 
 /* Modal Animations */
 .modal-backdrop {
-  background-color: rgba(15, 23, 42, 0.75);
+  background-color: rgba(11, 23, 39, 0.80);
   backdrop-filter: blur(6px);
   transition: opacity 0.3s ease-in-out;
 }
@@ -127,7 +130,7 @@ body {
 }
 
 .filter-chip.active {
-  background-color: #0F172A;
+  background-color: #0E2643;
   color: #FFFFFF;
-  border-color: #0F172A;
+  border-color: #0E2643;
 }
