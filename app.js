@@ -60,11 +60,7 @@ function initHeroCarousel() {
 
   startHeroCarouselAutoplay();
 
-  const heroSection = document.getElementById('inicio');
-  if (heroSection) {
-    heroSection.addEventListener('mouseenter', stopHeroCarouselAutoplay);
-    heroSection.addEventListener('mouseleave', startHeroCarouselAutoplay);
-  }
+  // Autoplay runs continuously
 }
 
 function showHeroSlide(index) {
@@ -113,7 +109,7 @@ function startHeroCarouselAutoplay() {
   stopHeroCarouselAutoplay();
   heroCarouselTimer = setInterval(() => {
     nextHeroSlide();
-  }, 4500);
+  }, 3500);
 }
 
 function stopHeroCarouselAutoplay() {
