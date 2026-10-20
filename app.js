@@ -39,7 +39,7 @@ let heroCarouselTimer = null;
 function initHeroCarousel() {
   const container = document.getElementById('hero-carousel');
   const indicators = document.getElementById('hero-carousel-indicators');
-  const tagEl = document.getElementById('hero-slide-tag');
+  const tagEl = document.getElementById('hero-slide-caption') || document.getElementById('hero-slide-tag');
   if (!container) return;
 
   container.innerHTML = HERO_SLIDES.map((slide, i) => `
@@ -55,7 +55,10 @@ function initHeroCarousel() {
   }
 
   if (tagEl && HERO_SLIDES[0]) {
-    tagEl.innerHTML = `<i class="fas fa-map-marker-alt text-cyan-400 mr-1.5"></i> <strong>${HERO_SLIDES[0].tag}</strong> &bull; ${HERO_SLIDES[0].location}`;
+    const s = HERO_SLIDES[0];
+    const loc = s.location || 'Morón y Zona Oeste';
+    const tag = s.tag ? ` &bull; ${s.tag}` : '';
+    tagEl.innerHTML = `<i class="fas fa-map-marker-alt text-cyan-400 mr-1.5"></i> <span class="font-bold text-white">${loc}</span><span class="text-slate-300 font-normal hidden sm:inline">${tag}</span>`;
   }
 
   startHeroCarouselAutoplay();
@@ -89,7 +92,9 @@ function showHeroSlide(index) {
 
   if (tagEl && HERO_SLIDES[currentHeroIndex]) {
     const s = HERO_SLIDES[currentHeroIndex];
-    tagEl.innerHTML = `<i class="fas fa-map-marker-alt text-cyan-400 mr-1.5"></i> <strong>${s.tag}</strong> &bull; ${s.location}`;
+    const loc = s.location || 'Morón y Zona Oeste';
+    const tag = s.tag ? ` &bull; ${s.tag}` : '';
+    tagEl.innerHTML = `<i class="fas fa-map-marker-alt text-cyan-400 mr-1.5"></i> <span class="font-bold text-white">${loc}</span><span class="text-slate-300 font-normal hidden sm:inline">${tag}</span>`;
   }
 }
 
@@ -109,7 +114,7 @@ function startHeroCarouselAutoplay() {
   stopHeroCarouselAutoplay();
   heroCarouselTimer = setInterval(() => {
     nextHeroSlide();
-  }, 3500);
+  }, 5000);
 }
 
 function stopHeroCarouselAutoplay() {

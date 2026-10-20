@@ -112,6 +112,9 @@
 
   <!-- PHOTO CAROUSEL SECTION (100% PURE PHOTOS, NO CONTENT OVERLAY) -->
   <section id="inicio" class="relative pt-16 md:pt-20 bg-slate-950 overflow-hidden">
+    <!-- Top Brand Teal Accent Line (Matching bottom line) -->
+    <div class="w-full h-[2px] bg-teal-500 relative z-20 shadow-sm"></div>
+
     <div class="relative w-full h-[300px] sm:h-[380px] md:h-[460px] lg:h-[500px] overflow-hidden select-none group">
       <!-- Carousel Slides Container -->
       <div id="hero-carousel" class="w-full h-full relative">
@@ -125,6 +128,15 @@
       <button type="button" onclick="nextHeroSlide()" aria-label="Foto siguiente" class="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-slate-950/70 hover:bg-teal-600 text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition shadow-2xl hover:scale-110">
         <i class="fas fa-chevron-right text-base"></i>
       </button>
+
+      <!-- Slide Location Caption (Chico, abajo dentro del carrusel) -->
+      <div class="absolute bottom-4 left-4 sm:left-6 z-20">
+        <div id="hero-slide-caption" class="px-3 py-1.5 rounded-lg bg-slate-950/80 border border-white/15 text-[11px] sm:text-xs text-slate-200 backdrop-blur-md shadow-lg flex items-center gap-1.5">
+          <i class="fas fa-map-marker-alt text-cyan-400 text-xs"></i>
+          <span class="font-bold text-white">Castelar Norte</span>
+          <span class="text-slate-300 font-normal hidden sm:inline">&bull; Chalet de Categoría</span>
+        </div>
+      </div>
 
       <!-- Slide Indicators -->
       <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
