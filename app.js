@@ -33,6 +33,13 @@ function applySiteContent(content) {
       }
     }
   });
+
+  if (content.coverage_zones && Array.isArray(content.coverage_zones)) {
+    const ul = document.getElementById('footer-coverage-zones');
+    if (ul && content.coverage_zones.length > 0) {
+      ul.innerHTML = content.coverage_zones.map(z => `<li>${z}</li>`).join('');
+    }
+  }
 }
 
 function getNestedValue(obj, path) {

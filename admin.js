@@ -243,6 +243,25 @@ function populateContentForm() {
   setVal('edit-nos-title', siteContent.nosotros?.title);
   setVal('edit-nos-p1', siteContent.nosotros?.p1);
   setVal('edit-nos-p2', siteContent.nosotros?.p2);
+  setVal('edit-nos-feat1-title', siteContent.nosotros?.feature1_title);
+  setVal('edit-nos-feat1-desc', siteContent.nosotros?.feature1_desc);
+  setVal('edit-nos-feat2-title', siteContent.nosotros?.feature2_title);
+  setVal('edit-nos-feat2-desc', siteContent.nosotros?.feature2_desc);
+
+  // Tasaciones
+  setVal('edit-tas-badge', siteContent.tasaciones?.badge);
+  setVal('edit-tas-title', siteContent.tasaciones?.title);
+  setVal('edit-tas-desc', siteContent.tasaciones?.desc);
+  setVal('edit-tas-bullet1', siteContent.tasaciones?.bullet1);
+  setVal('edit-tas-bullet2', siteContent.tasaciones?.bullet2);
+  setVal('edit-tas-bullet3', siteContent.tasaciones?.bullet3);
+  setVal('edit-tas-cred-title', siteContent.tasaciones?.cred_title);
+  setVal('edit-tas-cred-mat', siteContent.tasaciones?.cred_mat);
+  setVal('edit-tas-cred-addr', siteContent.tasaciones?.cred_addr);
+  setVal('edit-tas-cred-phone', siteContent.tasaciones?.cred_phone);
+
+  // Coverage zones
+  setVal('edit-coverage-zones', (siteContent.coverage_zones || []).join('\n'));
 
   // Contact
   setVal('edit-cnt-address', siteContent.contact?.office_address || siteContent.topbar?.address);
@@ -303,8 +322,25 @@ function handleSaveSiteContent(e) {
       quote_desc: getVal('edit-nos-quote-desc'),
       title: getVal('edit-nos-title'),
       p1: getVal('edit-nos-p1'),
-      p2: getVal('edit-nos-p2')
+      p2: getVal('edit-nos-p2'),
+      feature1_title: getVal('edit-nos-feat1-title'),
+      feature1_desc: getVal('edit-nos-feat1-desc'),
+      feature2_title: getVal('edit-nos-feat2-title'),
+      feature2_desc: getVal('edit-nos-feat2-desc')
     },
+    tasaciones: {
+      badge: getVal('edit-tas-badge'),
+      title: getVal('edit-tas-title'),
+      desc: getVal('edit-tas-desc'),
+      bullet1: getVal('edit-tas-bullet1'),
+      bullet2: getVal('edit-tas-bullet2'),
+      bullet3: getVal('edit-tas-bullet3'),
+      cred_title: getVal('edit-tas-cred-title'),
+      cred_mat: getVal('edit-tas-cred-mat'),
+      cred_addr: getVal('edit-tas-cred-addr'),
+      cred_phone: getVal('edit-tas-cred-phone')
+    },
+    coverage_zones: getVal('edit-coverage-zones').split('\n').map(s => s.trim()).filter(Boolean),
     contact: {
       office_address: getVal('edit-cnt-address'),
       phone: getVal('edit-cnt-phone'),

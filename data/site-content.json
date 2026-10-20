@@ -34,8 +34,31 @@
     "quote_desc": "Impulsados por el ejemplo de trabajo de nuestros padres y la vocación de servicio con la comunidad.",
     "title": "¿Por qué elegir Dévora Fernández Propiedades?",
     "p1": "Somos una empresa Inmobiliaria Familiar dedicada a la compra, venta, tasaciones, alquileres y administración de propiedades en Zona Oeste y Costa Atlántica.",
-    "p2": "Fuimos impulsados por el ejemplo de trabajo de nuestros Padres, y agradecidos a Dios por esta profesión, ejercitamos este servicio a la comunidad con compromiso, seriedad y calidez humana. Estamos para ayudarte a lograr tus sueños y que adquieras lo que estás buscando en Bienes Inmuebles. Cada operación es acompañada personalmente por nuestro equipo colegiado."
+    "p2": "Fuimos impulsados por el ejemplo de trabajo de nuestros Padres, y agradecidos a Dios por esta profesión, ejercitamos este servicio a la comunidad con compromiso, seriedad y calidez humana. Estamos para ayudarte a lograr tus sueños y que adquieras lo que estás buscando en Bienes Inmuebles. Cada operación es acompañada personalmente por nuestro equipo colegiado.",
+    "feature1_title": "Trato Personalizado",
+    "feature1_desc": "Sin intermediarios opacos, respuesta directa.",
+    "feature2_title": "Respaldo Jurídico",
+    "feature2_desc": "Documentación y contratos supervisados."
   },
+  "tasaciones": {
+    "badge": "Cotización Real de Mercado",
+    "title": "Tasá tu Propiedad",
+    "desc": "Para que podamos tasar correctamente su propiedad, por favor complete el siguiente formulario y nos comunicaremos con usted.",
+    "bullet1": "Evaluación profesional basada en valores reales de cierre.",
+    "bullet2": "Asesoramiento legal, impositivo y notarial previo a la publicación.",
+    "bullet3": "Publicación y difusión prioritaria en los principales portales.",
+    "cred_title": "Colegio de Martilleros de Morón",
+    "cred_mat": "2262",
+    "cred_addr": "Cabildo 258, Morón, Bs.As.",
+    "cred_phone": "11 7708 0208 / 11 6410 8048"
+  },
+  "coverage_zones": [
+    "Morón Centro, Sur y Norte",
+    "Castelar Norte y Sur",
+    "Hurlingham y Villa Tesei",
+    "Ituzaingó",
+    "Costa Atlántica (Miramar y Las Toninas)"
+  ],
   "contact": {
     "office_address": "Cabildo 258, B1708 Morón, Provincia de Buenos Aires, Argentina",
     "phone": "11 7708 0280",

@@ -357,13 +357,13 @@
         
         <!-- Left info column -->
         <div class="lg:col-span-5">
-          <span class="px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+          <span class="px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-4 inline-block" data-content="tasaciones.badge">
             Cotización Real de Mercado
           </span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">
+          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4" data-content="tasaciones.title">
             Tasá tu Propiedad
           </h2>
-          <p class="text-slate-300 text-sm leading-relaxed mb-6 font-medium">
+          <p class="text-slate-300 text-sm leading-relaxed mb-6 font-medium" data-content="tasaciones.desc">
             Para que podamos tasar correctamente su propiedad, por favor complete el siguiente formulario y nos comunicaremos con usted.
           </p>
 
@@ -372,19 +372,19 @@
               <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
                 <i class="fas fa-check"></i>
               </div>
-              <span>Evaluación profesional basada en valores reales de cierre.</span>
+              <span data-content="tasaciones.bullet1">Evaluación profesional basada en valores reales de cierre.</span>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
                 <i class="fas fa-check"></i>
               </div>
-              <span>Asesoramiento legal, impositivo y notarial previo a la publicación.</span>
+              <span data-content="tasaciones.bullet2">Asesoramiento legal, impositivo y notarial previo a la publicación.</span>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
                 <i class="fas fa-check"></i>
               </div>
-              <span>Publicación y difusión prioritaria en los principales portales.</span>
+              <span data-content="tasaciones.bullet3">Publicación y difusión prioritaria en los principales portales.</span>
             </div>
           </div>
 
@@ -392,11 +392,11 @@
           <div class="p-5 bg-slate-800/80 rounded-2xl border border-slate-700/80 text-xs text-slate-300 space-y-2">
             <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-1">
               <i class="fas fa-award"></i>
-              <span>Colegio de Martilleros de Morón</span>
+              <span data-content="tasaciones.cred_title">Colegio de Martilleros de Morón</span>
             </div>
-            <p><strong>Nº de Matrícula:</strong> 2262</p>
-            <p><strong>Dirección:</strong> Cabildo 258, Morón, Bs.As.</p>
-            <p><strong>Atención directa:</strong> 11 7708 0208 / 11 6410 8048</p>
+            <p><strong>Nº de Matrícula:</strong> <span data-content="tasaciones.cred_mat">2262</span></p>
+            <p><strong>Dirección:</strong> <span data-content="tasaciones.cred_addr">Cabildo 258, Morón, Bs.As.</span></p>
+            <p><strong>Atención directa:</strong> <span data-content="tasaciones.cred_phone">11 7708 0208 / 11 6410 8048</span></p>
           </div>
         </div>
 
@@ -522,13 +522,13 @@
           <div class="grid grid-cols-2 gap-4">
             <div class="p-4 bg-white rounded-2xl border border-slate-200">
               <i class="fas fa-handshake text-amber-600 text-xl mb-2"></i>
-              <h4 class="font-bold text-slate-900 text-sm mb-1">Trato Personalizado</h4>
-              <p class="text-xs text-slate-500">Sin intermediarios opacos, respuesta directa.</p>
+              <h4 class="font-bold text-slate-900 text-sm mb-1" data-content="nosotros.feature1_title">Trato Personalizado</h4>
+              <p class="text-xs text-slate-500" data-content="nosotros.feature1_desc">Sin intermediarios opacos, respuesta directa.</p>
             </div>
             <div class="p-4 bg-white rounded-2xl border border-slate-200">
               <i class="fas fa-shield-alt text-amber-600 text-xl mb-2"></i>
-              <h4 class="font-bold text-slate-900 text-sm mb-1">Respaldo Jurídico</h4>
-              <p class="text-xs text-slate-500">Documentación y contratos supervisados.</p>
+              <h4 class="font-bold text-slate-900 text-sm mb-1" data-content="nosotros.feature2_title">Respaldo Jurídico</h4>
+              <p class="text-xs text-slate-500" data-content="nosotros.feature2_desc">Documentación y contratos supervisados.</p>
             </div>
           </div>
         </div>
@@ -623,7 +623,7 @@
 
       <div>
         <h4 class="text-white font-bold text-sm mb-4">Zonas de Cobertura</h4>
-        <ul class="space-y-2 text-xs text-slate-500">
+        <ul id="footer-coverage-zones" class="space-y-2 text-xs text-slate-500">
           <li>Morón Centro, Sur y Norte</li>
           <li>Castelar Norte y Sur</li>
           <li>Hurlingham y Villa Tesei</li>
