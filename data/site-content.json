@@ -1,0 +1,47 @@
+{
+  "topbar": {
+    "address": "Cabildo 258, Morón, Buenos Aires",
+    "phone": "11 7708 0208",
+    "whatsapp": "+54 9 11 6410 8048",
+    "hours": "Lun a Vie: 9:00 a 18:00 hs",
+    "email": "devorafernandezpropiedades@gmail.com"
+  },
+  "hero": {
+    "badge": "Empresa Inmobiliaria Familiar en Morón",
+    "title": "Encontrá el lugar donde escribir tu próxima historia",
+    "subtitle": "Especialistas en compra, venta, alquileres y administración de consorcios en Morón, Castelar, Hurlingham, Ituzaingó y Costa Atlántica. Tasaciones reales a valor de mercado."
+  },
+  "stats": {
+    "stat1_number": "+15",
+    "stat1_label": "Años de Trayectoria",
+    "stat2_number": "100%",
+    "stat2_label": "Tasación a Valor Real",
+    "stat3_number": "+50",
+    "stat3_label": "Consorcios Administrados",
+    "stat4_number": "+500",
+    "stat4_label": "Operaciones Exitosas"
+  },
+  "services": {
+    "service1_title": "Venta y Alquileres",
+    "service1_desc": "Especialistas en comercialización de Casas, Departamentos, Galpones, Terrenos y Cocheras. Publicidad efectiva en los principales portales del país.",
+    "service2_title": "Tasaciones Profesionales",
+    "service2_desc": "Tasamos a valor real del mercado basándonos en análisis comparativos actualizados para propiedades urbanas, rurales y turísticas.",
+    "service3_title": "Administración de Consorcios",
+    "service3_desc": "Gestión transparente y rigurosa para edificios y conjuntos habitacionales. Rendición de cuentas clara, mantenimiento oportuno y solución de expensas."
+  },
+  "nosotros": {
+    "quote_title": "\"Valores & Familia\"",
+    "quote_desc": "Impulsados por el ejemplo de trabajo de nuestros padres y la vocación de servicio con la comunidad.",
+    "title": "¿Por qué elegir Dévora Fernández Propiedades?",
+    "p1": "Somos una empresa Inmobiliaria Familiar dedicada a la compra, venta, tasaciones, alquileres y administración de propiedades en Zona Oeste y Costa Atlántica.",
+    "p2": "Fuimos impulsados por el ejemplo de trabajo de nuestros Padres, y agradecidos a Dios por esta profesión, ejercitamos este servicio a la comunidad con compromiso, seriedad y calidez humana. Estamos para ayudarte a lograr tus sueños y que adquieras lo que estás buscando en Bienes Inmuebles. Cada operación es acompañada personalmente por nuestro equipo colegiado."
+  },
+  "contact": {
+    "office_address": "Cabildo 258, B1708 Morón, Provincia de Buenos Aires, Argentina",
+    "phone": "11 7708 0280",
+    "whatsapp": "+54 9 11 6410 8048",
+    "email": "devorafernandezpropiedades@gmail.com",
+    "hours": "Atención telefónica de Lun a Vie de 9 a 18 hs",
+    "license": "Matrícula Nº 2262 - Colegio de Martilleros de Morón"
+  }
+}

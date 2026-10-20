@@ -1,3 +1,43 @@
+
+// Load and Apply Site Text Content
+async function loadSiteContent() {
+  let content = null;
+  const local = localStorage.getItem('devora_site_content');
+  if (local) {
+    try {
+      content = JSON.parse(local);
+    } catch(e) {}
+  }
+  if (!content) {
+    try {
+      const res = await fetch('./data/site-content.json');
+      if (res.ok) {
+        content = await res.json();
+      }
+    } catch(e) {}
+  }
+  if (!content) return;
+
+  applySiteContent(content);
+}
+
+function applySiteContent(content) {
+  document.querySelectorAll('[data-content]').forEach(el => {
+    const key = el.getAttribute('data-content');
+    const val = getNestedValue(content, key);
+    if (val) {
+      if (key === 'hero.title') {
+        el.innerHTML = val;
+      } else {
+        el.textContent = val;
+      }
+    }
+  });
+}
+
+function getNestedValue(obj, path) {
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
 // App JavaScript - Dévora Fernández Propiedades
 
 let propertiesData = [];
@@ -19,6 +59,7 @@ const WHATSAPP_PHONE = '5491164108048'; // Número de WhatsApp oficial
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', async () => {
+  await loadSiteContent();
   await loadProperties();
   setupEventListeners();
   setupMobileMenu();

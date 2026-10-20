@@ -1,3 +1,159 @@
+
+let currentTab = 'properties';
+let siteContent = null;
+
+// Switch Navigation Tabs
+function switchTab(tab) {
+  currentTab = tab;
+  const propView = document.getElementById('tab-properties-view');
+  const contentView = document.getElementById('tab-content-view');
+  const btnProp = document.getElementById('tab-btn-properties');
+  const btnContent = document.getElementById('tab-btn-content');
+
+  if (tab === 'properties') {
+    if (propView) propView.classList.remove('hidden');
+    if (contentView) contentView.classList.add('hidden');
+    btnProp.className = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-gradient-gold text-slate-950 shadow-md';
+    btnContent.className = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-800 text-slate-400 hover:text-white';
+  } else {
+    if (propView) propView.classList.add('hidden');
+    if (contentView) contentView.classList.remove('hidden');
+    btnProp.className = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-800 text-slate-400 hover:text-white';
+    btnContent.className = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-gradient-gold text-slate-950 shadow-md';
+    loadSiteContentData();
+  }
+}
+
+// Load Site Content for Editor
+async function loadSiteContentData() {
+  const local = localStorage.getItem('devora_site_content');
+  if (local) {
+    try {
+      siteContent = JSON.parse(local);
+      populateContentForm();
+      return;
+    } catch(e) {}
+  }
+
+  try {
+    const res = await fetch('./data/site-content.json');
+    if (res.ok) {
+      siteContent = await res.json();
+      populateContentForm();
+    }
+  } catch(err) {
+    console.error('Error cargando site-content.json:', err);
+  }
+}
+
+// Populate Editor Form
+function populateContentForm() {
+  if (!siteContent) return;
+
+  // Hero
+  setVal('edit-hero-badge', siteContent.hero?.badge);
+  setVal('edit-hero-title', siteContent.hero?.title);
+  setVal('edit-hero-subtitle', siteContent.hero?.subtitle);
+
+  // Stats
+  setVal('edit-stat1-num', siteContent.stats?.stat1_number);
+  setVal('edit-stat1-lbl', siteContent.stats?.stat1_label);
+  setVal('edit-stat2-num', siteContent.stats?.stat2_number);
+  setVal('edit-stat2-lbl', siteContent.stats?.stat2_label);
+  setVal('edit-stat3-num', siteContent.stats?.stat3_number);
+  setVal('edit-stat3-lbl', siteContent.stats?.stat3_label);
+  setVal('edit-stat4-num', siteContent.stats?.stat4_number);
+  setVal('edit-stat4-lbl', siteContent.stats?.stat4_label);
+
+  // Services
+  setVal('edit-svc1-title', siteContent.services?.service1_title);
+  setVal('edit-svc1-desc', siteContent.services?.service1_desc);
+  setVal('edit-svc2-title', siteContent.services?.service2_title);
+  setVal('edit-svc2-desc', siteContent.services?.service2_desc);
+  setVal('edit-svc3-title', siteContent.services?.service3_title);
+  setVal('edit-svc3-desc', siteContent.services?.service3_desc);
+
+  // Nosotros
+  setVal('edit-nos-quote-title', siteContent.nosotros?.quote_title);
+  setVal('edit-nos-quote-desc', siteContent.nosotros?.quote_desc);
+  setVal('edit-nos-title', siteContent.nosotros?.title);
+  setVal('edit-nos-p1', siteContent.nosotros?.p1);
+  setVal('edit-nos-p2', siteContent.nosotros?.p2);
+
+  // Contact
+  setVal('edit-cnt-address', siteContent.contact?.office_address || siteContent.topbar?.address);
+  setVal('edit-cnt-phone', siteContent.contact?.phone || siteContent.topbar?.phone);
+  setVal('edit-cnt-whatsapp', siteContent.contact?.whatsapp || siteContent.topbar?.whatsapp);
+  setVal('edit-cnt-email', siteContent.contact?.email || siteContent.topbar?.email);
+  setVal('edit-cnt-hours', siteContent.contact?.hours || siteContent.topbar?.hours);
+  setVal('edit-cnt-license', siteContent.contact?.license);
+}
+
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if (el && typeof val !== 'undefined') el.value = val;
+}
+
+function getVal(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+// Save Site Content
+function handleSaveSiteContent(e) {
+  if (e) e.preventDefault();
+
+  siteContent = {
+    topbar: {
+      address: getVal('edit-cnt-address'),
+      phone: getVal('edit-cnt-phone'),
+      whatsapp: getVal('edit-cnt-whatsapp'),
+      hours: getVal('edit-cnt-hours'),
+      email: getVal('edit-cnt-email')
+    },
+    hero: {
+      badge: getVal('edit-hero-badge'),
+      title: getVal('edit-hero-title'),
+      subtitle: getVal('edit-hero-subtitle')
+    },
+    stats: {
+      stat1_number: getVal('edit-stat1-num'),
+      stat1_label: getVal('edit-stat1-lbl'),
+      stat2_number: getVal('edit-stat2-num'),
+      stat2_label: getVal('edit-stat2-lbl'),
+      stat3_number: getVal('edit-stat3-num'),
+      stat3_label: getVal('edit-stat3-lbl'),
+      stat4_number: getVal('edit-stat4-num'),
+      stat4_label: getVal('edit-stat4-lbl')
+    },
+    services: {
+      service1_title: getVal('edit-svc1-title'),
+      service1_desc: getVal('edit-svc1-desc'),
+      service2_title: getVal('edit-svc2-title'),
+      service2_desc: getVal('edit-svc2-desc'),
+      service3_title: getVal('edit-svc3-title'),
+      service3_desc: getVal('edit-svc3-desc')
+    },
+    nosotros: {
+      quote_title: getVal('edit-nos-quote-title'),
+      quote_desc: getVal('edit-nos-quote-desc'),
+      title: getVal('edit-nos-title'),
+      p1: getVal('edit-nos-p1'),
+      p2: getVal('edit-nos-p2')
+    },
+    contact: {
+      office_address: getVal('edit-cnt-address'),
+      phone: getVal('edit-cnt-phone'),
+      whatsapp: getVal('edit-cnt-whatsapp'),
+      email: getVal('edit-cnt-email'),
+      hours: getVal('edit-cnt-hours'),
+      license: getVal('edit-cnt-license')
+    }
+  };
+
+  localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+  showToast('Textos del sitio guardados con éxito', 'success');
+}
 // admin.js - Panel de Administración Dévora Fernández Propiedades
 
 const ADMIN_CREDENTIALS = {
@@ -29,6 +185,7 @@ function checkAuth() {
     if (authContainer) authContainer.classList.add('hidden');
     if (dashboardContainer) dashboardContainer.classList.remove('hidden');
     loadPropertiesData();
+    loadSiteContentData();
   } else {
     if (authContainer) authContainer.classList.remove('hidden');
     if (dashboardContainer) dashboardContainer.classList.add('hidden');
@@ -470,7 +627,49 @@ async function syncToCloud() {
       throw new Error(errData.message || 'Error guardando en GitHub');
     }
 
-    showToast('¡Catálogo publicado en Vercel! Se actualizará la web en ~15 segundos', 'success');
+    // 4. Also sync site-content.json if modified
+    if (siteContent) {
+      try {
+        const contentPath = 'data/site-content.json';
+        const getContentUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${contentPath}`;
+        const getContentRes = await fetch(getContentUrl, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        let contentSha = null;
+        if (getContentRes.ok) {
+          const cInfo = await getContentRes.json();
+          contentSha = cInfo.sha;
+        }
+
+        const contentJson = JSON.stringify(siteContent, null, 2);
+        const cUtf8 = new TextEncoder().encode(contentJson);
+        let cBin = '';
+        cUtf8.forEach(b => cBin += String.fromCharCode(b));
+        const cB64 = btoa(cBin);
+
+        await fetch(getContentUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Actualización de textos desde Panel de Administración',
+            content: cB64,
+            sha: contentSha || undefined,
+            branch: 'main'
+          })
+        });
+      } catch(cErr) {
+        console.warn('Error sincronizando site-content.json:', cErr);
+      }
+    }
+
+    showToast('¡Catálogo y textos publicados en Vercel! Se actualizará la web en ~15 segundos', 'success');
   } catch (err) {
     console.error('Error en syncToCloud:', err);
     showToast(`Error de publicación: ${err.message}`, 'error');

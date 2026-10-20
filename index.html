@@ -22,17 +22,17 @@
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-6">
         <span class="flex items-center gap-2">
-          <i class="fas fa-map-marker-alt text-amber-500"></i> Cabildo 258, Morón, Buenos Aires
+          <i class="fas fa-map-marker-alt text-amber-500"></i> <span data-content="topbar.address">Cabildo 258, Morón, Buenos Aires</span>
         </span>
         <span class="flex items-center gap-2">
-          <i class="fas fa-phone-alt text-amber-500"></i> 11 7708 0208
+          <i class="fas fa-phone-alt text-amber-500"></i> <span data-content="topbar.phone">11 7708 0208</span>
         </span>
         <span class="flex items-center gap-2">
-          <i class="fab fa-whatsapp text-emerald-400"></i> +54 9 11 6410 8048
+          <i class="fab fa-whatsapp text-emerald-400"></i> <span data-content="topbar.whatsapp">+54 9 11 6410 8048</span>
         </span>
       </div>
       <div class="flex items-center gap-4 text-slate-400">
-        <span><i class="far fa-clock text-amber-500"></i> Lun a Vie: 9:00 a 18:00 hs</span>
+        <span><i class="far fa-clock text-amber-500"></i> <span data-content="topbar.hours">Lun a Vie: 9:00 a 18:00 hs</span></span>
         <div class="flex items-center gap-3 ml-2 border-l border-slate-800 pl-4">
           <a href="https://api.whatsapp.com/send?phone=5491164108048" target="_blank" class="hover:text-amber-400 transition"><i class="fab fa-whatsapp"></i></a>
           <a href="mailto:devorafernandezpropiedades@gmail.com" class="hover:text-amber-400 transition" title="devorafernandezpropiedades@gmail.com"><i class="far fa-envelope"></i></a>
@@ -100,12 +100,12 @@
       <div class="max-w-3xl mb-12">
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-semibold uppercase tracking-wider mb-6">
           <i class="fas fa-certificate text-amber-400"></i>
-          <span>Empresa Inmobiliaria Familiar en Morón</span>
+          <span data-content="hero.badge">Empresa Inmobiliaria Familiar en Morón</span>
         </div>
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-6">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-6" data-content="hero.title">
           Encontrá el lugar donde escribir tu <span class="text-gradient-gold">próxima historia</span>
         </h1>
-        <p class="text-lg text-slate-300 leading-relaxed max-w-2xl">
+        <p class="text-lg text-slate-300 leading-relaxed max-w-2xl" data-content="hero.subtitle">
           Especialistas en compra, venta, alquileres y administración de consorcios en Morón, Castelar, Hurlingham, Ituzaingó y Costa Atlántica. Tasaciones reales a valor de mercado.
         </p>
       </div>
@@ -251,20 +251,20 @@
   <section class="bg-slate-950 py-10 border-y border-slate-800 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
       <div>
-        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1">+15</span>
-        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Años de Trayectoria</span>
+        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1" data-content="stats.stat1_number">+15</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider" data-content="stats.stat1_label">Años de Trayectoria</span>
       </div>
       <div>
-        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1">100%</span>
-        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Tasación a Valor Real</span>
+        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1" data-content="stats.stat2_number">100%</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider" data-content="stats.stat2_label">Tasación a Valor Real</span>
       </div>
       <div>
-        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1">+50</span>
-        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Consorcios Administrados</span>
+        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1" data-content="stats.stat3_number">+50</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider" data-content="stats.stat3_label">Consorcios Administrados</span>
       </div>
       <div>
-        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1">+500</span>
-        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Operaciones Exitosas</span>
+        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1" data-content="stats.stat4_number">+500</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider" data-content="stats.stat4_label">Operaciones Exitosas</span>
       </div>
     </div>
   </section>
@@ -306,8 +306,8 @@
           <div class="w-14 h-14 bg-gradient-gold rounded-2xl flex items-center justify-center text-slate-950 text-2xl font-bold mb-6 shadow-lg shadow-amber-500/10 group-hover:scale-110 transition-transform">
             <i class="fas fa-home"></i>
           </div>
-          <h3 class="text-xl font-bold mb-3 text-white">Venta y Alquileres</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          <h3 class="text-xl font-bold mb-3 text-white" data-content="services.service1_title">Venta y Alquileres</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6" data-content="services.service1_desc">
             Especialistas en comercialización de Casas, Departamentos, Galpones, Terrenos y Cocheras. Publicidad efectiva en los principales portales del país.
           </p>
           <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20quiero%20consultar%20por%20comercializar%20mi%20propiedad" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300">
@@ -321,8 +321,8 @@
           <div class="w-14 h-14 bg-gradient-gold rounded-2xl flex items-center justify-center text-slate-950 text-2xl font-bold mb-6 shadow-lg shadow-amber-500/10 group-hover:scale-110 transition-transform">
             <i class="fas fa-calculator"></i>
           </div>
-          <h3 class="text-xl font-bold mb-3 text-white">Tasaciones Profesionales</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          <h3 class="text-xl font-bold mb-3 text-white" data-content="services.service2_title">Tasaciones Profesionales</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6" data-content="services.service2_desc">
             Tasamos a valor real del mercado basándonos en análisis comparativos actualizados para propiedades urbanas, rurales y turísticas.
           </p>
           <a href="#tasaciones" class="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300">
@@ -336,8 +336,8 @@
           <div class="w-14 h-14 bg-gradient-gold rounded-2xl flex items-center justify-center text-slate-950 text-2xl font-bold mb-6 shadow-lg shadow-amber-500/10 group-hover:scale-110 transition-transform">
             <i class="fas fa-building"></i>
           </div>
-          <h3 class="text-xl font-bold mb-3 text-white">Administración de Consorcios</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          <h3 class="text-xl font-bold mb-3 text-white" data-content="services.service3_title">Administración de Consorcios</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6" data-content="services.service3_desc">
             Gestión transparente y rigurosa para edificios y conjuntos habitacionales. Rendición de cuentas clara, mantenimiento oportuno y solución de expensas.
           </p>
           <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20quisiera%20informacion%20sobre%20Administracion%20de%20Consorcios" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300">
@@ -500,8 +500,8 @@
         <div class="relative">
           <img src="https://static.kiteprop.com/kp/properties/588719/96371f/lg/96371f46e01b1eb449bd53842cca9df1.jpg" alt="Inmobiliaria Devora Fernandez Moron" class="rounded-3xl shadow-xl w-full object-cover h-[450px]">
           <div class="absolute -bottom-6 -right-6 bg-slate-900 text-white p-6 rounded-2xl shadow-xl hidden sm:block max-w-xs border border-slate-700">
-            <p class="text-amber-400 font-extrabold text-lg mb-1">"Valores & Familia"</p>
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-amber-400 font-extrabold text-lg mb-1" data-content="nosotros.quote_title">"Valores & Familia"</p>
+            <p class="text-xs text-slate-300 leading-relaxed" data-content="nosotros.quote_desc">
               Impulsados por el ejemplo de trabajo de nuestros padres y la vocación de servicio con la comunidad.
             </p>
           </div>
@@ -509,13 +509,13 @@
 
         <div>
           <span class="text-amber-600 font-bold text-xs uppercase tracking-widest mb-2 block">Nuestra Identidad</span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-6">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-6" data-content="nosotros.title">
             ¿Por qué elegir Dévora Fernández Propiedades?
           </h2>
-          <p class="text-slate-600 text-sm leading-relaxed mb-6">
+          <p class="text-slate-600 text-sm leading-relaxed mb-6" data-content="nosotros.p1">
             Somos una empresa <strong>Inmobiliaria Familiar</strong> dedicada a la compra, venta, tasaciones, alquileres y administración de propiedades en Zona Oeste y Costa Atlántica.
           </p>
-          <p class="text-slate-600 text-sm leading-relaxed mb-8">
+          <p class="text-slate-600 text-sm leading-relaxed mb-8" data-content="nosotros.p2">
             Fuimos impulsados por el ejemplo de trabajo de nuestros Padres, y agradecidos a Dios por esta profesión, ejercitamos este servicio a la comunidad con compromiso, seriedad y calidez humana. Estamos para ayudarte a lograr tus sueños y que adquieras lo que estás buscando en Bienes Inmuebles. Cada operación es acompañada personalmente por nuestro equipo colegiado.
           </p>
 
@@ -555,7 +555,7 @@
           </div>
           <div>
             <h4 class="font-bold text-slate-900 text-sm mb-1">Oficina Central</h4>
-            <p class="text-xs text-slate-600">Cabildo 258, B1708 Morón, Provincia de Buenos Aires, Argentina</p>
+            <p class="text-xs text-slate-600" data-content="contact.office_address">Cabildo 258, B1708 Morón, Provincia de Buenos Aires, Argentina</p>
           </div>
         </div>
 
@@ -662,7 +662,7 @@
           <i class="fas fa-lock text-[10px]"></i> Acceso Privado
         </a>
       </div>
-      <p class="text-amber-400/90 font-medium">Matrícula Nº 2262 - Colegio de Martilleros de Morón</p>
+      <p class="text-amber-400/90 font-medium" data-content="contact.license">Matrícula Nº 2262 - Colegio de Martilleros de Morón</p>
     </div>
   </footer>
 

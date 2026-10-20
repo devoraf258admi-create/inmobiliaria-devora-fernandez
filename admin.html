@@ -96,6 +96,21 @@
     <!-- Main Content -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
+      <!-- Navigation Tabs -->
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-4 mb-6">
+        <button onclick="switchTab('properties')" id="tab-btn-properties" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-gradient-gold text-slate-950 shadow-md">
+          <i class="fas fa-home"></i>
+          <span>Catálogo de Inmuebles</span>
+        </button>
+        <button onclick="switchTab('content')" id="tab-btn-content" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-800 text-slate-400 hover:text-white">
+          <i class="fas fa-edit"></i>
+          <span>Textos y Contenido de la Web</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: PROPERTIES MANAGEMENT -->
+      <div id="tab-properties-view">
+      
       <!-- Stats KPIs -->
       <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
@@ -189,6 +204,211 @@
         </div>
       </div>
 
+      </div><!-- END TAB 1 -->
+
+      <!-- TAB 2: SITE CONTENT EDITOR -->
+      <div id="tab-content-view" class="hidden">
+        
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="text-xl font-bold text-white">Editor de Textos de la Web</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Modificá cualquier texto del sitio público. Los cambios se guardan al instante.</p>
+          </div>
+          <button type="button" onclick="handleSaveSiteContent(event)" class="px-5 py-2.5 bg-gradient-gold hover:opacity-95 text-slate-950 text-xs font-black uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition">
+            <i class="fas fa-save"></i>
+            <span>Guardar Textos</span>
+          </button>
+        </div>
+
+        <form id="site-content-form" onsubmit="handleSaveSiteContent(event)" class="space-y-6">
+          
+          <!-- 1. HERO / PORTADA -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-4 border-b border-slate-800 pb-2">
+              <i class="fas fa-star"></i>
+              <span>Portada y Título Principal (Hero)</span>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Etiqueta Superior (Badge)</label>
+                <input type="text" id="edit-hero-badge" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Título Principal (H1)</label>
+                <input type="text" id="edit-hero-title" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Bajada / Descripción de Portada</label>
+                <textarea id="edit-hero-subtitle" rows="3" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. CIFRAS Y ESTADÍSTICAS -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-4 border-b border-slate-800 pb-2">
+              <i class="fas fa-chart-line"></i>
+              <span>Cifras Destacadas (Barra de Estadísticas)</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700">
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cifra 1</label>
+                <input type="text" id="edit-stat1-num" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white mb-2">
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Etiqueta 1</label>
+                <input type="text" id="edit-stat1-lbl" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white">
+              </div>
+
+              <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700">
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cifra 2</label>
+                <input type="text" id="edit-stat2-num" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white mb-2">
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Etiqueta 2</label>
+                <input type="text" id="edit-stat2-lbl" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white">
+              </div>
+
+              <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700">
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cifra 3</label>
+                <input type="text" id="edit-stat3-num" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white mb-2">
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Etiqueta 3</label>
+                <input type="text" id="edit-stat3-lbl" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white">
+              </div>
+
+              <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700">
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cifra 4</label>
+                <input type="text" id="edit-stat4-num" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white mb-2">
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Etiqueta 4</label>
+                <input type="text" id="edit-stat4-lbl" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white">
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. SERVICIOS -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-4 border-b border-slate-800 pb-2">
+              <i class="fas fa-concierge-bell"></i>
+              <span>Servicios Inmobiliarios</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 bg-slate-800/60 rounded-xl border border-slate-700 space-y-3">
+                <span class="text-xs font-bold text-amber-400 block">Servicio 1</span>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">Título</label>
+                  <input type="text" id="edit-svc1-title" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">Descripción</label>
+                  <textarea id="edit-svc1-desc" rows="4" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white"></textarea>
+                </div>
+              </div>
+
+              <div class="p-4 bg-slate-800/60 rounded-xl border border-slate-700 space-y-3">
+                <span class="text-xs font-bold text-amber-400 block">Servicio 2</span>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">Título</label>
+                  <input type="text" id="edit-svc2-title" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">Descripción</label>
+                  <textarea id="edit-svc2-desc" rows="4" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white"></textarea>
+                </div>
+              </div>
+
+              <div class="p-4 bg-slate-800/60 rounded-xl border border-slate-700 space-y-3">
+                <span class="text-xs font-bold text-amber-400 block">Servicio 3</span>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">Título</label>
+                  <input type="text" id="edit-svc3-title" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1">Descripción</label>
+                  <textarea id="edit-svc3-desc" rows="4" class="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. SOBRE NOSOTROS -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-4 border-b border-slate-800 pb-2">
+              <i class="fas fa-users"></i>
+              <span>Sección Sobre Nosotros</span>
+            </div>
+
+            <div class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">Título de Cita Destacada</label>
+                  <input type="text" id="edit-nos-quote-title" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">Texto de Cita Destacada</label>
+                  <input type="text" id="edit-nos-quote-desc" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Título de la Sección</label>
+                <input type="text" id="edit-nos-title" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Párrafo 1 (Presentación)</label>
+                <textarea id="edit-nos-p1" rows="3" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Párrafo 2 (Historia y Valores)</label>
+                <textarea id="edit-nos-p2" rows="4" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. CONTACTO Y LEGAL -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-4 border-b border-slate-800 pb-2">
+              <i class="fas fa-address-book"></i>
+              <span>Contacto, Horarios y Matrícula</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Dirección de Oficina</label>
+                <input type="text" id="edit-cnt-address" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Teléfono de Línea</label>
+                <input type="text" id="edit-cnt-phone" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Número de WhatsApp</label>
+                <input type="text" id="edit-cnt-whatsapp" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Email Oficial</label>
+                <input type="email" id="edit-cnt-email" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Horario de Atención</label>
+                <input type="text" id="edit-cnt-hours" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Matrícula Profesional</label>
+                <input type="text" id="edit-cnt-license" class="w-full px-3.5 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button type="submit" class="px-8 py-3 bg-gradient-gold hover:opacity-95 text-slate-950 text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition">
+              <i class="fas fa-save text-sm"></i>
+              <span>Guardar Todos los Textos</span>
+            </button>
+          </div>
+
+        </form>
+      </div><!-- END TAB 2 -->
     </main>
   </div>
 
