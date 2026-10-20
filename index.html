@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dévora Fernández Propiedades | Inmobiliaria en Morón, Castelar, Padua y Zona Oeste</title>
+  <meta name="description" content="Inmobiliaria familiar dedicada a la compra, venta, alquileres, tasaciones a valor real de mercado y administración de consorcios en Morón, Castelar, Padua y Miramar.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen">
+
+  <!-- TOP BAR CONTACT -->
+  <div class="bg-slate-950 text-slate-300 text-xs py-2 px-4 border-b border-slate-800 hidden md:block">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-6">
+        <span class="flex items-center gap-2">
+          <i class="fas fa-map-marker-alt text-amber-500"></i> Cabildo 258, Morón, Buenos Aires
+        </span>
+        <span class="flex items-center gap-2">
+          <i class="fas fa-phone-alt text-amber-500"></i> 11 7708 0208
+        </span>
+        <span class="flex items-center gap-2">
+          <i class="fab fa-whatsapp text-emerald-400"></i> +54 9 11 6410 8048
+        </span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <span><i class="far fa-clock text-amber-500"></i> Lun a Vie: 9:00 a 18:00 hs</span>
+        <div class="flex items-center gap-3 ml-2 border-l border-slate-800 pl-4">
+          <a href="https://api.whatsapp.com/send?phone=5491164108048" target="_blank" class="hover:text-amber-400 transition"><i class="fab fa-whatsapp"></i></a>
+          <a href="mailto:devorafernandezpropiedades@gmail.com" class="hover:text-amber-400 transition" title="devorafernandezpropiedades@gmail.com"><i class="far fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN NAVIGATION -->
+  <header id="main-navbar" class="glass-nav fixed top-0 left-0 right-0 z-40 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- LOGO -->
+      <a href="#" class="flex items-center gap-3 group">
+        <img src="assets/img/logo-white.png" alt="Dévora Fernández Propiedades" class="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105">
+      </a>
+
+      <!-- DESKTOP MENU -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-200">
+        <a href="#inicio" class="hover:text-amber-400 transition-colors">Inicio</a>
+        <a href="#propiedades" class="hover:text-amber-400 transition-colors">Propiedades</a>
+        <a href="#servicios" class="hover:text-amber-400 transition-colors">Servicios</a>
+        <a href="#tasaciones" class="hover:text-amber-400 transition-colors">Tasaciones</a>
+        <a href="#nosotros" class="hover:text-amber-400 transition-colors">Nosotros</a>
+        <a href="#contacto" class="hover:text-amber-400 transition-colors">Contacto</a>
+      </nav>
+
+      <!-- CTA BUTTON -->
+      <div class="hidden sm:flex items-center gap-3">
+        <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20quisiera%20realizar%20una%20consulta" target="_blank" class="px-5 py-2.5 bg-gradient-gold hover:opacity-95 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition transform hover:-translate-y-0.5">
+          <i class="fab fa-whatsapp text-sm"></i>
+          <span>Consultar Ahora</span>
+        </a>
+      </div>
+
+      <!-- MOBILE MENU BUTTON -->
+      <button id="mobile-menu-btn" class="md:hidden text-white p-2 focus:outline-none">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+    </div>
+
+    <!-- MOBILE MENU CONTAINER -->
+    <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-6 py-6 space-y-4 text-slate-200 font-semibold text-base">
+      <a href="#inicio" class="block hover:text-amber-400">Inicio</a>
+      <a href="#propiedades" class="block hover:text-amber-400">Propiedades</a>
+      <a href="#servicios" class="block hover:text-amber-400">Servicios</a>
+      <a href="#tasaciones" class="block hover:text-amber-400">Tasaciones</a>
+      <a href="#nosotros" class="block hover:text-amber-400">Nosotros</a>
+      <a href="#contacto" class="block hover:text-amber-400">Contacto</a>
+      <a href="https://api.whatsapp.com/send?phone=5491164108048" target="_blank" class="block text-center py-3 bg-gradient-gold text-slate-950 font-bold rounded-xl">
+        Consultar por WhatsApp
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section id="inicio" class="relative pt-32 pb-24 md:pt-44 md:pb-36 bg-slate-900 overflow-hidden flex items-center min-h-[85vh]">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0 z-0">
+      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80" alt="Casas Inmobiliaria Moron" class="w-full h-full object-cover">
+      <div class="hero-overlay absolute inset-0"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div class="max-w-3xl mb-12">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-semibold uppercase tracking-wider mb-6">
+          <i class="fas fa-certificate text-amber-400"></i>
+          <span>Empresa Inmobiliaria Familiar en Morón</span>
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-6">
+          Encontrá el lugar donde escribir tu <span class="text-gradient-gold">próxima historia</span>
+        </h1>
+        <p class="text-lg text-slate-300 leading-relaxed max-w-2xl">
+          Especialistas en compra, venta, alquileres y administración de consorcios en Morón, Castelar, Hurlingham, Ituzaingó y Costa Atlántica. Tasaciones reales a valor de mercado.
+        </p>
+      </div>
+
+      <!-- SEARCH & FILTER BOX -->
+      <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-slate-200 text-slate-800 max-w-6xl w-full">
+        
+        <form id="main-search-form" onsubmit="event.preventDefault(); triggerSearch();" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-slate-200 border-b border-slate-200">
+          
+          <!-- FILA 1 -->
+          <!-- 1. Palabras clave -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-search text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <input type="text" id="filter-q" placeholder="Palabras clave" class="w-full text-sm font-medium text-slate-800 placeholder-slate-400 bg-transparent outline-none">
+          </div>
+
+          <!-- 2. Provincia, Localidad -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-map-marker-alt text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <select id="filter-location" class="w-full text-sm font-medium text-slate-800 bg-transparent outline-none cursor-pointer">
+              <option value="todos">Provincia, Localidad</option>
+            </select>
+          </div>
+
+          <!-- 3. Dirección -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-map-pin text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <input type="text" id="filter-address" placeholder="Dirección" class="w-full text-sm font-medium text-slate-800 placeholder-slate-400 bg-transparent outline-none">
+          </div>
+
+          <!-- 4. Tipo de propiedad -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-home text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <select id="filter-type" class="w-full text-sm font-medium text-slate-800 bg-transparent outline-none cursor-pointer">
+              <option value="todos">Tipo de Propiedad</option>
+              <option value="Casa">Casas</option>
+              <option value="Departamento">Departamentos</option>
+              <option value="PH">PH</option>
+              <option value="Local Comercial">Locales comerciales</option>
+              <option value="Galpón">Galpones y depósitos</option>
+              <option value="Terreno">Terrenos residenciales</option>
+              <option value="Cochera">Estacionamientos / Cocheras</option>
+            </select>
+          </div>
+
+          <!-- FILA 2 -->
+          <!-- 5. Operación -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-building text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <select id="filter-operation" class="w-full text-sm font-medium text-slate-800 bg-transparent outline-none cursor-pointer">
+              <option value="todos">Operación</option>
+              <option value="Venta">En venta</option>
+              <option value="Alquiler">En alquiler</option>
+            </select>
+          </div>
+
+          <!-- 6. Ambientes -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-vector-square text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <select id="filter-rooms" class="w-full text-sm font-medium text-slate-800 bg-transparent outline-none cursor-pointer">
+              <option value="todos">Ambientes</option>
+              <option value="1">1 ambiente</option>
+              <option value="2">2 ambientes</option>
+              <option value="3">3 ambientes</option>
+              <option value="4">4 ambientes</option>
+              <option value="5">5 o más ambientes</option>
+            </select>
+          </div>
+
+          <!-- 7. Dormitorios -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-bed text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <select id="filter-bedrooms" class="w-full text-sm font-medium text-slate-800 bg-transparent outline-none cursor-pointer">
+              <option value="todos">Dormitorios</option>
+              <option value="1">1 dormitorio</option>
+              <option value="2">2 dormitorios</option>
+              <option value="3">3 dormitorios</option>
+              <option value="4">4 o más dormitorios</option>
+            </select>
+          </div>
+
+          <!-- 8. Baños -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-bath text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <select id="filter-bathrooms" class="w-full text-sm font-medium text-slate-800 bg-transparent outline-none cursor-pointer">
+              <option value="todos">Baños</option>
+              <option value="1">1 baño</option>
+              <option value="2">2 baños</option>
+              <option value="3">3 o más baños</option>
+            </select>
+          </div>
+
+          <!-- FILA 3 -->
+          <!-- 9. Moneda -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-dollar-sign text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <select id="filter-currency" class="w-full text-sm font-medium text-slate-800 bg-transparent outline-none cursor-pointer">
+              <option value="todos">Moneda</option>
+              <option value="USD">USD Dólares</option>
+              <option value="ARS">ARS Pesos</option>
+            </select>
+          </div>
+
+          <!-- 10. Precio máximo -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-search-dollar text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <input type="number" id="filter-price-input" placeholder="Precio máximo" class="w-full text-sm font-medium text-slate-800 placeholder-slate-400 bg-transparent outline-none">
+          </div>
+
+          <!-- 11. Apto Crédito -->
+          <div class="flex items-center px-4 py-3.5 bg-white hover:bg-slate-50 transition-colors">
+            <i class="fas fa-money-check-alt text-slate-400 text-base mr-3 w-5 text-center"></i>
+            <label for="filter-credit" class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700 select-none">
+              <input type="checkbox" id="filter-credit" class="w-4 h-4 rounded text-orange-600 focus:ring-orange-500 border-slate-300">
+              <span>Apto Crédito</span>
+            </label>
+          </div>
+
+          <!-- 12. Botón BUSCAR -->
+          <div class="p-0 bg-white flex">
+            <button type="button" onclick="triggerSearch()" class="w-full h-full min-h-[50px] py-3.5 px-6 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-extrabold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-inner">
+              <i class="fas fa-search"></i>
+              <span>BUSCAR</span>
+            </button>
+          </div>
+
+        </form>
+
+        <!-- Sub-bar with count and reset -->
+        <div class="bg-slate-50 px-6 py-2.5 flex items-center justify-between border-t border-slate-200 text-xs">
+          <span id="properties-count" class="font-bold text-slate-600">Cargando catálogo...</span>
+          <button type="button" onclick="resetFilters()" class="font-bold text-slate-500 hover:text-orange-600 flex items-center gap-1.5 transition">
+            <i class="fas fa-undo text-xs"></i> Restablecer Filtros
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- STATS COUNTER BAR -->
+  <section class="bg-slate-950 py-10 border-y border-slate-800 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1">+15</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Años de Trayectoria</span>
+      </div>
+      <div>
+        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1">100%</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Tasación a Valor Real</span>
+      </div>
+      <div>
+        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1">+50</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Consorcios Administrados</span>
+      </div>
+      <div>
+        <span class="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-1">+500</span>
+        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Operaciones Exitosas</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROPERTY CATALOG SECTION -->
+  <section id="propiedades" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+      <div>
+        <span class="text-amber-600 font-bold text-xs uppercase tracking-widest mb-2 block">Catálogo Exclusivo</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Propiedades Destacadas</h2>
+      </div>
+      <p class="text-slate-500 text-sm max-w-md mt-4 md:mt-0">
+        Explora nuestro catálogo de casas, departamentos, PHs y terrenos en venta y alquiler con disponibilidad inmediata.
+      </p>
+    </div>
+
+    <!-- PROPERTIES GRID -->
+    <div id="properties-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Properties rendered dynamically via JS -->
+    </div>
+  </section>
+
+  <!-- SERVICES SECTION -->
+  <section id="servicios" class="py-24 bg-slate-900 text-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-amber-400 font-bold text-xs uppercase tracking-widest mb-2 block">Nuestras Soluciones</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">Servicios Inmobiliarios Integrales</h2>
+        <p class="text-slate-400 text-base">
+          Brindamos un acompañamiento transparente y profesional en cada etapa de la gestión de tus bienes inmuebles.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Service 1 -->
+        <div class="bg-slate-800/80 p-8 rounded-3xl border border-slate-700 hover:border-amber-500/50 transition duration-300 group">
+          <div class="w-14 h-14 bg-gradient-gold rounded-2xl flex items-center justify-center text-slate-950 text-2xl font-bold mb-6 shadow-lg shadow-amber-500/10 group-hover:scale-110 transition-transform">
+            <i class="fas fa-home"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">Venta y Alquileres</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            Especialistas en comercialización de Casas, Departamentos, Galpones, Terrenos y Cocheras. Publicidad efectiva en los principales portales del país.
+          </p>
+          <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20quiero%20consultar%20por%20comercializar%20mi%20propiedad" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300">
+            <span>Consultar Comercialización</span>
+            <i class="fas fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="bg-slate-800/80 p-8 rounded-3xl border border-slate-700 hover:border-amber-500/50 transition duration-300 group">
+          <div class="w-14 h-14 bg-gradient-gold rounded-2xl flex items-center justify-center text-slate-950 text-2xl font-bold mb-6 shadow-lg shadow-amber-500/10 group-hover:scale-110 transition-transform">
+            <i class="fas fa-calculator"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">Tasaciones Profesionales</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            Tasamos a valor real del mercado basándonos en análisis comparativos actualizados para propiedades urbanas, rurales y turísticas.
+          </p>
+          <a href="#tasaciones" class="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300">
+            <span>Solicitar Tasación</span>
+            <i class="fas fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="bg-slate-800/80 p-8 rounded-3xl border border-slate-700 hover:border-amber-500/50 transition duration-300 group">
+          <div class="w-14 h-14 bg-gradient-gold rounded-2xl flex items-center justify-center text-slate-950 text-2xl font-bold mb-6 shadow-lg shadow-amber-500/10 group-hover:scale-110 transition-transform">
+            <i class="fas fa-building"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">Administración de Consorcios</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            Gestión transparente y rigurosa para edificios y conjuntos habitacionales. Rendición de cuentas clara, mantenimiento oportuno y solución de expensas.
+          </p>
+          <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20quisiera%20informacion%20sobre%20Administracion%20de%20Consorcios" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300">
+            <span>Consultar para tu Edificio</span>
+            <i class="fas fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TASACIONES FORM SECTION -->
+  <section id="tasaciones" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        
+        <!-- Left info column -->
+        <div class="lg:col-span-5">
+          <span class="px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+            Cotización Real de Mercado
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">
+            Tasá tu Propiedad
+          </h2>
+          <p class="text-slate-300 text-sm leading-relaxed mb-6 font-medium">
+            Para que podamos tasar correctamente su propiedad, por favor complete el siguiente formulario y nos comunicaremos con usted.
+          </p>
+
+          <div class="space-y-4 text-xs font-medium text-slate-300 mb-8">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                <i class="fas fa-check"></i>
+              </div>
+              <span>Evaluación profesional basada en valores reales de cierre.</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                <i class="fas fa-check"></i>
+              </div>
+              <span>Asesoramiento legal, impositivo y notarial previo a la publicación.</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                <i class="fas fa-check"></i>
+              </div>
+              <span>Publicación y difusión prioritaria en los principales portales.</span>
+            </div>
+          </div>
+
+          <!-- Professional credentials card -->
+          <div class="p-5 bg-slate-800/80 rounded-2xl border border-slate-700/80 text-xs text-slate-300 space-y-2">
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-1">
+              <i class="fas fa-award"></i>
+              <span>Colegio de Martilleros de Morón</span>
+            </div>
+            <p><strong>Nº de Matrícula:</strong> 2262</p>
+            <p><strong>Dirección:</strong> Cabildo 258, Morón, Bs.As.</p>
+            <p><strong>Atención directa:</strong> 11 7708 0208 / 11 6410 8048</p>
+          </div>
+        </div>
+
+        <!-- Form Card (All fields from old CRM site) -->
+        <div class="lg:col-span-7 bg-white text-slate-900 p-6 sm:p-8 rounded-2xl shadow-xl">
+          <div class="border-b border-slate-100 pb-4 mb-5">
+            <h3 class="text-xl font-extrabold text-slate-900">Solicitud de Tasación</h3>
+            <p class="text-slate-500 text-xs mt-1">Completá los datos y te responderemos a la brevedad por WhatsApp y correo electrónico.</p>
+          </div>
+          
+          <form id="tasacion-form" class="space-y-4">
+            
+            <!-- Nombre y Apellido -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Nombre <span class="text-red-500">*</span></label>
+                <input type="text" id="tasacion-firstname" required placeholder="Nombre" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Apellido <span class="text-red-500">*</span></label>
+                <input type="text" id="tasacion-lastname" required placeholder="Apellido" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+              </div>
+            </div>
+
+            <!-- Tipo de Propiedad y Tipo de Operación -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Tipo de propiedad <span class="text-red-500">*</span></label>
+                <select id="tasacion-type" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer">
+                  <option value="" selected disabled>Seleccione una opción</option>
+                  <option value="Casas">Casas</option>
+                  <option value="Departamentos">Departamentos</option>
+                  <option value="PH">PH</option>
+                  <option value="Oficinas">Oficinas</option>
+                  <option value="Terrenos residenciales">Terrenos residenciales</option>
+                  <option value="Terrenos industriales">Terrenos industriales</option>
+                  <option value="Galpones y depósitos">Galpones y depósitos</option>
+                  <option value="Edificios y naves industriales">Edificios y naves industriales</option>
+                  <option value="Campos y agrícolas">Campos y agrícolas</option>
+                  <option value="Estacionamientos">Estacionamientos / Cocheras</option>
+                  <option value="Negocios y fondos de comercio">Negocios y fondos de comercio</option>
+                  <option value="Locales comerciales">Locales comerciales</option>
+                  <option value="Consultorios">Consultorios</option>
+                  <option value="Cabañas">Cabañas</option>
+                  <option value="Lotes agrícolas">Lotes agrícolas</option>
+                  <option value="Loteos">Loteos</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Tipo de operación <span class="text-red-500">*</span></label>
+                <select id="tasacion-optype" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer">
+                  <option value="" selected disabled>Seleccione una opción</option>
+                  <option value="En venta">En venta</option>
+                  <option value="En alquiler">En alquiler</option>
+                  <option value="En alquiler temporal">En alquiler temporal</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Teléfono y Email -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Teléfono <span class="text-red-500">*</span></label>
+                <input type="tel" id="tasacion-phone" required placeholder="Teléfono" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Email <span class="text-red-500">*</span></label>
+                <input type="email" id="tasacion-email" required placeholder="Email" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+              </div>
+            </div>
+
+            <!-- Ubicación -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Ubicación / Dirección <span class="text-red-500">*</span></label>
+              <input type="text" id="tasacion-location" required placeholder="Calle, número, localidad (Ej: Cabildo 258, Morón)" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+            </div>
+
+            <!-- Mensaje -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Mensaje <span class="text-red-500">*</span></label>
+              <textarea id="tasacion-message" required rows="3" placeholder="Detalles de la propiedad (ambientes, medidas aproximadas, estado general, etc.)..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none resize-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-extrabold text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+              <i class="fab fa-whatsapp text-xl"></i>
+              <span>Enviar Solicitud de Tasación</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT US SECTION -->
+  <section id="nosotros" class="py-24 bg-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        
+        <div class="relative">
+          <img src="https://static.kiteprop.com/kp/properties/588719/96371f/lg/96371f46e01b1eb449bd53842cca9df1.jpg" alt="Inmobiliaria Devora Fernandez Moron" class="rounded-3xl shadow-xl w-full object-cover h-[450px]">
+          <div class="absolute -bottom-6 -right-6 bg-slate-900 text-white p-6 rounded-2xl shadow-xl hidden sm:block max-w-xs border border-slate-700">
+            <p class="text-amber-400 font-extrabold text-lg mb-1">"Valores & Familia"</p>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Impulsados por el ejemplo de trabajo de nuestros padres y la vocación de servicio con la comunidad.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-amber-600 font-bold text-xs uppercase tracking-widest mb-2 block">Nuestra Identidad</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-6">
+            ¿Por qué elegir Dévora Fernández Propiedades?
+          </h2>
+          <p class="text-slate-600 text-sm leading-relaxed mb-6">
+            Somos una empresa <strong>Inmobiliaria Familiar</strong> dedicada a la compra, venta, tasaciones, alquileres y administración de propiedades en Zona Oeste y Costa Atlántica.
+          </p>
+          <p class="text-slate-600 text-sm leading-relaxed mb-8">
+            Fuimos impulsados por el ejemplo de trabajo de nuestros Padres, y agradecidos a Dios por esta profesión, ejercitamos este servicio a la comunidad con compromiso, seriedad y calidez humana. Estamos para ayudarte a lograr tus sueños y que adquieras lo que estás buscando en Bienes Inmuebles. Cada operación es acompañada personalmente por nuestro equipo colegiado.
+          </p>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-white rounded-2xl border border-slate-200">
+              <i class="fas fa-handshake text-amber-600 text-xl mb-2"></i>
+              <h4 class="font-bold text-slate-900 text-sm mb-1">Trato Personalizado</h4>
+              <p class="text-xs text-slate-500">Sin intermediarios opacos, respuesta directa.</p>
+            </div>
+            <div class="p-4 bg-white rounded-2xl border border-slate-200">
+              <i class="fas fa-shield-alt text-amber-600 text-xl mb-2"></i>
+              <h4 class="font-bold text-slate-900 text-sm mb-1">Respaldo Jurídico</h4>
+              <p class="text-xs text-slate-500">Documentación y contratos supervisados.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT & LOCATION MAP -->
+  <section id="contacto" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <span class="text-amber-600 font-bold text-xs uppercase tracking-widest mb-2 block">Estemos en Contacto</span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Nuestra Oficina en Morón</h2>
+      <p class="text-slate-500 text-sm">Visítanos o comunícate directamente con nuestros asesores.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Contact Info Cards -->
+      <div class="space-y-6">
+        <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
+          <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">Oficina Central</h4>
+            <p class="text-xs text-slate-600">Cabildo 258, B1708 Morón, Provincia de Buenos Aires, Argentina</p>
+          </div>
+        </div>
+
+        <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
+          <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <i class="fab fa-whatsapp"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">WhatsApp de Atención Directa</h4>
+            <p class="text-xs text-slate-600 mb-2">Respuesta rápida y envío de fichas técnicas</p>
+            <a href="https://api.whatsapp.com/send?phone=5491164108048" target="_blank" class="text-xs font-bold text-emerald-600 hover:underline">
+              +54 9 11 6410 8048
+            </a>
+          </div>
+        </div>
+
+        <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
+          <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <i class="fas fa-phone-alt"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">Teléfono de Línea</h4>
+            <p class="text-xs text-slate-600 mb-1">11 7708 0280</p>
+            <p class="text-[11px] text-slate-400">Atención telefónica de Lun a Vie de 9 a 18 hs</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Google Maps Embed placeholder -->
+      <div class="lg:col-span-2 bg-slate-200 rounded-3xl overflow-hidden shadow-md min-h-[350px] relative">
+        <iframe 
+          title="Ubicacion Moron Inmobiliaria Devora Fernandez"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.493976378486!2d-58.62312!3d-34.65481!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcc76536647911%3A0xb351dbfa5e01768a!2sCabildo%20258%2C%20B1708%20Mor%C3%B3n%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1700000000000!5m2!1ses!2sar" 
+          class="w-full h-full border-0" 
+          allowfullscreen="" 
+          loading="lazy">
+        </iframe>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 text-slate-400 py-16 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+      
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <img src="assets/img/logo-white.png" alt="Dévora Fernández Propiedades" class="h-12 w-auto object-contain">
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          Inmobiliaria familiar dedicada a la compra, venta, alquileres, tasaciones y administración de propiedades y consorcios.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="text-white font-bold text-sm mb-4">Navegación</h4>
+        <ul class="space-y-2 text-xs font-medium">
+          <li><a href="#inicio" class="hover:text-amber-400 transition">Inicio</a></li>
+          <li><a href="#propiedades" class="hover:text-amber-400 transition">Propiedades</a></li>
+          <li><a href="#servicios" class="hover:text-amber-400 transition">Servicios</a></li>
+          <li><a href="#tasaciones" class="hover:text-amber-400 transition">Solicitar Tasación</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-white font-bold text-sm mb-4">Zonas de Cobertura</h4>
+        <ul class="space-y-2 text-xs text-slate-500">
+          <li>Morón Centro, Sur y Norte</li>
+          <li>Castelar Norte y Sur</li>
+          <li>Hurlingham y Villa Tesei</li>
+          <li>Ituzaingó</li>
+          <li>Costa Atlántica (Miramar y Las Toninas)</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-white font-bold text-sm mb-4">Contacto Directo</h4>
+        <p class="text-xs text-slate-400 mb-2"><i class="fas fa-map-marker-alt text-amber-500 mr-2"></i>Cabildo 258, Morón</p>
+        <p class="text-xs text-slate-400 mb-2"><i class="fas fa-phone-alt text-amber-500 mr-2"></i>11 7708 0208 / 11 7708 0280</p>
+        <p class="text-xs text-slate-400 mb-2"><i class="fas fa-envelope text-amber-500 mr-2"></i>devorafernandezpropiedades@gmail.com</p>
+        <p class="text-xs text-slate-400 mb-4"><i class="fab fa-whatsapp text-emerald-400 mr-2"></i>+54 9 11 6410 8048</p>
+        
+        <div class="flex items-center gap-3 mb-4">
+          <a href="https://www.instagram.com/inmobiliariadevorafernandez" target="_blank" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-amber-600 text-white flex items-center justify-center transition">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://www.facebook.com/Inmobiliariadevorafernandez" target="_blank" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-amber-600 text-white flex items-center justify-center transition">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="https://api.whatsapp.com/send?phone=5491164108048" target="_blank" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-emerald-600 text-white flex items-center justify-center transition">
+            <i class="fab fa-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <p>© 2026 Dévora Fernández Propiedades. Todos los derechos reservados.</p>
+      <p class="text-amber-400/90 font-medium">Matrícula Nº 2262 - Colegio de Martilleros de Morón</p>
+    </div>
+  </footer>
+
+  <!-- FLOATING WHATSAPP BUTTON -->
+  <a href="https://api.whatsapp.com/send?phone=5491164108048&text=Hola,%20me%20gustaria%20recibir%20informacion" target="_blank" class="btn-whatsapp-float fixed bottom-6 right-6 z-50 bg-emerald-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-2xl hover:scale-110 transition-transform">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- PROPERTY DETAIL MODAL CONTAINER -->
+  <div id="property-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+    <div class="modal-backdrop fixed inset-0" onclick="closeModal()"></div>
+    
+    <div class="modal-content relative bg-white w-full max-w-3xl rounded-3xl shadow-2xl z-10 max-h-[90vh] overflow-y-auto" id="modal-body">
+      <!-- Modal Content rendered by app.js -->
+    </div>
+  </div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>
