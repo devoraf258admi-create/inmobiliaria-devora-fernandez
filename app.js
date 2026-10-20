@@ -27,6 +27,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Fetch Properties Data
 async function loadProperties() {
+  // Check localStorage first (so admin changes take effect immediately)
+  const localData = localStorage.getItem('devora_properties');
+  if (localData) {
+    try {
+      propertiesData = JSON.parse(localData);
+      renderProperties();
+      populateLocationOptions();
+      return;
+    } catch (e) {
+      console.warn('Error reading local properties:', e);
+    }
+  }
+
   try {
     const response = await fetch('./data/properties.json');
     if (!response.ok) throw new Error('No se pudo cargar el catálogo');
@@ -188,9 +201,23 @@ function renderProperties() {
         <img src="${prop.image}" alt="${prop.title}" class="img-zoom w-full h-full object-cover">
         
         <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+          ${prop.status === 'Vendido' ? `
+            <span class="px-3 py-1.5 bg-rose-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1">
+              <i class="fas fa-tag"></i> Vendido
+            </span>
+          ` : (prop.status === 'Alquilado' ? `
+            <span class="px-3 py-1.5 bg-sky-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1">
+              <i class="fas fa-key"></i> Alquilado
+            </span>
+          ` : (prop.status === 'Reservado' ? `
+            <span class="px-3 py-1.5 bg-amber-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1">
+              <i class="fas fa-clock"></i> Reservado
+            </span>
+          ` : `
           <span class="badge-operation px-3 py-1.5 rounded-lg text-white shadow-md ${prop.operation === 'Venta' ? 'bg-amber-600' : 'bg-emerald-600'}">
             ${prop.operation}
           </span>
+          `))}
           ${prop.featured ? `
             <span class="px-3 py-1.5 bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs font-semibold rounded-lg shadow-md flex items-center gap-1">
               <i class="fas fa-star text-amber-400"></i> Destacado

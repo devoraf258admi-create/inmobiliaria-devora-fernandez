@@ -1,0 +1,515 @@
+// admin.js - Panel de Administración Dévora Fernández Propiedades
+
+const ADMIN_CREDENTIALS = {
+  users: ['admin', 'devora', 'devoraf258admi'],
+  pass: 'devora2026'
+};
+
+const GITHUB_CONFIG = {
+  owner: 'devoraf258admi-create',
+  repo: 'inmobiliaria-devora-fernandez',
+  path: 'data/properties.json'
+};
+
+let properties = [];
+let filteredProperties = [];
+
+// Init on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  checkAuth();
+});
+
+// Check Session Authentication
+function checkAuth() {
+  const isAuth = sessionStorage.getItem('devora_admin_auth') === 'true';
+  const authContainer = document.getElementById('auth-container');
+  const dashboardContainer = document.getElementById('dashboard-container');
+
+  if (isAuth) {
+    if (authContainer) authContainer.classList.add('hidden');
+    if (dashboardContainer) dashboardContainer.classList.remove('hidden');
+    loadPropertiesData();
+  } else {
+    if (authContainer) authContainer.classList.remove('hidden');
+    if (dashboardContainer) dashboardContainer.classList.add('hidden');
+  }
+}
+
+// Handle Login
+function handleLogin(e) {
+  e.preventDefault();
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value.trim();
+  const errorBox = document.getElementById('login-error');
+
+  if (ADMIN_CREDENTIALS.users.includes(user) && pass === ADMIN_CREDENTIALS.pass) {
+    sessionStorage.setItem('devora_admin_auth', 'true');
+    if (errorBox) errorBox.classList.add('hidden');
+    checkAuth();
+    showToast('Bienvenido al Panel de Administración', 'success');
+  } else {
+    if (errorBox) {
+      errorBox.classList.remove('hidden');
+      document.getElementById('login-error-text').textContent = 'Usuario o contraseña incorrectos.';
+    }
+  }
+}
+
+// Handle Logout
+function handleLogout() {
+  if (confirm('¿Deseas cerrar la sesión de administración?')) {
+    sessionStorage.removeItem('devora_admin_auth');
+    checkAuth();
+  }
+}
+
+// Load Properties Data
+async function loadPropertiesData() {
+  const localData = localStorage.getItem('devora_properties');
+  if (localData) {
+    try {
+      properties = JSON.parse(localData);
+      normalizeProperties();
+      renderAdminDashboard();
+      return;
+    } catch (err) {
+      console.warn('Error parseando localStorage:', err);
+    }
+  }
+
+  // Fallback to fetching properties.json
+  try {
+    const res = await fetch('./data/properties.json');
+    if (res.ok) {
+      properties = await res.json();
+      normalizeProperties();
+      saveToLocal();
+      renderAdminDashboard();
+    }
+  } catch (err) {
+    console.error('Error cargando properties.json:', err);
+    showToast('No se pudieron cargar las propiedades', 'error');
+  }
+}
+
+// Normalize each property to guarantee default fields like status
+function normalizeProperties() {
+  properties.forEach(p => {
+    if (!p.status) {
+      p.status = 'Disponible';
+    }
+    if (!p.gallery) {
+      p.gallery = [];
+    }
+    if (typeof p.featured === 'undefined') {
+      p.featured = false;
+    }
+  });
+}
+
+// Save to LocalStorage
+function saveToLocal() {
+  localStorage.setItem('devora_properties', JSON.stringify(properties));
+}
+
+// Render Dashboard (Stats + Table)
+function renderAdminDashboard() {
+  updateStats();
+  filterAdminProperties();
+}
+
+// Update Top KPI Cards
+function updateStats() {
+  const total = properties.length;
+  const available = properties.filter(p => p.status === 'Disponible').length;
+  const sold = properties.filter(p => p.status === 'Vendido').length;
+  const rented = properties.filter(p => p.status === 'Alquilado').length;
+  const reserved = properties.filter(p => p.status === 'Reservado').length;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-available').textContent = available;
+  document.getElementById('stat-sold').textContent = sold;
+  document.getElementById('stat-rented').textContent = rented;
+  document.getElementById('stat-reserved').textContent = reserved;
+}
+
+// Filter Properties Table
+function filterAdminProperties() {
+  const q = (document.getElementById('admin-search')?.value || '').toLowerCase().trim();
+  const status = document.getElementById('admin-filter-status')?.value || 'todos';
+  const op = document.getElementById('admin-filter-op')?.value || 'todos';
+  const type = document.getElementById('admin-filter-type')?.value || 'todos';
+
+  filteredProperties = properties.filter(p => {
+    const matchesQ = !q ||
+      (p.title && p.title.toLowerCase().includes(q)) ||
+      (p.address && p.address.toLowerCase().includes(q)) ||
+      (p.location && p.location.toLowerCase().includes(q)) ||
+      String(p.id).includes(q);
+
+    const matchesStatus = status === 'todos' || (p.status || 'Disponible') === status;
+    const matchesOp = op === 'todos' || p.operation === op;
+    const matchesType = type === 'todos' || p.propertyType === type;
+
+    return matchesQ && matchesStatus && matchesOp && matchesType;
+  });
+
+  renderTableRows();
+}
+
+// Render Table Rows
+function renderTableRows() {
+  const tbody = document.getElementById('admin-properties-list');
+  const emptyState = document.getElementById('admin-empty-state');
+  if (!tbody) return;
+
+  if (filteredProperties.length === 0) {
+    tbody.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add('hidden');
+
+  tbody.innerHTML = filteredProperties.map(p => {
+    const status = p.status || 'Disponible';
+    
+    // Status Badge Styling
+    let statusBadge = '';
+    if (status === 'Vendido') {
+      statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-950/80 text-rose-400 border border-rose-800/80"><i class="fas fa-tag"></i> Vendido</span>';
+    } else if (status === 'Alquilado') {
+      statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-950/80 text-sky-400 border border-sky-800/80"><i class="fas fa-key"></i> Alquilado</span>';
+    } else if (status === 'Reservado') {
+      statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-950/80 text-amber-400 border border-amber-800/80"><i class="fas fa-clock"></i> Reservado</span>';
+    } else {
+      statusBadge = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/80"><i class="fas fa-check-circle"></i> Disponible</span>';
+    }
+
+    return `
+      <tr class="hover:bg-slate-800/40 transition">
+        <!-- Propiedad (Foto + Título + Dirección) -->
+        <td class="py-3 px-4">
+          <div class="flex items-center gap-3">
+            <img src="${p.image || 'assets/img/logo.png'}" alt="" class="w-12 h-12 object-cover rounded-xl bg-slate-800 border border-slate-700 shrink-0">
+            <div class="max-w-xs sm:max-w-sm">
+              <span class="text-xs text-slate-400 font-mono">#${p.id}</span>
+              <h4 class="font-bold text-white text-xs line-clamp-1 hover:text-amber-400 transition" title="${p.title}">${p.title}</h4>
+              <p class="text-[11px] text-slate-400 line-clamp-1"><i class="fas fa-map-marker-alt text-amber-500 mr-1"></i>${p.address || ''}, ${p.location || ''}</p>
+            </div>
+          </div>
+        </td>
+
+        <!-- Tipo / Operación -->
+        <td class="py-3 px-4">
+          <span class="text-slate-200 font-semibold block">${p.propertyType}</span>
+          <span class="text-[11px] ${p.operation === 'Venta' ? 'text-amber-400' : 'text-emerald-400'} font-bold uppercase tracking-wider">${p.operation}</span>
+        </td>
+
+        <!-- Precio -->
+        <td class="py-3 px-4 font-bold text-white whitespace-nowrap">
+          ${p.priceDisplay || 'Consultar'}
+        </td>
+
+        <!-- Estado Actual -->
+        <td class="py-3 px-4">
+          ${statusBadge}
+        </td>
+
+        <!-- Cambiar Estado Rápido -->
+        <td class="py-3 px-4 text-center">
+          <div class="inline-flex items-center gap-1 bg-slate-800 p-1 rounded-xl border border-slate-700">
+            <button onclick="changeStatus(${p.id}, 'Disponible')" title="Marcar Disponible" class="px-2 py-1 rounded-lg text-[11px] font-bold ${status === 'Disponible' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'} transition">Disp.</button>
+            <button onclick="changeStatus(${p.id}, 'Vendido')" title="Marcar Vendido" class="px-2 py-1 rounded-lg text-[11px] font-bold ${status === 'Vendido' ? 'bg-rose-600 text-white' : 'text-slate-400 hover:text-white'} transition">Vendido</button>
+            <button onclick="changeStatus(${p.id}, 'Alquilado')" title="Marcar Alquilado" class="px-2 py-1 rounded-lg text-[11px] font-bold ${status === 'Alquilado' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'} transition">Alquilado</button>
+            <button onclick="changeStatus(${p.id}, 'Reservado')" title="Marcar Reservado" class="px-2 py-1 rounded-lg text-[11px] font-bold ${status === 'Reservado' ? 'bg-amber-600 text-white' : 'text-slate-400 hover:text-white'} transition">Reservado</button>
+          </div>
+        </td>
+
+        <!-- Acciones -->
+        <td class="py-3 px-4 text-right whitespace-nowrap">
+          <div class="flex items-center justify-end gap-2">
+            <button onclick="openModalEdit(${p.id})" class="p-2 bg-slate-800 hover:bg-amber-600/20 hover:text-amber-400 text-slate-300 rounded-lg transition" title="Editar Propiedad">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteProperty(${p.id})" class="p-2 bg-slate-800 hover:bg-rose-600/20 hover:text-rose-400 text-slate-300 rounded-lg transition" title="Eliminar Propiedad">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Quick Change Status
+function changeStatus(id, newStatus) {
+  const prop = properties.find(p => p.id === id);
+  if (!prop) return;
+
+  prop.status = newStatus;
+  saveToLocal();
+  renderAdminDashboard();
+  showToast(`Propiedad #${id} marcada como ${newStatus}`, 'success');
+}
+
+// Delete Property
+function deleteProperty(id) {
+  const prop = properties.find(p => p.id === id);
+  if (!prop) return;
+
+  if (confirm(`¿Estás seguro de que deseas eliminar permanentemente la propiedad "${prop.title}" (#${id})?`)) {
+    properties = properties.filter(p => p.id !== id);
+    saveToLocal();
+    renderAdminDashboard();
+    showToast(`Propiedad #${id} eliminada`, 'info');
+  }
+}
+
+// Open Modal: Create
+function openModalCreate() {
+  document.getElementById('property-form').reset();
+  document.getElementById('prop-id').value = '';
+  document.getElementById('form-modal-title').textContent = 'Nueva Propiedad';
+  document.getElementById('property-form-modal').classList.remove('hidden');
+}
+
+// Open Modal: Edit
+function openModalEdit(id) {
+  const prop = properties.find(p => p.id === id);
+  if (!prop) return;
+
+  document.getElementById('prop-id').value = prop.id;
+  document.getElementById('form-modal-title').textContent = `Editar Propiedad #${prop.id}`;
+  
+  document.getElementById('prop-title').value = prop.title || '';
+  document.getElementById('prop-operation').value = prop.operation || 'Venta';
+  document.getElementById('prop-type').value = prop.propertyType || 'Casa';
+  document.getElementById('prop-status').value = prop.status || 'Disponible';
+  
+  // Parse currency and price
+  const pDisp = (prop.priceDisplay || '').toUpperCase();
+  if (pDisp.includes('ARS') || pDisp.includes('$')) {
+    document.getElementById('prop-currency').value = 'ARS';
+  } else {
+    document.getElementById('prop-currency').value = 'USD';
+  }
+
+  document.getElementById('prop-price').value = prop.priceUsd > 0 ? prop.priceUsd : (prop.priceDisplay || '');
+  document.getElementById('prop-location').value = prop.location || '';
+  document.getElementById('prop-address').value = prop.address || '';
+  document.getElementById('prop-rooms').value = prop.environments || 0;
+  document.getElementById('prop-beds').value = prop.bedrooms || 0;
+  document.getElementById('prop-baths').value = prop.bathrooms || 1;
+  document.getElementById('prop-surface-total').value = prop.surfaceTotal || 0;
+  document.getElementById('prop-surface-covered').value = prop.surfaceCovered || 0;
+  document.getElementById('prop-image').value = prop.image || '';
+  document.getElementById('prop-gallery').value = (prop.gallery || []).join('\n');
+  document.getElementById('prop-desc').value = prop.description || '';
+  document.getElementById('prop-featured').checked = !!prop.featured;
+  
+  const combined = ((prop.title || '') + ' ' + (prop.description || '') + ' ' + (prop.features || []).join(' ')).toLowerCase();
+  document.getElementById('prop-credit').checked = combined.includes('crédito') || combined.includes('credito') || combined.includes('apto');
+
+  document.getElementById('property-form-modal').classList.remove('hidden');
+}
+
+// Close Modal
+function closeFormModal() {
+  document.getElementById('property-form-modal').classList.add('hidden');
+}
+
+// Handle Save Property (Create / Update)
+function handleSaveProperty(e) {
+  e.preventDefault();
+  
+  const idVal = document.getElementById('prop-id').value;
+  const isEdit = !!idVal;
+  const id = isEdit ? parseInt(idVal) : Date.now();
+
+  const title = document.getElementById('prop-title').value.trim();
+  const operation = document.getElementById('prop-operation').value;
+  const propertyType = document.getElementById('prop-type').value;
+  const status = document.getElementById('prop-status').value;
+  const currency = document.getElementById('prop-currency').value;
+  const rawPrice = document.getElementById('prop-price').value.trim();
+  const location = document.getElementById('prop-location').value.trim();
+  const address = document.getElementById('prop-address').value.trim();
+  const environments = parseInt(document.getElementById('prop-rooms').value) || 0;
+  const bedrooms = parseInt(document.getElementById('prop-beds').value) || 0;
+  const bathrooms = parseInt(document.getElementById('prop-baths').value) || 1;
+  const surfaceTotal = parseInt(document.getElementById('prop-surface-total').value) || 0;
+  const surfaceCovered = parseInt(document.getElementById('prop-surface-covered').value) || 0;
+  const image = document.getElementById('prop-image').value.trim();
+  const galleryRaw = document.getElementById('prop-gallery').value.trim();
+  const gallery = galleryRaw ? galleryRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+  const description = document.getElementById('prop-desc').value.trim();
+  const featured = document.getElementById('prop-featured').checked;
+  const isCredit = document.getElementById('prop-credit').checked;
+
+  // Format price
+  let priceUsd = 0;
+  let priceDisplay = rawPrice;
+  const numOnly = parseInt(rawPrice.replace(/[^\d]/g, ''));
+  if (!isNaN(numOnly) && numOnly > 0) {
+    if (currency === 'USD') {
+      priceUsd = numOnly;
+      priceDisplay = `USD ${numOnly.toLocaleString('es-AR')}`;
+    } else {
+      priceDisplay = `ARS ${numOnly.toLocaleString('es-AR')}`;
+    }
+  }
+
+  const features = [];
+  if (isCredit) features.push('Apto Crédito');
+  if (environments > 0) features.push(`${environments} Ambientes`);
+  if (bedrooms > 0) features.push(`${bedrooms} Dormitorios`);
+  if (bathrooms > 0) features.push(`${bathrooms} Baños`);
+
+  const propData = {
+    id,
+    code: `PROP-${id}`,
+    title,
+    location,
+    address,
+    operation,
+    propertyType,
+    status,
+    priceUsd,
+    priceDisplay,
+    featured,
+    bedrooms,
+    bathrooms,
+    environments,
+    surfaceTotal,
+    surfaceCovered,
+    description,
+    features,
+    image,
+    gallery,
+    originalUrl: ''
+  };
+
+  if (isEdit) {
+    const idx = properties.findIndex(p => p.id === id);
+    if (idx !== -1) {
+      properties[idx] = { ...properties[idx], ...propData };
+    }
+  } else {
+    properties.unshift(propData);
+  }
+
+  saveToLocal();
+  renderAdminDashboard();
+  closeFormModal();
+  showToast(isEdit ? 'Propiedad actualizada con éxito' : 'Nueva propiedad creada con éxito', 'success');
+}
+
+// Cloud Sync to GitHub -> Triggers Vercel Auto Deploy
+async function syncToCloud() {
+  let token = localStorage.getItem('devora_gh_token');
+  if (!token) {
+    const inputToken = prompt('Para publicar en la web automáticamente, ingresá tu Token de GitHub (solo se pide la primera vez):');
+    if (!inputToken) return;
+    token = inputToken.trim();
+    localStorage.setItem('devora_gh_token', token);
+  }
+
+  const btn = document.getElementById('btn-sync');
+  const originalHtml = btn.innerHTML;
+
+  try {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Publicando...</span>';
+
+    // 1. Get current SHA from GitHub
+    const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+    const getRes = await fetch(getUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (!getRes.ok) {
+      if (getRes.status === 401 || getRes.status === 403) {
+        localStorage.removeItem('devora_gh_token');
+        throw new Error('Token no válido o vencido. Por favor volvé a ingresarlo.');
+      }
+      throw new Error(`Error obteniendo datos de GitHub (${getRes.status})`);
+    }
+
+    const fileInfo = await getRes.json();
+    const currentSha = fileInfo.sha;
+
+    // 2. Encode properties to base64 (UTF-8 safe)
+    const jsonStr = JSON.stringify(properties, null, 2);
+    const utf8Bytes = new TextEncoder().encode(jsonStr);
+    let binary = '';
+    utf8Bytes.forEach(b => binary += String.fromCharCode(b));
+    const base64Content = btoa(binary);
+
+    // 3. PUT updated file to GitHub
+    const putRes = await fetch(getUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Actualización de catálogo desde Panel de Administración Dévora',
+        content: base64Content,
+        sha: currentSha,
+        branch: 'main'
+      })
+    });
+
+    if (!putRes.ok) {
+      const errData = await putRes.json();
+      throw new Error(errData.message || 'Error guardando en GitHub');
+    }
+
+    showToast('¡Catálogo publicado en Vercel! Se actualizará la web en ~15 segundos', 'success');
+  } catch (err) {
+    console.error('Error en syncToCloud:', err);
+    showToast(`Error de publicación: ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+// Export Backup JSON
+function exportBackupJSON() {
+  const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(properties, null, 2));
+  const dlAnchor = document.createElement('a');
+  dlAnchor.setAttribute('href', dataStr);
+  dlAnchor.setAttribute('download', `propiedades-devora-${new Date().toISOString().slice(0, 10)}.json`);
+  dlAnchor.click();
+  showToast('Copia de seguridad descargada', 'info');
+}
+
+// Show Toast
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  const toastText = document.getElementById('toast-text');
+  const toastIcon = document.getElementById('toast-icon');
+
+  if (!toast) return;
+
+  toastText.textContent = message;
+  
+  if (type === 'error') {
+    toastIcon.className = 'fas fa-exclamation-circle text-rose-400 text-lg';
+  } else if (type === 'info') {
+    toastIcon.className = 'fas fa-info-circle text-sky-400 text-lg';
+  } else {
+    toastIcon.className = 'fas fa-check-circle text-emerald-400 text-lg';
+  }
+
+  toast.classList.remove('translate-y-24', 'opacity-0');
+  setTimeout(() => {
+    toast.classList.add('translate-y-24', 'opacity-0');
+  }, 4000);
+}

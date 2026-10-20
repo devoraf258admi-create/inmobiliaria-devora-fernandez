@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | Dévora Fernández Propiedades</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-full flex flex-col font-sans bg-slate-950 text-slate-200">
+
+  <!-- ================= AUTH CONTAINER (LOGIN) ================= -->
+  <div id="auth-container" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative">
+      <div class="text-center mb-8">
+        <img src="assets/img/logo-white.png" alt="Dévora Fernández Propiedades" class="h-14 mx-auto mb-4 object-contain">
+        <h2 class="text-xl font-bold text-white">Panel de Administración</h2>
+        <p class="text-xs text-slate-400 mt-1">Acceso restringido para gestión de inmuebles</p>
+      </div>
+
+      <form id="login-form" onsubmit="handleLogin(event)" class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Usuario</label>
+          <div class="relative">
+            <i class="fas fa-user absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+            <input type="text" id="login-user" required placeholder="admin o devora" class="w-full pl-10 pr-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Contraseña</label>
+          <div class="relative">
+            <i class="fas fa-lock absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+            <input type="password" id="login-pass" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+          </div>
+        </div>
+
+        <div id="login-error" class="hidden text-xs text-rose-400 bg-rose-950/40 border border-rose-800/50 p-3 rounded-xl flex items-center gap-2">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span id="login-error-text">Usuario o contraseña incorrectos</span>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-gold hover:opacity-95 text-slate-950 font-bold text-sm uppercase tracking-wider rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>Ingresar al Panel</span>
+        </button>
+
+        <div class="text-center pt-2">
+          <a href="index.html" class="text-xs text-slate-400 hover:text-amber-400 transition flex items-center justify-center gap-1.5">
+            <i class="fas fa-arrow-left"></i> Volver al sitio público
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= DASHBOARD CONTAINER ================= -->
+  <div id="dashboard-container" class="hidden flex-1 flex flex-col">
+    
+    <!-- Topbar -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <a href="admin.html" class="flex items-center gap-3">
+            <img src="assets/img/logo-white.png" alt="Dévora Fernández" class="h-10 sm:h-12 w-auto object-contain">
+          </a>
+          <span class="hidden sm:inline-block px-2.5 py-1 bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold rounded-lg uppercase tracking-wider">
+            Admin
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <a href="index.html" target="_blank" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
+            <i class="fas fa-external-link-alt text-amber-400"></i>
+            <span class="hidden md:inline">Ver Sitio Web</span>
+          </a>
+
+          <button onclick="syncToCloud()" id="btn-sync" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center gap-1.5 transition">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Publicar en Web</span>
+          </button>
+
+          <button onclick="openModalCreate()" class="px-3.5 py-2 bg-gradient-gold hover:opacity-95 text-slate-950 text-xs font-extrabold rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-1.5 transition">
+            <i class="fas fa-plus"></i>
+            <span class="hidden sm:inline">Nueva Propiedad</span>
+          </button>
+
+          <button onclick="handleLogout()" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-xl transition" title="Cerrar sesión">
+            <i class="fas fa-sign-out-alt text-base"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
+      <!-- Stats KPIs -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <span class="text-xs text-slate-400 font-medium block">Total Catálogo</span>
+          <span id="stat-total" class="text-2xl font-black text-white mt-1 block">0</span>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <span class="text-xs text-emerald-400 font-medium block">Disponibles</span>
+          <span id="stat-available" class="text-2xl font-black text-emerald-400 mt-1 block">0</span>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <span class="text-xs text-rose-400 font-medium block">Vendidas</span>
+          <span id="stat-sold" class="text-2xl font-black text-rose-400 mt-1 block">0</span>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <span class="text-xs text-sky-400 font-medium block">Alquiladas</span>
+          <span id="stat-rented" class="text-2xl font-black text-sky-400 mt-1 block">0</span>
+        </div>
+        <div class="col-span-2 lg:col-span-1 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+          <span class="text-xs text-amber-400 font-medium block">Reservadas</span>
+          <span id="stat-reserved" class="text-2xl font-black text-amber-400 mt-1 block">0</span>
+        </div>
+      </div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        <!-- Search -->
+        <div class="w-full md:w-80 relative">
+          <i class="fas fa-search absolute left-3.5 top-3 text-slate-500 text-sm"></i>
+          <input type="text" id="admin-search" oninput="filterAdminProperties()" placeholder="Buscar por título, dirección, ID..." class="w-full pl-10 pr-4 py-2 bg-slate-800/80 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <!-- Filter Selects -->
+        <div class="w-full md:w-auto flex flex-wrap items-center gap-2.5">
+          <select id="admin-filter-status" onchange="filterAdminProperties()" class="px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-200 outline-none">
+            <option value="todos">Todos los Estados</option>
+            <option value="Disponible">Solo Disponibles</option>
+            <option value="Vendido">Solo Vendidos</option>
+            <option value="Alquilado">Solo Alquilados</option>
+            <option value="Reservado">Solo Reservados</option>
+          </select>
+
+          <select id="admin-filter-op" onchange="filterAdminProperties()" class="px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-200 outline-none">
+            <option value="todos">Todas las Operaciones</option>
+            <option value="Venta">Venta</option>
+            <option value="Alquiler">Alquiler</option>
+          </select>
+
+          <select id="admin-filter-type" onchange="filterAdminProperties()" class="px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-200 outline-none">
+            <option value="todos">Todos los Tipos</option>
+            <option value="Casa">Casas</option>
+            <option value="Departamento">Departamentos</option>
+            <option value="PH">PH</option>
+            <option value="Local Comercial">Locales</option>
+            <option value="Cochera">Cocheras</option>
+            <option value="Terreno">Terrenos</option>
+            <option value="Galpón">Galpones</option>
+          </select>
+
+          <button onclick="exportBackupJSON()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition" title="Descargar Copia de Seguridad JSON">
+            <i class="fas fa-download text-xs"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Properties Table / List -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-800/80 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-800">
+                <th class="py-3 px-4">Propiedad</th>
+                <th class="py-3 px-4">Tipo / Operación</th>
+                <th class="py-3 px-4">Precio</th>
+                <th class="py-3 px-4">Estado Actual</th>
+                <th class="py-3 px-4 text-center">Cambiar Estado Rápido</th>
+                <th class="py-3 px-4 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="admin-properties-list" class="divide-y divide-slate-800/60 font-medium">
+              <!-- Rendered via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="admin-empty-state" class="hidden text-center py-12">
+          <i class="fas fa-search text-3xl text-slate-600 mb-3"></i>
+          <p class="text-sm font-semibold text-slate-400">No se encontraron propiedades con los filtros seleccionados</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ================= MODAL NUEVA / EDITAR PROPIEDAD ================= -->
+  <div id="property-form-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-3xl max-h-[92vh] overflow-y-auto shadow-2xl p-6 sm:p-8">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+        <div>
+          <h3 id="form-modal-title" class="text-xl font-bold text-white">Nueva Propiedad</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Completá los datos del inmueble para el catálogo</p>
+        </div>
+        <button onclick="closeFormModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="property-form" onsubmit="handleSaveProperty(event)" class="space-y-5">
+        <input type="hidden" id="prop-id">
+
+        <!-- Título -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Título de la Propiedad *</label>
+          <input type="text" id="prop-title" required placeholder="Ej: Chalet en Venta | 4 Ambientes | Castelar Norte" class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <!-- Operación, Tipo, Estado -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Operación *</label>
+            <select id="prop-operation" required class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none focus:border-amber-500">
+              <option value="Venta">Venta</option>
+              <option value="Alquiler">Alquiler</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Tipo de Propiedad *</label>
+            <select id="prop-type" required class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none focus:border-amber-500">
+              <option value="Casa">Casa</option>
+              <option value="Departamento">Departamento</option>
+              <option value="PH">PH</option>
+              <option value="Local Comercial">Local Comercial</option>
+              <option value="Cochera">Estacionamiento / Cochera</option>
+              <option value="Terreno">Terreno</option>
+              <option value="Galpón">Galpón</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Estado de Publicación *</label>
+            <select id="prop-status" required class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none focus:border-amber-500">
+              <option value="Disponible">Disponible</option>
+              <option value="Vendido">Vendido</option>
+              <option value="Alquilado">Alquilado</option>
+              <option value="Reservado">Reservado</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Precio & Moneda -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Moneda *</label>
+            <select id="prop-currency" required class="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none focus:border-amber-500">
+              <option value="USD">USD (Dólares)</option>
+              <option value="ARS">ARS (Pesos)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Valor Numérico (o 'Consultar') *</label>
+            <input type="text" id="prop-price" required placeholder="Ej: 125000 o Consultar precio" class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <!-- Ubicación & Dirección -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Localidad / Zona *</label>
+            <input type="text" id="prop-location" required placeholder="Ej: Morón, Castelar, Hurlingham..." class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Dirección / Calle *</label>
+            <input type="text" id="prop-address" required placeholder="Ej: Cabildo 258" class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <!-- Ambientes, Dormitorios, Baños, Superficies -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Ambientes</label>
+            <input type="number" id="prop-rooms" min="0" value="0" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Dormitorios</label>
+            <input type="number" id="prop-beds" min="0" value="0" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Baños</label>
+            <input type="number" id="prop-baths" min="0" value="1" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Sup. Total (m²)</label>
+            <input type="number" id="prop-surface-total" min="0" value="0" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Sup. Cubierta (m²)</label>
+            <input type="number" id="prop-surface-covered" min="0" value="0" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white outline-none">
+          </div>
+        </div>
+
+        <!-- Imagen Principal -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Foto Principal (URL directa) *</label>
+          <input type="url" id="prop-image" required placeholder="https://ejemplo.com/foto1.jpg" class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <!-- Galería de Fotos Adicionales -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Galería de Fotos (Una URL por cada línea)</label>
+          <textarea id="prop-gallery" rows="3" placeholder="https://ejemplo.com/foto2.jpg&#10;https://ejemplo.com/foto3.jpg" class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono"></textarea>
+        </div>
+
+        <!-- Descripción -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Descripción Completa</label>
+          <textarea id="prop-desc" rows="4" placeholder="Detalle completo de ambientes, luminosidad, comodidades y estado..." class="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <!-- Checkboxes -->
+        <div class="flex items-center gap-6 pt-1">
+          <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300 select-none">
+            <input type="checkbox" id="prop-featured" class="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 bg-slate-800 border-slate-700">
+            <span>Inmueble Destacado</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300 select-none">
+            <input type="checkbox" id="prop-credit" class="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 bg-slate-800 border-slate-700">
+            <span>Apto Crédito Hipotecario</span>
+          </label>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          <button type="button" onclick="closeFormModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-6 py-2.5 bg-gradient-gold hover:opacity-95 text-slate-950 text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition">
+            Guardar Propiedad
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 border border-slate-700 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
+    <i id="toast-icon" class="fas fa-check-circle text-emerald-400 text-lg"></i>
+    <span id="toast-text" class="text-xs font-bold">Operación completada</span>
+  </div>
+
+  <!-- Admin Script Logic -->
+  <script src="admin.js"></script>
+</body>
+</html>
