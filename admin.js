@@ -1,4 +1,168 @@
 
+let currentGalleryImages = [];
+
+// Compress and optimize image to Web-ready JPEG Base64
+async function compressImageFile(file, maxWidth = 1600, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxWidth) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxWidth) / height);
+            height = maxWidth;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Handle Main Image from PC
+async function handleMainImageUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  try {
+    showToast('Procesando foto principal...', 'info');
+    const optimized = await compressImageFile(file);
+    const input = document.getElementById('prop-image');
+    if (input) input.value = optimized;
+    setMainImagePreview(optimized);
+    showToast('Foto principal cargada correctamente', 'success');
+  } catch (err) {
+    console.error('Error procesando foto:', err);
+    showToast('Error al cargar la foto', 'error');
+  } finally {
+    event.target.value = '';
+  }
+}
+
+// Set Main Image Preview
+function setMainImagePreview(url) {
+  const imgEl = document.getElementById('main-image-preview');
+  const phEl = document.getElementById('main-image-placeholder');
+  const btnRemove = document.getElementById('btn-remove-main-img');
+
+  if (url) {
+    if (imgEl) {
+      imgEl.src = url;
+      imgEl.classList.remove('hidden');
+    }
+    if (phEl) phEl.classList.add('hidden');
+    if (btnRemove) btnRemove.classList.remove('hidden');
+  } else {
+    if (imgEl) {
+      imgEl.src = '';
+      imgEl.classList.add('hidden');
+    }
+    if (phEl) phEl.classList.remove('hidden');
+    if (btnRemove) btnRemove.classList.add('hidden');
+  }
+}
+
+// Clear Main Image
+function clearMainImage() {
+  const input = document.getElementById('prop-image');
+  if (input) input.value = '';
+  setMainImagePreview('');
+}
+
+// Handle Manual URL for Main Image
+function handleMainImageUrlInput(url) {
+  setMainImagePreview(url.trim());
+}
+
+// Handle Gallery Files from PC (Multiple)
+async function handleGalleryFilesUpload(event) {
+  const files = Array.from(event.target.files || []);
+  if (files.length === 0) return;
+
+  try {
+    showToast(`Cargando y optimizando ${files.length} foto(s)...`, 'info');
+    for (const file of files) {
+      const optimized = await compressImageFile(file);
+      currentGalleryImages.push(optimized);
+    }
+    renderGalleryPreviews();
+    showToast(`Se agregaron ${files.length} foto(s) a la galería`, 'success');
+  } catch (err) {
+    console.error('Error procesando fotos de galería:', err);
+    showToast('Error al procesar fotos', 'error');
+  } finally {
+    event.target.value = '';
+  }
+}
+
+// Render Gallery Previews
+function renderGalleryPreviews() {
+  const grid = document.getElementById('gallery-previews-grid');
+  const countEl = document.getElementById('gallery-count');
+  if (!grid) return;
+
+  if (countEl) {
+    countEl.textContent = `${currentGalleryImages.length} fotos cargadas`;
+  }
+
+  if (currentGalleryImages.length === 0) {
+    grid.innerHTML = '<div class="col-span-full py-4 text-center text-xs text-slate-500">No hay fotos en la galería todavía. Seleccioná fotos desde tu PC con el botón de arriba.</div>';
+    return;
+  }
+
+  grid.innerHTML = currentGalleryImages.map((src, index) => `
+    <div class="relative h-20 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 group shadow-sm">
+      <img src="${src}" alt="" class="w-full h-full object-cover">
+      <button type="button" onclick="removeGalleryImage(${index})" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-[10px] flex items-center justify-center shadow transition" title="Eliminar foto">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  `).join('');
+}
+
+// Remove Single Image from Gallery
+function removeGalleryImage(index) {
+  currentGalleryImages.splice(index, 1);
+  renderGalleryPreviews();
+}
+
+// Toggle manual URL input for gallery
+function toggleUrlGalleryInput() {
+  const box = document.getElementById('gallery-url-container');
+  if (box) box.classList.toggle('hidden');
+}
+
+// Sync gallery from text URLs if typed
+function syncGalleryFromUrls() {
+  const text = document.getElementById('prop-gallery-urls')?.value || '';
+  const urls = text.split('\n').map(s => s.trim()).filter(Boolean);
+  urls.forEach(u => {
+    if (!currentGalleryImages.includes(u)) {
+      currentGalleryImages.push(u);
+    }
+  });
+  renderGalleryPreviews();
+}
+
 let currentTab = 'properties';
 let siteContent = null;
 
@@ -428,6 +592,9 @@ function openModalCreate() {
   document.getElementById('property-form').reset();
   document.getElementById('prop-id').value = '';
   document.getElementById('form-modal-title').textContent = 'Nueva Propiedad';
+  currentGalleryImages = [];
+  setMainImagePreview('');
+  renderGalleryPreviews();
   document.getElementById('property-form-modal').classList.remove('hidden');
 }
 
@@ -461,7 +628,9 @@ function openModalEdit(id) {
   document.getElementById('prop-surface-total').value = prop.surfaceTotal || 0;
   document.getElementById('prop-surface-covered').value = prop.surfaceCovered || 0;
   document.getElementById('prop-image').value = prop.image || '';
-  document.getElementById('prop-gallery').value = (prop.gallery || []).join('\n');
+  setMainImagePreview(prop.image || '');
+  currentGalleryImages = Array.isArray(prop.gallery) ? [...prop.gallery] : [];
+  renderGalleryPreviews();
   document.getElementById('prop-desc').value = prop.description || '';
   document.getElementById('prop-featured').checked = !!prop.featured;
   
@@ -498,8 +667,7 @@ function handleSaveProperty(e) {
   const surfaceTotal = parseInt(document.getElementById('prop-surface-total').value) || 0;
   const surfaceCovered = parseInt(document.getElementById('prop-surface-covered').value) || 0;
   const image = document.getElementById('prop-image').value.trim();
-  const galleryRaw = document.getElementById('prop-gallery').value.trim();
-  const gallery = galleryRaw ? galleryRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+  const gallery = [...currentGalleryImages];
   const description = document.getElementById('prop-desc').value.trim();
   const featured = document.getElementById('prop-featured').checked;
   const isCredit = document.getElementById('prop-credit').checked;
