@@ -110,48 +110,43 @@
     </div>
   </header>
 
-  <!-- HERO SECTION -->
-  <section id="inicio" class="relative pt-32 pb-24 md:pt-44 md:pb-36 bg-slate-950 overflow-hidden flex items-center min-h-[85vh]">
-    <!-- Dynamic Hero Background Photo Carousel -->
-    <div class="hero-carousel-container select-none">
+  <!-- PHOTO CAROUSEL SECTION (100% PURE PHOTOS, NO CONTENT OVERLAY) -->
+  <section id="inicio" class="relative pt-20 md:pt-24 bg-slate-950 overflow-hidden">
+    <div class="relative w-full h-[380px] sm:h-[480px] md:h-[580px] lg:h-[650px] overflow-hidden select-none group">
+      <!-- Carousel Slides Container -->
       <div id="hero-carousel" class="w-full h-full relative">
-        <!-- Injected slides by app.js with real property photos -->
+        <!-- Injected dynamically by app.js: 100% clean images with zero overlay or text -->
       </div>
-      <div class="hero-overlay absolute inset-0 z-10 pointer-events-none"></div>
-    </div>
 
-    <!-- Hero Carousel Nav Controls -->
-    <button type="button" onclick="prevHeroSlide()" aria-label="Foto anterior" class="hidden sm:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-950/60 hover:bg-teal-600 text-white border border-white/20 backdrop-blur-md items-center justify-center transition shadow-2xl hover:scale-110">
-      <i class="fas fa-chevron-left text-sm"></i>
-    </button>
-    <button type="button" onclick="nextHeroSlide()" aria-label="Foto siguiente" class="hidden sm:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-slate-950/60 hover:bg-teal-600 text-white border border-white/20 backdrop-blur-md items-center justify-center transition shadow-2xl hover:scale-110">
-      <i class="fas fa-chevron-right text-sm"></i>
-    </button>
+      <!-- Carousel Nav Controls -->
+      <button type="button" onclick="prevHeroSlide()" aria-label="Foto anterior" class="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-slate-950/70 hover:bg-teal-600 text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition shadow-2xl hover:scale-110">
+        <i class="fas fa-chevron-left text-base"></i>
+      </button>
+      <button type="button" onclick="nextHeroSlide()" aria-label="Foto siguiente" class="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-slate-950/70 hover:bg-teal-600 text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition shadow-2xl hover:scale-110">
+        <i class="fas fa-chevron-right text-base"></i>
+      </button>
 
-    <!-- Slide Property Tag (Bottom Right) -->
-    <div class="absolute bottom-4 right-6 z-20 hidden md:block">
-      <span id="hero-slide-tag" class="px-3.5 py-1.5 rounded-xl bg-slate-950/70 border border-white/15 text-xs text-slate-200 font-semibold backdrop-blur-md shadow-lg inline-flex items-center">
-        <i class="fas fa-map-marker-alt text-cyan-400 mr-1.5"></i> Chalet de Categoría &bull; Castelar Norte
-      </span>
-    </div>
-
-    <!-- Slide Indicators (Bottom Center) -->
-    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-      <div id="hero-carousel-indicators" class="flex items-center gap-1.5 bg-slate-950/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-        <!-- Indicators injected by app.js -->
+      <!-- Slide Indicators -->
+      <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+        <div id="hero-carousel-indicators" class="flex items-center gap-2 bg-slate-950/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+          <!-- Indicators injected by app.js -->
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-      <div class="max-w-3xl mb-12">
+  <!-- WORDS & SEARCH FILTERS (BELOW CAROUSEL) -->
+  <section id="buscador" class="py-14 md:py-20 bg-slate-900 text-white relative border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div class="max-w-3xl mx-auto text-center mb-12">
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/20 border border-teal-500/40 text-teal-300 text-xs font-semibold uppercase tracking-wider mb-6">
           <i class="fas fa-certificate text-cyan-400"></i>
           <span data-content="hero.badge">Empresa Inmobiliaria Familiar en Morón</span>
         </div>
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-6" data-content="hero.title">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6" data-content="hero.title">
           Encontrá el lugar donde escribir tu <span class="text-gradient-gold">próxima historia</span>
         </h1>
-        <p class="text-lg text-slate-300 leading-relaxed max-w-2xl" data-content="hero.subtitle">
+        <p class="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto" data-content="hero.subtitle">
           Especialistas en compra, venta, alquileres y administración de consorcios en Morón, Castelar, Hurlingham, Ituzaingó y Costa Atlántica. Tasaciones reales a valor de mercado.
         </p>
       </div>
@@ -289,7 +284,6 @@
         </div>
 
       </div>
-
     </div>
   </section>
 

@@ -65,26 +65,17 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* Hero Overlay & Dynamic Carousel */
-.hero-carousel-container {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-}
-
+/* Top Photo Carousel (Clean, Unobstructed) */
 .hero-slide {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transform: scale(1.06);
-  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 7s cubic-bezier(0.1, 0, 0.2, 1);
-  will-change: opacity, transform;
+  transition: opacity 0.8s ease-in-out;
+  will-change: opacity;
 }
 
 .hero-slide.active {
   opacity: 1;
-  transform: scale(1);
 }
 
 .hero-slide img {
