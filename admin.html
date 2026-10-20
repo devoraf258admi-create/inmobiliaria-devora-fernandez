@@ -626,6 +626,30 @@
             </div>
           </div>
 
+          
+          <!-- 8. PREGUNTAS FRECUENTES (FAQ) -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
+              <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm">
+                <i class="fas fa-question-circle"></i>
+                <span>Preguntas Frecuentes (FAQ)</span>
+              </div>
+              <button type="button" onclick="addNewFaqAdmin()" class="px-3.5 py-1.5 bg-teal-600/30 hover:bg-teal-600 text-cyan-300 hover:text-white border border-teal-500/40 rounded-xl text-xs font-bold transition flex items-center gap-1.5 w-fit">
+                <i class="fas fa-plus text-[10px]"></i>
+                <span>Agregar Pregunta</span>
+              </button>
+            </div>
+            
+            <p class="text-xs text-slate-400 mb-4">
+              Podés editar las preguntas y respuestas existentes, agregar nuevas o eliminar las que no correspondan. Los cambios se guardan y publican directamente en la web.
+            </p>
+
+            <div id="admin-faq-list" class="space-y-4">
+              <!-- FAQs rendered dynamically by admin.js -->
+            </div>
+          </div>
+
+
           <div class="flex items-center justify-end gap-3 pt-2">
             <button type="submit" class="px-8 py-3 bg-gradient-gold hover:opacity-95 text-slate-950 text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition">
               <i class="fas fa-save text-sm"></i>

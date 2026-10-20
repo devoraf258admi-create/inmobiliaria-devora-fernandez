@@ -69,7 +69,7 @@ function initHeroCarousel() {
 function showHeroSlide(index) {
   const slides = document.querySelectorAll('.hero-slide');
   const indicators = document.querySelectorAll('#hero-carousel-indicators button');
-  const tagEl = document.getElementById('hero-slide-tag');
+  const tagEl = document.getElementById('hero-slide-caption') || document.getElementById('hero-slide-tag');
   if (slides.length === 0) return;
 
   currentHeroIndex = (index + slides.length) % slides.length;
@@ -172,6 +172,10 @@ function applySiteContent(content) {
       }
     }
   });
+
+    if (content.faqs && Array.isArray(content.faqs) && content.faqs.length > 0) {
+    renderFaqs(content.faqs);
+  }
 
   if (content.coverage_zones && Array.isArray(content.coverage_zones)) {
     const ul = document.getElementById('footer-coverage-zones');
@@ -3378,4 +3382,36 @@ function toggleFaq(index) {
     answer.classList.remove('hidden');
     if (icon) icon.style.transform = 'rotate(180deg)';
   }
+}
+
+
+// Render FAQs dynamically from site content
+function renderFaqs(faqs) {
+  const container = document.getElementById('faq-accordion-container');
+  if (!container || !Array.isArray(faqs) || faqs.length === 0) return;
+
+  container.innerHTML = faqs.map((faq, i) => {
+    const num = i + 1;
+    const isOpen = i === 0;
+    const formattedAnswer = (faq.answer || '').split('\n').map(p => {
+      const trimmed = p.trim();
+      if (!trimmed) return '<div class="h-1"></div>';
+      return `<p class="mb-2 last:mb-0">${trimmed.replace(/^[–-]\s*/, '<strong>&bull; </strong>')}</p>`;
+    }).join('');
+
+    return `
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200">
+        <button type="button" onclick="toggleFaq(${num})" class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none">
+          <span class="font-bold text-slate-900 text-base sm:text-lg flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 text-xs font-extrabold flex items-center justify-center shrink-0">${num}</span>
+            <span>${faq.question}</span>
+          </span>
+          <i id="faq-icon-${num}" class="faq-icon fas fa-chevron-down text-teal-600 text-sm transition-transform duration-300" style="${isOpen ? 'transform: rotate(180deg);' : ''}"></i>
+        </button>
+        <div id="faq-answer-${num}" class="faq-answer ${isOpen ? '' : 'hidden'} px-5 sm:px-6 pb-6 pt-1 text-slate-600 text-sm leading-relaxed border-t border-slate-100">
+          ${formattedAnswer}
+        </div>
+      </div>
+    `;
+  }).join('');
 }

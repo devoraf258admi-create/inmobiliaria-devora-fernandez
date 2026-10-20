@@ -98,5 +98,27 @@
       "tag": "Edificio Residencial",
       "location": "Villa Sarmiento / Ramos Mejía"
     }
+  ],
+  "faqs": [
+    {
+      "id": 1,
+      "question": "¿Qué documentación necesito para poder alquilar?",
+      "answer": "Hay tres opciones:\n\n– Garantía propietaria: Fotocopia de la Escritura se presenta con un servicio de la misma (gas, luz o agua). Requerimientos: NO tiene que estar como bien de familia y NO tiene que estar hipotecada.\n\n– Dos recibos de Sueldo: Recibos de sueldo con antigüedad mínima de tres años.\n\n– Garantía Finaer: Aceptamos garantía de fianza digital Finaer con gestión rápida y aprobación online."
+    },
+    {
+      "id": 2,
+      "question": "¿Cuál es el plazo de tiempo para alquilar?",
+      "answer": "El mínimo es 2 años en contratos de vivienda y 3 años en contratos comerciales. Para el contrato comercial se puede convenir el plazo de común acuerdo entre las partes."
+    },
+    {
+      "id": 3,
+      "question": "¿Qué gastos voy a tener para iniciar un contrato de alquiler?",
+      "answer": "Para ingresar se abona:\n– Dos meses adelantado de Alquiler.\n– Mes de Depósito (este dinero será devuelto cuando termina el contrato si deja la vivienda en buen estado).\n– Gastos de escribanía por certificar tu firma y la de tu garante en el contrato."
+    },
+    {
+      "id": 4,
+      "question": "¿Quién tiene que pagar los arreglos de la casa en alquiler?",
+      "answer": "– El dueño (propietario): Debe pagar los gastos de reparación que sean necesarios para que la vivienda pueda ser usada como se acordó (roturas estructurales, cañerías maestras, humedad previa, filtraciones, etc.).\n\n– El inquilino: Sólo debe pagar los arreglos de mero mantenimiento del inmueble (cueritos de canillas, luminarias, etc.) y los que surjan de su responsabilidad por uso diario."
+    }
   ]
 }

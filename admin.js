@@ -367,7 +367,8 @@ function handleSaveSiteContent(e) {
       hours: getVal('edit-cnt-hours'),
       license: getVal('edit-cnt-license')
     },
-    carousel: (siteContent && siteContent.carousel) || getCarouselSlides()
+    carousel: (siteContent && siteContent.carousel) || getCarouselSlides(),
+    faqs: getFaqsFromAdminForm()
   };
 
   localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
@@ -1178,4 +1179,107 @@ function saveCarouselChanges() {
   }
   localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
   showToast('¡Cambios del carrusel guardados! Hacé clic en "Publicar en Web" para aplicarlos en internet.', 'success');
+}
+
+
+// ==========================================
+// FAQ MANAGEMENT (ADMIN)
+// ==========================================
+const DEFAULT_FAQS = [
+  {
+    id: 1,
+    question: "¿Qué documentación necesito para poder alquilar?",
+    answer: "Hay tres opciones:\n\n– Garantía propietaria: Fotocopia de la Escritura se presenta con un servicio de la misma (gas, luz o agua). Requerimientos: NO tiene que estar como bien de familia y NO tiene que estar hipotecada.\n\n– Dos recibos de Sueldo: Recibos de sueldo con antigüedad mínima de tres años.\n\n– Garantía Finaer: Aceptamos garantía de fianza digital Finaer con gestión rápida y aprobación online."
+  },
+  {
+    id: 2,
+    question: "¿Cuál es el plazo de tiempo para alquilar?",
+    answer: "El mínimo es 2 años en contratos de vivienda y 3 años en contratos comerciales. Para el contrato comercial se puede convenir el plazo de común acuerdo entre las partes."
+  },
+  {
+    id: 3,
+    question: "¿Qué gastos voy a tener para iniciar un contrato de alquiler?",
+    answer: "Para ingresar se abona:\n– Dos meses adelantado de Alquiler.\n– Mes de Depósito (este dinero será devuelto cuando termina el contrato si deja la vivienda en buen estado).\n– Gastos de escribanía por certificar tu firma y la de tu garante en el contrato."
+  },
+  {
+    id: 4,
+    question: "¿Quién tiene que pagar los arreglos de la casa en alquiler?",
+    answer: "– El dueño (propietario): Debe pagar los gastos de reparación que sean necesarios para que la vivienda pueda ser usada como se acordó (roturas estructurales, cañerías maestras, humedad previa, filtraciones, etc.).\n\n– El inquilino: Sólo debe pagar los arreglos de mero mantenimiento del inmueble (cueritos de canillas, luminarias, etc.) y los que surjan de su responsabilidad por uso diario."
+  }
+];
+
+function getAdminFaqs() {
+  if (siteContent && Array.isArray(siteContent.faqs) && siteContent.faqs.length > 0) {
+    return siteContent.faqs;
+  }
+  return DEFAULT_FAQS;
+}
+
+function renderAdminFaqs() {
+  const container = document.getElementById('admin-faq-list');
+  if (!container) return;
+
+  const faqs = getAdminFaqs();
+
+  container.innerHTML = faqs.map((faq, index) => `
+    <div class="admin-faq-card bg-slate-800/80 border border-slate-700 rounded-xl p-4 space-y-3 relative group">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+        <span class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
+          <i class="fas fa-question-circle"></i> Pregunta #${index + 1}
+        </span>
+        <button type="button" onclick="deleteFaqAdmin(${index})" class="text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1 transition">
+          <i class="fas fa-trash-alt text-[10px]"></i> Eliminar
+        </button>
+      </div>
+      <div>
+        <label class="block text-[11px] font-semibold text-slate-300 mb-1">Título de la Pregunta</label>
+        <input type="text" class="faq-q-input w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-teal-500" value="${faq.question.replace(/"/g, '&quot;')}" placeholder="Ej: ¿Qué documentación necesito para poder alquilar?">
+      </div>
+      <div>
+        <label class="block text-[11px] font-semibold text-slate-300 mb-1">Respuesta Detallada</label>
+        <textarea rows="4" class="faq-a-input w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-teal-500" placeholder="Escribí la respuesta aquí...">${faq.answer || ''}</textarea>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addNewFaqAdmin() {
+  if (!siteContent) siteContent = {};
+  if (!Array.isArray(siteContent.faqs)) {
+    siteContent.faqs = [...getAdminFaqs()];
+  }
+
+  siteContent.faqs.push({
+    id: siteContent.faqs.length + 1,
+    question: "Nueva Pregunta Frecuente",
+    answer: "Escribí aquí la respuesta..."
+  });
+
+  renderAdminFaqs();
+  showToast('Nueva pregunta agregada al formulario. Editá el texto y guardá los cambios.', 'info');
+}
+
+function deleteFaqAdmin(index) {
+  if (!confirm('¿Eliminar esta pregunta frecuente?')) return;
+  if (!siteContent) siteContent = {};
+  if (!Array.isArray(siteContent.faqs)) {
+    siteContent.faqs = [...getAdminFaqs()];
+  }
+
+  siteContent.faqs.splice(index, 1);
+  renderAdminFaqs();
+  showToast('Pregunta eliminada', 'info');
+}
+
+function getFaqsFromAdminForm() {
+  const cards = document.querySelectorAll('.admin-faq-card');
+  const faqs = [];
+  cards.forEach((card, i) => {
+    const q = card.querySelector('.faq-q-input')?.value.trim();
+    const a = card.querySelector('.faq-a-input')?.value.trim();
+    if (q) {
+      faqs.push({ id: i + 1, question: q, answer: a || '' });
+    }
+  });
+  return faqs.length > 0 ? faqs : DEFAULT_FAQS;
 }
