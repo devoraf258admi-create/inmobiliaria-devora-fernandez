@@ -170,20 +170,34 @@ let siteContent = null;
 function switchTab(tab) {
   currentTab = tab;
   const propView = document.getElementById('tab-properties-view');
+  const carouselView = document.getElementById('tab-carousel-view');
   const contentView = document.getElementById('tab-content-view');
+
   const btnProp = document.getElementById('tab-btn-properties');
+  const btnCarousel = document.getElementById('tab-btn-carousel');
   const btnContent = document.getElementById('tab-btn-content');
+
+  const activeCls = 'px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-gradient-gold text-slate-950 shadow-md whitespace-nowrap';
+  const inactiveCls = 'px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 whitespace-nowrap border border-slate-700';
+
+  if (propView) propView.classList.add('hidden');
+  if (carouselView) carouselView.classList.add('hidden');
+  if (contentView) contentView.classList.add('hidden');
+
+  if (btnProp) btnProp.className = inactiveCls;
+  if (btnCarousel) btnCarousel.className = inactiveCls;
+  if (btnContent) btnContent.className = inactiveCls;
 
   if (tab === 'properties') {
     if (propView) propView.classList.remove('hidden');
-    if (contentView) contentView.classList.add('hidden');
-    btnProp.className = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-gradient-gold text-slate-950 shadow-md';
-    btnContent.className = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-800 text-slate-400 hover:text-white';
-  } else {
-    if (propView) propView.classList.add('hidden');
+    if (btnProp) btnProp.className = activeCls;
+  } else if (tab === 'carousel') {
+    if (carouselView) carouselView.classList.remove('hidden');
+    if (btnCarousel) btnCarousel.className = activeCls;
+    renderCarouselAdminList();
+  } else if (tab === 'content') {
     if (contentView) contentView.classList.remove('hidden');
-    btnProp.className = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-800 text-slate-400 hover:text-white';
-    btnContent.className = 'px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-gradient-gold text-slate-950 shadow-md';
+    if (btnContent) btnContent.className = activeCls;
     loadSiteContentData();
   }
 }
@@ -966,7 +980,26 @@ function getCarouselSlides() {
   return DEFAULT_CAROUSEL_SLIDES;
 }
 
-function renderCarouselAdminList() {
+async function ensureSiteContentLoaded() {
+  if (siteContent && Array.isArray(siteContent.carousel)) return siteContent;
+  const local = localStorage.getItem('devora_site_content');
+  if (local) {
+    try {
+      siteContent = JSON.parse(local);
+      if (Array.isArray(siteContent.carousel)) return siteContent;
+    } catch(e) {}
+  }
+  try {
+    const res = await fetch('./data/site-content.json');
+    if (res.ok) {
+      siteContent = await res.json();
+    }
+  } catch(e) {}
+  return siteContent;
+}
+
+async function renderCarouselAdminList() {
+  await ensureSiteContentLoaded();
   const container = document.getElementById('carousel-admin-grid');
   const countBadge = document.getElementById('carousel-count-badge');
   if (!container) return;
