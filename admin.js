@@ -550,7 +550,10 @@ function renderAdminLast6() {
           <span class="text-[10px] text-slate-400 font-mono">#${p.id}</span>
           <h4 class="text-xs font-bold text-white line-clamp-2 leading-tight">${p.title}</h4>
           <p class="text-[11px] text-slate-400 line-clamp-1"><i class="fas fa-map-marker-alt text-teal-400 mr-1"></i>${p.address || ''}</p>
-          <p class="text-xs font-bold text-teal-300 mt-auto pt-2">${p.priceDisplay || 'Consultar'}</p>
+          <p class="text-xs font-bold text-teal-300 mt-1">${p.priceDisplay || 'Consultar'}</p>
+          <button onclick="openModalEdit(${p.id})" class="mt-2 w-full py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-[11px] font-bold transition flex items-center justify-center gap-1">
+            <i class="fas fa-pen"></i> Editar
+          </button>
         </div>
       </div>
     `;
