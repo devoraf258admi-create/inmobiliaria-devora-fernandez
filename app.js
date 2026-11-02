@@ -126,7 +126,8 @@ function stopHeroCarouselAutoplay() {
 
 // Backwards compatibility aliases
 const NOSOTROS_SLIDES = HERO_SLIDES;
-function initNosotrosCarousel() { initHeroCarousel(); }
+function initNosotrosCarousel() { initHeroCarousel();
+  checkUrlForSharedProperty(); }
 function nextNosotrosSlide() { nextHeroSlide(); }
 function prevNosotrosSlide() { prevHeroSlide(); }
 function goToNosotrosSlide(i) { goToHeroSlide(i); }
@@ -743,7 +744,16 @@ function resetFilters() {
   renderProperties();
 }
 
-// Open Property Details Modal
+// ==========================================
+// MODAL GALLERY, AUTOPLAY SLIDESHOW & SHARING
+// ==========================================
+let modalSlideshowInterval = null;
+let modalCurrentImages = [];
+let modalCurrentIndex = 0;
+let modalCurrentProp = null;
+let isModalSlideshowPaused = false;
+
+// Open Property Details Modal with Extra Large Images & Autoplay
 function openPropertyModal(id) {
   const prop = propertiesData.find(p => p.id === id);
   if (!prop) return;
@@ -752,94 +762,172 @@ function openPropertyModal(id) {
   const modalBody = document.getElementById('modal-body');
   if (!modal || !modalBody) return;
 
+  // Build complete list of unique images
+  const allImages = [];
+  if (prop.image) allImages.push(prop.image);
+  if (Array.isArray(prop.gallery)) {
+    prop.gallery.forEach(img => {
+      if (img && !allImages.includes(img)) allImages.push(img);
+    });
+  }
+  if (allImages.length === 0) allImages.push('assets/img/logo.png');
+
+  modalCurrentImages = allImages;
+  modalCurrentIndex = 0;
+  modalCurrentProp = prop;
+  isModalSlideshowPaused = false;
+
   const encodedMsg = encodeURIComponent(
     `Hola Dévora Fernández Propiedades, me interesa la propiedad "${prop.title}" (${prop.operation} - ${prop.priceDisplay}). Quisiera recibir más detalles.`
   );
   const waUrl = `https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodedMsg}`;
 
   modalBody.innerHTML = `
-    <!-- Modal Header Gallery -->
-    <div class="relative bg-slate-900 h-80 rounded-t-3xl overflow-hidden group">
-      <img id="modal-main-img" src="${prop.image}" alt="${prop.title}" class="w-full h-full object-cover">
+    <!-- Extra Large Gallery Container with Autoplay -->
+    <div class="relative bg-slate-950 h-[420px] sm:h-[500px] md:h-[580px] rounded-t-3xl overflow-hidden group select-none flex items-center justify-center"
+         onmouseenter="pauseModalSlideshow()" 
+         onmouseleave="resumeModalSlideshow()">
       
-      <button onclick="closeModal()" class="absolute top-4 right-4 bg-slate-900/80 hover:bg-slate-900 text-white w-10 h-10 rounded-full flex items-center justify-center transition backdrop-blur-md border border-white/20">
-        <i class="fas fa-times text-lg"></i>
-      </button>
+      <!-- Blurred background for letterbox aesthetics -->
+      <img id="modal-bg-img" src="${modalCurrentImages[0]}" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none transition-all duration-500" aria-hidden="true">
+      
+      <!-- Main High-Resolution Photo -->
+      <img id="modal-main-img" src="${modalCurrentImages[0]}" alt="${prop.title}" class="relative z-10 max-w-full max-h-full object-contain transition-opacity duration-300 shadow-2xl">
 
-      <div class="absolute bottom-4 left-4 flex gap-2 overflow-x-auto p-1 max-w-[80%] backdrop-blur-md bg-slate-900/60 rounded-xl border border-white/10">
-        ${prop.gallery.map((img, idx) => `
-          <img src="${img}" onclick="document.getElementById('modal-main-img').src='${img}'" class="w-14 h-14 object-cover rounded-lg cursor-pointer hover:opacity-100 opacity-70 transition border border-white/30">
-        `).join('')}
+      <!-- Top Controls Bar -->
+      <div class="absolute top-4 inset-x-4 z-30 flex items-center justify-between pointer-events-none">
+        <!-- Photo Counter & Auto Indicator -->
+        <div class="pointer-events-auto inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950/75 backdrop-blur-md text-white border border-white/20 text-xs font-bold shadow-lg">
+          <i class="fas fa-camera text-teal-400"></i>
+          <span id="modal-photo-counter">1 / ${modalCurrentImages.length}</span>
+          ${modalCurrentImages.length > 1 ? `
+            <span id="modal-auto-badge" class="ml-1.5 px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/80 text-white font-medium inline-flex items-center gap-1 transition">
+              <i class="fas fa-play text-[8px]"></i> <span>Auto</span>
+            </span>
+          ` : ''}
+        </div>
+
+        <!-- Share & Close Buttons -->
+        <div class="pointer-events-auto flex items-center gap-2">
+          <button type="button" onclick="shareProperty(${prop.id})" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950/75 hover:bg-teal-600 text-white border border-white/20 text-xs font-bold transition backdrop-blur-md cursor-pointer shadow-lg active:scale-95" title="Compartir propiedad">
+            <i class="fas fa-share-alt text-teal-400 group-hover:text-white"></i>
+            <span>Compartir</span>
+          </button>
+          
+          <button type="button" onclick="closeModal()" class="w-10 h-10 rounded-full bg-slate-950/75 hover:bg-rose-600 text-white flex items-center justify-center transition backdrop-blur-md border border-white/20 cursor-pointer shadow-lg active:scale-95" title="Cerrar (Esc)">
+            <i class="fas fa-times text-base"></i>
+          </button>
+        </div>
       </div>
+
+      <!-- Navigation Arrows (if > 1 image) -->
+      ${modalCurrentImages.length > 1 ? `
+        <button type="button" onclick="prevModalImage(event)" class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-950/75 hover:bg-teal-600 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-xl cursor-pointer active:scale-95" aria-label="Foto anterior">
+          <i class="fas fa-chevron-left text-base sm:text-lg"></i>
+        </button>
+        <button type="button" onclick="nextModalImage(event)" class="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-950/75 hover:bg-teal-600 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-xl cursor-pointer active:scale-95" aria-label="Siguiente foto">
+          <i class="fas fa-chevron-right text-base sm:text-lg"></i>
+        </button>
+      ` : ''}
+
+      <!-- Bottom Thumbnails Strip -->
+      ${modalCurrentImages.length > 1 ? `
+        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 overflow-x-auto max-w-[94%] p-2 rounded-2xl bg-slate-950/80 backdrop-blur-md border border-white/10 shadow-2xl" id="modal-thumbs-bar">
+          ${modalCurrentImages.map((img, idx) => `
+            <button type="button" onclick="setModalImage(${idx})" class="shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${idx === 0 ? 'border-teal-400 ring-2 ring-teal-400/50 scale-105 opacity-100' : 'border-white/20 opacity-60 hover:opacity-100'}" id="modal-thumb-${idx}">
+              <img src="${img}" alt="" class="w-full h-full object-cover">
+            </button>
+          `).join('')}
+        </div>
+      ` : ''}
     </div>
 
     <!-- Modal Content -->
-    <div class="p-8">
-      <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+    <div class="p-6 sm:p-8">
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
         <div>
-          <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full mb-2">
-            ${prop.operation} • ${prop.propertyType}
-          </span>
-          <h2 class="text-2xl font-extrabold text-slate-900">${prop.title}</h2>
-          <p class="text-slate-500 text-sm flex items-center gap-1 mt-1">
-            <i class="fas fa-map-marker-alt text-teal-500"></i> ${prop.address}
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-block px-3 py-1 bg-amber-100 text-amber-900 text-xs font-bold rounded-full">
+              ${prop.operation} • ${prop.propertyType}
+            </span>
+            <span class="text-xs text-slate-400 font-mono">ID #${prop.id}</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">${prop.title}</h2>
+          <p class="text-slate-500 text-sm flex items-center gap-1.5 mt-2">
+            <i class="fas fa-map-marker-alt text-teal-600"></i> ${prop.address}${prop.location ? ', ' + prop.location : ''}
           </p>
         </div>
 
-        <div class="text-right">
-          <span class="text-xs text-slate-400 block font-medium">Precio de Publicación</span>
-          <span class="text-3xl font-extrabold text-slate-900">${prop.priceDisplay}</span>
+        <div class="flex md:flex-col items-end justify-between md:justify-start gap-2 bg-slate-50 md:bg-transparent p-4 md:p-0 rounded-2xl border md:border-0 border-slate-200">
+          <div class="text-left md:text-right">
+            <span class="text-xs text-slate-400 block font-medium">Precio de Publicación</span>
+            <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">${prop.priceDisplay}</span>
+          </div>
+          <button type="button" onclick="shareProperty(${prop.id})" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-teal-50 text-slate-700 hover:text-teal-700 text-xs font-bold transition border border-slate-200 cursor-pointer shadow-sm">
+            <i class="fas fa-share-alt text-teal-600"></i>
+            <span>Compartir</span>
+          </button>
         </div>
       </div>
 
-      <!-- Main Attributes -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 my-6">
-        <div class="text-center">
-          <span class="text-xs text-slate-400 block">Ambientes</span>
-          <span class="text-lg font-bold text-slate-800">${prop.environments > 0 ? prop.environments + ' Amb.' : 'Consultar'}</span>
+      <!-- Main Attributes Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 mb-6">
+        <div class="text-center p-2 rounded-xl bg-white border border-slate-100 shadow-sm">
+          <span class="text-[11px] text-slate-400 uppercase tracking-wider block font-semibold">Ambientes</span>
+          <span class="text-base sm:text-lg font-bold text-slate-800">${prop.environments > 0 ? prop.environments + ' Amb.' : 'Consultar'}</span>
         </div>
-        <div class="text-center">
-          <span class="text-xs text-slate-400 block">Dormitorios</span>
-          <span class="text-lg font-bold text-slate-800">${prop.bedrooms > 0 ? prop.bedrooms + ' Dorm.' : 'Consultar'}</span>
+        <div class="text-center p-2 rounded-xl bg-white border border-slate-100 shadow-sm">
+          <span class="text-[11px] text-slate-400 uppercase tracking-wider block font-semibold">Dormitorios</span>
+          <span class="text-base sm:text-lg font-bold text-slate-800">${prop.bedrooms > 0 ? prop.bedrooms + ' Dorm.' : 'Consultar'}</span>
         </div>
-        <div class="text-center">
-          <span class="text-xs text-slate-400 block">Baños</span>
-          <span class="text-lg font-bold text-slate-800">${prop.bathrooms > 0 ? prop.bathrooms + (prop.bathrooms > 1 ? ' Baños' : ' Baño') : 'Consultar'}</span>
+        <div class="text-center p-2 rounded-xl bg-white border border-slate-100 shadow-sm">
+          <span class="text-[11px] text-slate-400 uppercase tracking-wider block font-semibold">Baños</span>
+          <span class="text-base sm:text-lg font-bold text-slate-800">${prop.bathrooms > 0 ? prop.bathrooms + (prop.bathrooms > 1 ? ' Baños' : ' Baño') : 'Consultar'}</span>
         </div>
-        <div class="text-center">
-          <span class="text-xs text-slate-400 block">Superficie</span>
-          <span class="text-lg font-bold text-slate-800">${prop.surfaceTotal > 1 ? prop.surfaceTotal + ' m²' : (prop.surfaceCovered > 1 ? prop.surfaceCovered + ' m²' : 'Consultar')}</span>
+        <div class="text-center p-2 rounded-xl bg-white border border-slate-100 shadow-sm">
+          <span class="text-[11px] text-slate-400 uppercase tracking-wider block font-semibold">Superficie</span>
+          <span class="text-base sm:text-lg font-bold text-slate-800">${prop.surfaceTotal > 1 ? prop.surfaceTotal + ' m²' : (prop.surfaceCovered > 1 ? prop.surfaceCovered + ' m²' : 'Consultar')}</span>
         </div>
       </div>
 
       <!-- Description -->
       <div class="mb-6">
-        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Descripción</h4>
-        <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-line">${prop.description}</div>
+        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-2">
+          <i class="fas fa-align-left text-teal-600"></i> Descripción
+        </h4>
+        <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-line bg-slate-50/60 p-4 rounded-2xl border border-slate-100">${prop.description}</div>
       </div>
 
       <!-- Characteristics List -->
-      <div class="mb-8">
-        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Características Principales</h4>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          ${prop.features.map(feat => `
-            <div class="flex items-center gap-2 text-xs font-medium text-slate-700">
-              <i class="fas fa-check-circle text-teal-500 text-sm"></i>
-              <span>${feat}</span>
-            </div>
-          `).join('')}
+      ${Array.isArray(prop.features) && prop.features.length > 0 ? `
+        <div class="mb-8">
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <i class="fas fa-check-double text-teal-600"></i> Características Principales
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${prop.features.map(feat => `
+              <div class="flex items-center gap-2 text-xs font-medium text-slate-700 bg-white p-2.5 rounded-xl border border-slate-100 shadow-xs">
+                <i class="fas fa-check-circle text-teal-500 text-sm shrink-0"></i>
+                <span>${feat}</span>
+              </div>
+            `).join('')}
+          </div>
         </div>
-      </div>
+      ` : ''}
 
       <!-- Modal Footer CTAs -->
-      <div class="flex flex-col sm:flex-row items-center gap-3 pt-6 border-t border-slate-100">
-        <a href="${waUrl}" target="_blank" class="w-full sm:flex-1 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition shadow-md">
-          <i class="fab fa-whatsapp text-xl"></i>
+      <div class="flex flex-col sm:flex-row items-center gap-3 pt-6 border-t border-slate-200">
+        <a href="${waUrl}" target="_blank" class="w-full sm:flex-1 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-600/20 active:scale-98">
+          <i class="fab fa-whatsapp text-2xl"></i>
           <span>Consultar por WhatsApp</span>
         </a>
-        <a href="tel:1177080280" class="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition">
+        <button type="button" onclick="shareProperty(${prop.id})" class="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition shadow-lg shadow-teal-600/20 active:scale-98 cursor-pointer">
+          <i class="fas fa-share-alt text-lg"></i>
+          <span>Compartir</span>
+        </button>
+        <a href="tel:1177080280" class="w-full sm:w-auto px-6 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition active:scale-98">
           <i class="fas fa-phone-alt"></i>
-          <span>Llamar a la Inmobiliaria</span>
+          <span>Llamar</span>
         </a>
       </div>
     </div>
@@ -847,12 +935,202 @@ function openPropertyModal(id) {
 
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+
+  // Start automatic slideshow
+  startModalSlideshow();
 }
 
+// Start Slideshow
+function startModalSlideshow() {
+  stopModalSlideshow();
+  if (modalCurrentImages.length <= 1) return;
+  modalSlideshowInterval = setInterval(() => {
+    if (!isModalSlideshowPaused) {
+      nextModalImage();
+    }
+  }, 3500);
+}
+
+// Stop Slideshow
+function stopModalSlideshow() {
+  if (modalSlideshowInterval) {
+    clearInterval(modalSlideshowInterval);
+    modalSlideshowInterval = null;
+  }
+}
+
+// Pause / Resume Slideshow
+function pauseModalSlideshow() {
+  isModalSlideshowPaused = true;
+  updateModalAutoBadge();
+}
+
+function resumeModalSlideshow() {
+  isModalSlideshowPaused = false;
+  updateModalAutoBadge();
+}
+
+function updateModalAutoBadge() {
+  const badge = document.getElementById('modal-auto-badge');
+  if (!badge) return;
+  if (isModalSlideshowPaused) {
+    badge.className = 'ml-1.5 px-2 py-0.5 rounded-full text-[10px] bg-amber-500/80 text-white font-medium inline-flex items-center gap-1 transition';
+    badge.innerHTML = '<i class="fas fa-pause text-[8px]"></i> <span>Pausado</span>';
+  } else {
+    badge.className = 'ml-1.5 px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/80 text-white font-medium inline-flex items-center gap-1 transition';
+    badge.innerHTML = '<i class="fas fa-play text-[8px]"></i> <span>Auto</span>';
+  }
+}
+
+// Next Image
+function nextModalImage(e) {
+  if (e) e.stopPropagation();
+  if (modalCurrentImages.length <= 1) return;
+  modalCurrentIndex = (modalCurrentIndex + 1) % modalCurrentImages.length;
+  updateModalDisplay();
+}
+
+// Prev Image
+function prevModalImage(e) {
+  if (e) e.stopPropagation();
+  if (modalCurrentImages.length <= 1) return;
+  modalCurrentIndex = (modalCurrentIndex - 1 + modalCurrentImages.length) % modalCurrentImages.length;
+  updateModalDisplay();
+}
+
+// Set Specific Image from Thumbnail
+function setModalImage(idx) {
+  modalCurrentIndex = idx;
+  updateModalDisplay();
+  // Restart timer so user has a fresh 3.5s interval
+  startModalSlideshow();
+}
+
+// Update Active Image and Thumbnails
+function updateModalDisplay() {
+  const mainImg = document.getElementById('modal-main-img');
+  const bgImg = document.getElementById('modal-bg-img');
+  const counter = document.getElementById('modal-photo-counter');
+  const src = modalCurrentImages[modalCurrentIndex];
+  if (!src) return;
+
+  if (mainImg) {
+    mainImg.style.opacity = '0.35';
+    setTimeout(() => {
+      mainImg.src = src;
+      mainImg.style.opacity = '1';
+    }, 150);
+  }
+  if (bgImg) bgImg.src = src;
+  if (counter) counter.textContent = `${modalCurrentIndex + 1} / ${modalCurrentImages.length}`;
+
+  modalCurrentImages.forEach((_, idx) => {
+    const thumb = document.getElementById(`modal-thumb-${idx}`);
+    if (thumb) {
+      if (idx === modalCurrentIndex) {
+        thumb.className = 'shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer border-teal-400 ring-2 ring-teal-400/50 scale-105 opacity-100';
+        thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      } else {
+        thumb.className = 'shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer border-white/20 opacity-60 hover:opacity-100';
+      }
+    }
+  });
+}
+
+// Close Modal
 function closeModal() {
+  stopModalSlideshow();
   const modal = document.getElementById('property-modal');
   if (modal) modal.classList.add('hidden');
   document.body.style.overflow = 'auto';
+}
+
+// Share Property Logic (Web Share API + Clipboard Copy Fallback)
+async function shareProperty(id) {
+  const prop = propertiesData.find(p => p.id === id);
+  if (!prop) return;
+
+  const origin = window.location.origin.includes('localhost') 
+    ? window.location.origin 
+    : 'https://www.inmobiliariadevorafernandez.com.ar';
+  const shareUrl = `${origin}/?prop=${prop.id}`;
+  const shareTitle = `${prop.title} | Dévora Fernández Propiedades`;
+  const shareText = `Mirá esta propiedad en Dévora Fernández Propiedades:\n${prop.title} (${prop.operation} - ${prop.priceDisplay})\n`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: shareTitle,
+        text: shareText,
+        url: shareUrl
+      });
+      showToast('Propiedad compartida con éxito', 'success');
+      return;
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.warn('Share API error:', err);
+      }
+    }
+  }
+
+  // Fallback: Copy to clipboard
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(shareUrl);
+      showToast('¡Enlace copiado al portapapeles! Listo para enviar.', 'success');
+    } else {
+      const tempInput = document.createElement('input');
+      tempInput.value = shareUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast('¡Enlace copiado al portapapeles!', 'success');
+    }
+  } catch (e) {
+    prompt('Copiá el enlace de la propiedad para compartir:', shareUrl);
+  }
+}
+
+// Toast Notification
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  const toastText = document.getElementById('toast-text');
+  const toastIcon = document.getElementById('toast-icon');
+  if (!toast || !toastText) return;
+
+  toastText.textContent = message;
+  if (toastIcon) {
+    if (type === 'error') {
+      toastIcon.className = 'w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-sm shrink-0';
+      toastIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+    } else if (type === 'info') {
+      toastIcon.className = 'w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center text-sm shrink-0';
+      toastIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+    } else {
+      toastIcon.className = 'w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm shrink-0';
+      toastIcon.innerHTML = '<i class="fas fa-check"></i>';
+    }
+  }
+
+  toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+  setTimeout(() => {
+    toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+  }, 3500);
+}
+
+// Auto open modal if ?prop=ID is in URL
+function checkUrlForSharedProperty() {
+  const params = new URLSearchParams(window.location.search);
+  const propIdStr = params.get('prop');
+  if (propIdStr) {
+    const propId = parseInt(propIdStr);
+    if (!isNaN(propId)) {
+      setTimeout(() => {
+        openPropertyModal(propId);
+      }, 350);
+    }
+  }
 }
 
 // Handle Tasacion Request Form (All fields from old CRM site)

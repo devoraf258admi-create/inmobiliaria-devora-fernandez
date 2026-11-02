@@ -881,10 +881,6 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
       <div class="flex items-center gap-3">
         <p>© 2026 Dévora Fernández Propiedades. Todos los derechos reservados.</p>
-        <span class="text-slate-800">•</span>
-        <a href="admin.html" class="text-slate-600 hover:text-cyan-400 transition inline-flex items-center gap-1 text-[11px]" title="Acceso Administración">
-          <i class="fas fa-lock text-[10px]"></i> Acceso Privado
-        </a>
       </div>
       <p class="text-cyan-400/90 font-medium" data-content="contact.license">Matrícula Nº 2262 - Colegio de Martilleros de Morón</p>
     </div>
@@ -899,13 +895,22 @@
   <div id="property-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
     <div class="modal-backdrop fixed inset-0" onclick="closeModal()"></div>
     
-    <div class="modal-content relative bg-white w-full max-w-3xl rounded-3xl shadow-2xl z-10 max-h-[90vh] overflow-y-auto" id="modal-body">
+    <div class="modal-content relative bg-white w-full max-w-5xl rounded-3xl shadow-2xl z-10 max-h-[94vh] overflow-y-auto" id="modal-body">
       <!-- Modal Content rendered by app.js -->
     </div>
   </div>
 
+  
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 left-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900/95 backdrop-blur-md border border-slate-700 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
+    <div id="toast-icon" class="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm shrink-0">
+      <i class="fas fa-check"></i>
+    </div>
+    <p id="toast-text" class="text-xs font-semibold text-slate-200">Mensaje</p>
+  </div>
+
   <!-- App Script -->
-  <script src="app.js?v=20261102c"></script>
+  <script src="app.js?v=20261102d"></script>
 </body>
 </html>
 
