@@ -791,8 +791,14 @@ function openPropertyModal(id) {
       <!-- Blurred background for letterbox aesthetics -->
       <img id="modal-bg-img" src="${modalCurrentImages[0]}" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none transition-all duration-500" aria-hidden="true">
       
-      <!-- Main High-Resolution Photo -->
-      <img id="modal-main-img" src="${modalCurrentImages[0]}" alt="${prop.title}" class="relative z-10 max-w-full max-h-full object-contain transition-opacity duration-300 shadow-2xl">
+      <!-- Main High-Resolution Photo (Clic para pantalla completa / lupa) -->
+      <img id="modal-main-img" src="${modalCurrentImages[0]}" onclick="openPhotoFullscreen()" alt="${prop.title}" class="relative z-10 max-w-full max-h-full object-contain transition-opacity duration-300 shadow-2xl cursor-zoom-in" title="Hacé clic para ver en pantalla completa con lupa">
+
+      <!-- Botón Lupa / Pantalla Completa -->
+      <button type="button" onclick="openPhotoFullscreen()" class="absolute bottom-20 right-4 sm:bottom-24 sm:right-6 z-20 px-3.5 py-2 rounded-full bg-slate-950/80 hover:bg-teal-600 text-white flex items-center gap-2 backdrop-blur-md border border-white/20 transition-all hover:scale-105 shadow-2xl cursor-pointer active:scale-95" title="Ver foto en pantalla completa (Lupa)">
+        <i class="fas fa-search-plus text-teal-300 text-sm sm:text-base"></i>
+        <span class="text-xs font-bold hidden sm:inline">Pantalla Completa</span>
+      </button>
 
       <!-- Top Controls Bar -->
       <div class="absolute top-4 inset-x-4 z-30 flex items-center justify-between pointer-events-none">
@@ -1029,7 +1035,11 @@ function updateModalDisplay() {
     if (thumb) {
       if (idx === modalCurrentIndex) {
         thumb.className = 'shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer border-teal-400 ring-2 ring-teal-400/50 scale-105 opacity-100';
-        thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        const thumbsBar = document.getElementById('modal-thumbs-bar');
+        if (thumbsBar) {
+          const scrollTarget = thumb.offsetLeft - (thumbsBar.clientWidth / 2) + (thumb.clientWidth / 2);
+          thumbsBar.scrollTo({ left: Math.max(0, scrollTarget), behavior: 'smooth' });
+        }
       } else {
         thumb.className = 'shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer border-white/20 opacity-60 hover:opacity-100';
       }

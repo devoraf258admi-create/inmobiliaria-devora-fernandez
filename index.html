@@ -905,6 +905,59 @@
   </div>
 
   
+  
+  <!-- FULLSCREEN PHOTO LIGHTBOX (LUPA / PANTALLA COMPLETA) -->
+  <div id="photo-fullscreen-modal" class="hidden fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex flex-col justify-between p-3 sm:p-6 select-none" onclick="if(event.target === this) closePhotoFullscreen()">
+    
+    <!-- Top Bar -->
+    <div class="w-full flex items-center justify-between text-white z-20 pb-2">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold border border-white/20">
+          <i class="fas fa-camera text-teal-400"></i>
+          <span id="fullscreen-counter">1 / 1</span>
+        </span>
+        <span class="text-xs text-slate-300 font-medium hidden sm:inline truncate max-w-md" id="fullscreen-title"></span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="toggleZoomFullscreen(event)" class="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center gap-1.5 text-xs font-semibold transition border border-white/20 cursor-pointer" title="Acercar / Alejar (Lupa)">
+          <i class="fas fa-search-plus text-teal-300" id="fullscreen-zoom-icon"></i>
+          <span class="hidden sm:inline" id="fullscreen-zoom-text">Zoom</span>
+        </button>
+        <button type="button" onclick="closePhotoFullscreen()" class="w-10 h-10 rounded-full bg-rose-600/80 hover:bg-rose-600 text-white flex items-center justify-center transition border border-white/20 cursor-pointer shadow-lg active:scale-95" title="Cerrar (Esc)">
+          <i class="fas fa-times text-base"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Photo with Navigation & Zoom -->
+    <div class="relative w-full flex-1 flex items-center justify-center overflow-hidden my-auto" id="fullscreen-img-wrapper" onclick="if(event.target === this) toggleZoomFullscreen(event)">
+      <button type="button" onclick="prevFullscreenImage(event)" class="absolute left-2 sm:left-6 z-30 w-12 h-12 rounded-full bg-black/60 hover:bg-teal-600 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-2xl cursor-pointer active:scale-95" aria-label="Foto anterior">
+        <i class="fas fa-chevron-left text-lg"></i>
+      </button>
+      
+      <img id="fullscreen-img" src="" alt="" class="max-w-full max-h-[80vh] object-contain transition-all duration-300 rounded-lg shadow-2xl cursor-zoom-in" onclick="toggleZoomFullscreen(event)">
+      
+      <button type="button" onclick="nextFullscreenImage(event)" class="absolute right-2 sm:right-6 z-30 w-12 h-12 rounded-full bg-black/60 hover:bg-teal-600 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-2xl cursor-pointer active:scale-95" aria-label="Siguiente foto">
+        <i class="fas fa-chevron-right text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Bottom Controls & Thumbnails Strip -->
+    <div class="w-full flex flex-col items-center gap-2 z-20 pt-2">
+      <div id="fullscreen-thumbs" class="flex items-center gap-2 overflow-x-auto max-w-[94%] p-1.5 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 shadow-2xl">
+        <!-- Rendered dynamically -->
+      </div>
+      <p class="text-[11px] text-slate-400 flex items-center gap-2">
+        <span><i class="fas fa-search-plus text-teal-400 mr-1"></i> Clic en la foto para zoom</span>
+        <span>•</span>
+        <span>Flechas para navegar</span>
+        <span>•</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-mono">Esc</kbd> para salir</span>
+      </p>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 left-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900/95 backdrop-blur-md border border-slate-700 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
     <div id="toast-icon" class="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm shrink-0">
@@ -914,7 +967,7 @@
   </div>
 
   <!-- App Script -->
-  <script src="app.js?v=20261102d"></script>
+  <script src="app.js?v=20261102e"></script>
 </body>
 </html>
 
