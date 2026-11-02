@@ -557,10 +557,8 @@ function renderProperties() {
       btnContainer.classList.remove('hidden');
       if (showAllCatalogProperties) {
         btnText.textContent = 'Mostrar menos propiedades';
-        if (showingHint) showingHint.textContent = `Mostrando las ${filtered.length} propiedades del catálogo.`;
       } else {
         btnText.textContent = `Ver las ${totalVenta} propiedades en venta`;
-        if (showingHint) showingHint.textContent = `Mostrando 6 propiedades. Hacé clic para ver el catálogo completo (${filtered.length} propiedades).`;
       }
     }
   }
