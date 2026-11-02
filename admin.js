@@ -521,7 +521,40 @@ function saveToLocal() {
 function renderAdminDashboard() {
   updateStats();
   renderAdminFeaturedPanel();
+  renderAdminLast6();
   filterAdminProperties();
+}
+
+// Render last 6 published properties
+function renderAdminLast6() {
+  const grid = document.getElementById('admin-last6-grid');
+  if (!grid) return;
+
+  const nonFeatured = properties.filter(p => !p.featured);
+  const last6 = nonFeatured.slice(0, 6);
+
+  if (last6.length === 0) {
+    grid.innerHTML = '<p class="text-slate-500 text-sm col-span-3 text-center py-4">No hay propiedades publicadas.</p>';
+    return;
+  }
+
+  grid.innerHTML = last6.map(p => {
+    const opColor = p.operation === 'Venta' ? 'bg-amber-500' : 'bg-emerald-500';
+    return `
+      <div class="bg-slate-800/60 border border-slate-700 rounded-xl overflow-hidden flex flex-col hover:border-teal-500/50 transition">
+        <div class="relative h-32 bg-slate-700">
+          <img src="${p.image || 'assets/img/logo.png'}" alt="" class="w-full h-full object-cover">
+          <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold text-white ${opColor}">${p.operation}</span>
+        </div>
+        <div class="p-3 flex flex-col gap-1 flex-1">
+          <span class="text-[10px] text-slate-400 font-mono">#${p.id}</span>
+          <h4 class="text-xs font-bold text-white line-clamp-2 leading-tight">${p.title}</h4>
+          <p class="text-[11px] text-slate-400 line-clamp-1"><i class="fas fa-map-marker-alt text-teal-400 mr-1"></i>${p.address || ''}</p>
+          <p class="text-xs font-bold text-teal-300 mt-auto pt-2">${p.priceDisplay || 'Consultar'}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // Update Top KPI Cards
