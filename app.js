@@ -223,7 +223,8 @@ async function loadProperties() {
   const localData = localStorage.getItem('devora_properties');
   if (localData) {
     try {
-      propertiesData = JSON.parse(localData);
+      propertiesData = JSON.parse(localData).filter(p => p.id !== 6);
+      localStorage.setItem('devora_properties', JSON.stringify(propertiesData));
       renderProperties();
       populateLocationOptions();
       return;
@@ -235,7 +236,7 @@ async function loadProperties() {
   try {
     const response = await fetch('./data/properties.json?v=' + Date.now(), { cache: 'no-store' });
     if (!response.ok) throw new Error('No se pudo cargar el catálogo');
-    propertiesData = await response.json();
+    propertiesData = (await response.json()).filter(p => p.id !== 6);
     renderProperties();
     populateLocationOptions();
   } catch (error) {

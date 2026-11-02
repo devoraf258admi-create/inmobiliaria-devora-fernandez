@@ -475,6 +475,7 @@ async function loadPropertiesData() {
     try {
       properties = JSON.parse(localData);
       normalizeProperties();
+      saveToLocal();
       renderAdminDashboard();
       return;
     } catch (err) {
@@ -499,6 +500,7 @@ async function loadPropertiesData() {
 
 // Normalize each property to guarantee default fields like status
 function normalizeProperties() {
+  properties = properties.filter(p => p.id !== 6);
   properties.forEach(p => {
     if (!p.status) {
       p.status = 'Disponible';
