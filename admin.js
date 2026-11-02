@@ -517,9 +517,10 @@ function saveToLocal() {
   localStorage.setItem('devora_properties', JSON.stringify(properties));
 }
 
-// Render Dashboard (Stats + Table)
+// Render Dashboard (Stats + Featured + Table)
 function renderAdminDashboard() {
   updateStats();
+  renderAdminFeaturedPanel();
   filterAdminProperties();
 }
 
@@ -552,7 +553,12 @@ function filterAdminProperties() {
       (p.location && p.location.toLowerCase().includes(q)) ||
       String(p.id).includes(q);
 
-    const matchesStatus = status === 'todos' || (p.status || 'Disponible') === status;
+    let matchesStatus = true;
+    if (status === 'destacadas') {
+      matchesStatus = !!p.featured;
+    } else if (status !== 'todos') {
+      matchesStatus = (p.status || 'Disponible') === status;
+    }
     const matchesOp = op === 'todos' || p.operation === op;
     const matchesType = type === 'todos' || p.propertyType === type;
 
@@ -634,6 +640,9 @@ function renderTableRows() {
         <!-- Acciones -->
         <td class="py-3 px-4 text-right whitespace-nowrap">
           <div class="flex items-center justify-end gap-2">
+            <button onclick="toggleFeaturedProperty(${p.id})" class="p-2 bg-slate-800 ${p.featured ? 'text-amber-400 bg-amber-500/10 border border-amber-500/40 shadow-sm shadow-amber-500/10' : 'text-slate-500 hover:text-amber-400'} rounded-lg transition" title="${p.featured ? 'Inmueble Destacado (Quitar)' : 'Marcar como Destacada'}">
+              <i class="fas fa-star text-xs"></i>
+            </button>
             <button onclick="openModalEdit(${p.id})" class="p-2 bg-slate-800 hover:bg-amber-600/20 hover:text-amber-400 text-slate-300 rounded-lg transition" title="Editar Propiedad">
               <i class="fas fa-edit"></i>
             </button>
@@ -1329,4 +1338,186 @@ function getFaqsFromAdminForm() {
     }
   });
   return faqs.length > 0 ? faqs : DEFAULT_FAQS;
+}
+
+
+// ==========================================
+// FEATURED PROPERTIES MANAGEMENT (ADMIN)
+// ==========================================
+
+// Render Featured Properties Section in Admin
+function renderAdminFeaturedPanel() {
+  const grid = document.getElementById('admin-featured-grid');
+  if (!grid) return;
+
+  // Get current featured properties
+  const featured = properties.filter(p => p.featured);
+  
+  // We manage 3 slots for the home page
+  const slots = [0, 1, 2];
+
+  grid.innerHTML = slots.map(index => {
+    const prop = featured[index];
+
+    if (!prop) {
+      return `
+        <div class="bg-slate-950/70 border border-dashed border-slate-700/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center min-h-[310px] group hover:border-amber-400/50 transition">
+          <div class="w-12 h-12 rounded-full bg-slate-800 text-amber-400 flex items-center justify-center text-lg mb-3 shadow-inner">
+            <i class="fas fa-star"></i>
+          </div>
+          <span class="text-xs font-bold text-slate-300 mb-1">Puesto #${index + 1} de Portada Libre</span>
+          <p class="text-[11px] text-slate-500 mb-4 max-w-xs">Elegí una propiedad del catálogo para asignarla a este puesto destacado de la página web.</p>
+          <select onchange="assignFeaturedSlot(${index}, this.value)" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white outline-none cursor-pointer focus:border-amber-400">
+            <option value="">+ Seleccionar inmueble para destacar</option>
+            ${properties.map(p => `<option value="${p.id}">#${p.id} - ${(p.title || '').slice(0, 38)}...</option>`).join('')}
+          </select>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="bg-slate-950 border border-slate-800 hover:border-amber-500/40 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between transition group">
+        <!-- Photo with Badge -->
+        <div class="relative h-44 bg-slate-900 overflow-hidden">
+          <img id="featured-img-preview-${prop.id}" src="${prop.image || 'assets/img/logo.png'}" alt="${prop.title}" class="w-full h-full object-cover">
+          <span class="absolute top-2 left-2 px-2.5 py-1 bg-slate-900/90 backdrop-blur-md text-amber-400 text-[11px] font-extrabold rounded-lg border border-amber-400/40 flex items-center gap-1 shadow-md">
+            <i class="fas fa-star text-amber-400"></i> Puesto #${index + 1} Destacada
+          </span>
+          <span class="absolute top-2 right-2 px-2 py-0.5 bg-slate-900/80 backdrop-blur-md text-slate-300 text-[10px] font-mono rounded">
+            #${prop.id}
+          </span>
+        </div>
+
+        <!-- Info Body -->
+        <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+          <div>
+            <h4 class="text-xs font-bold text-white line-clamp-1 group-hover:text-amber-400 transition" title="${prop.title}">${prop.title}</h4>
+            <p class="text-[11px] text-slate-400 line-clamp-1 mt-0.5"><i class="fas fa-map-marker-alt text-amber-500 mr-1"></i>${prop.address || ''}, ${prop.location || ''}</p>
+            <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/80">
+              <span class="text-[11px] text-slate-300 font-semibold">${prop.operation} &bull; ${prop.propertyType}</span>
+              <span class="text-xs font-extrabold text-amber-400">${prop.priceDisplay || 'Consultar'}</span>
+            </div>
+          </div>
+
+          <!-- Direct Photo Change & Property Assign Controls -->
+          <div class="space-y-2 border-t border-slate-800 pt-3">
+            <label class="block text-[11px] font-semibold text-cyan-300 flex items-center gap-1">
+              <i class="fas fa-camera"></i> Modificar foto de esta destacada:
+            </label>
+            
+            <div class="grid grid-cols-2 gap-2">
+              <!-- Upload from PC -->
+              <label class="px-2.5 py-2 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 border border-teal-500/40 text-teal-300 text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition text-center shadow-sm">
+                <i class="fas fa-upload text-xs"></i>
+                <span>Subir de PC</span>
+                <input type="file" accept="image/*" onchange="handleFeaturedImageUpload(${prop.id}, event)" class="hidden">
+              </label>
+
+              <!-- Edit URL -->
+              <button type="button" onclick="promptChangeFeaturedUrl(${prop.id})" class="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition text-center">
+                <i class="fas fa-link text-xs"></i>
+                <span>Por URL</span>
+              </button>
+            </div>
+
+            <!-- Swap which property is in this slot -->
+            <div class="pt-1 flex items-center justify-between gap-2">
+              <select onchange="assignFeaturedSlot(${index}, this.value)" class="flex-1 px-2.5 py-1.5 bg-slate-800/90 border border-slate-700 rounded-lg text-[11px] text-slate-200 outline-none cursor-pointer">
+                <option value="${prop.id}">Cambiar inmueble asignado...</option>
+                ${properties.map(p => `<option value="${p.id}" ${p.id === prop.id ? 'selected' : ''}>#${p.id} - ${(p.title || '').slice(0, 30)}...</option>`).join('')}
+              </select>
+
+              <button type="button" onclick="removeFeaturedProperty(${prop.id})" title="Quitar de destacadas" class="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 text-[11px] transition">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Upload and compress image from PC for a featured property
+async function handleFeaturedImageUpload(propId, event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const prop = properties.find(p => p.id === propId);
+  if (!prop) return;
+
+  try {
+    showToast('Procesando y optimizando foto...', 'info');
+    const optimized = await compressImageFile(file, 1600, 0.85);
+
+    prop.image = optimized;
+    saveToLocal();
+    renderAdminDashboard();
+    showToast('¡Foto de la propiedad destacada actualizada con éxito! Hacé clic en "Publicar Web" para reflejarla.', 'success');
+  } catch (err) {
+    console.error('Error procesando foto destacada:', err);
+    showToast('Error al procesar la foto', 'error');
+  } finally {
+    event.target.value = '';
+  }
+}
+
+// Change featured property photo via URL
+function promptChangeFeaturedUrl(propId) {
+  const prop = properties.find(p => p.id === propId);
+  if (!prop) return;
+
+  const inputUrl = prompt('Ingresá el enlace directo de la nueva foto para esta propiedad destacada:', prop.image || '');
+  if (inputUrl === null) return;
+  const trimmed = inputUrl.trim();
+  if (!trimmed) return;
+
+  prop.image = trimmed;
+  saveToLocal();
+  renderAdminDashboard();
+  showToast('Foto actualizada correctamente. Hacé clic en "Publicar Web" para guardarla.', 'success');
+}
+
+// Assign a property to a featured slot
+function assignFeaturedSlot(slotIndex, newPropIdStr) {
+  const newPropId = parseInt(newPropIdStr);
+  if (isNaN(newPropId) || !newPropId) return;
+
+  const newProp = properties.find(p => p.id === newPropId);
+  if (!newProp) return;
+
+  const currentFeatured = properties.filter(p => p.featured);
+  const oldPropInSlot = currentFeatured[slotIndex];
+
+  if (oldPropInSlot && oldPropInSlot.id !== newPropId) {
+    oldPropInSlot.featured = false;
+  }
+
+  newProp.featured = true;
+
+  saveToLocal();
+  renderAdminDashboard();
+  showToast(`Propiedad #${newProp.id} asignada como Destacada de portada`, 'success');
+}
+
+// Remove property from featured
+function removeFeaturedProperty(propId) {
+  const prop = properties.find(p => p.id === propId);
+  if (!prop) return;
+
+  prop.featured = false;
+  saveToLocal();
+  renderAdminDashboard();
+  showToast(`Propiedad #${propId} quitada de destacadas`, 'info');
+}
+
+// Toggle featured status from properties table
+function toggleFeaturedProperty(propId) {
+  const prop = properties.find(p => p.id === propId);
+  if (!prop) return;
+
+  prop.featured = !prop.featured;
+  saveToLocal();
+  renderAdminDashboard();
+  showToast(prop.featured ? `Propiedad #${propId} marcada como Destacada` : `Propiedad #${propId} quitada de destacadas`, 'success');
 }

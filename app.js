@@ -270,6 +270,7 @@ function populateLocationOptions() {
 
 // Trigger Search from button
 function triggerSearch() {
+  showAllCatalogProperties = true;
   renderProperties();
   const target = document.getElementById('propiedades');
   if (target) {
@@ -277,11 +278,161 @@ function triggerSearch() {
   }
 }
 
+let showAllCatalogProperties = false;
+
+// Render 3 Featured Properties
+function renderFeaturedProperties() {
+  const container = document.getElementById('featured-container');
+  if (!container) return;
+
+  // Prioritize properties marked as featured (limit to 3)
+  let featured = propertiesData.filter(p => p.featured);
+  if (featured.length === 0) {
+    featured = propertiesData.slice(0, 3);
+  } else if (featured.length > 3) {
+    featured = featured.slice(0, 3);
+  }
+
+  if (featured.length === 0) {
+    container.innerHTML = '<div class="col-span-full py-8 text-center text-slate-400 text-sm">No hay propiedades destacadas seleccionadas.</div>';
+    return;
+  }
+
+  container.innerHTML = featured.map(prop => createPropertyCardHtml(prop, true)).join('');
+}
+
+// Generate single Property Card HTML
+function createPropertyCardHtml(prop, isFeatured = false) {
+  const isSold = prop.status === 'Vendido';
+  const isRented = prop.status === 'Alquilado';
+  const isReserved = prop.status === 'Reservado';
+
+  let statusBadge = '';
+  if (isSold) {
+    statusBadge = '<span class="px-3 py-1.5 bg-rose-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1"><i class="fas fa-tag"></i> Vendido</span>';
+  } else if (isRented) {
+    statusBadge = '<span class="px-3 py-1.5 bg-sky-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1"><i class="fas fa-key"></i> Alquilado</span>';
+  } else if (isReserved) {
+    statusBadge = '<span class="px-3 py-1.5 bg-amber-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1"><i class="fas fa-clock"></i> Reservado</span>';
+  } else {
+    const opBg = prop.operation === 'Venta' ? 'bg-teal-700' : 'bg-emerald-600';
+    statusBadge = `<span class="badge-operation px-3 py-1.5 rounded-lg text-white shadow-md ${opBg}">${prop.operation || 'Disponible'}</span>`;
+  }
+
+  const featuredBadge = (isFeatured || prop.featured)
+    ? '<span class="px-3 py-1.5 bg-slate-900/85 backdrop-blur-md text-amber-400 border border-amber-400/40 text-xs font-bold rounded-lg shadow-md flex items-center gap-1"><i class="fas fa-star text-amber-400"></i> Destacada</span>'
+    : '';
+
+  const locationText = [prop.address, prop.location].filter(Boolean).join(', ');
+
+  const bedText = prop.bedrooms > 0
+    ? prop.bedrooms + ' Dorm.'
+    : (prop.environments > 0 ? prop.environments + ' Amb.' : (prop.propertyType === 'Local Comercial' ? 'Comercial' : 'Inmueble'));
+
+  const bathText = prop.bathrooms > 0
+    ? prop.bathrooms + (prop.bathrooms > 1 ? ' Baños' : ' Baño')
+    : '1 Baño';
+
+  const surfaceText = prop.surfaceTotal > 1
+    ? prop.surfaceTotal + ' m²'
+    : (prop.surfaceCovered > 1 ? prop.surfaceCovered + ' m²' : 'Consultar');
+
+  const cardBorder = isFeatured
+    ? 'border-amber-400/40 ring-1 ring-amber-400/20'
+    : 'border-slate-100';
+
+  return `
+    <div class="property-card bg-white rounded-3xl overflow-hidden border ${cardBorder} shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group">
+      <!-- Image & Badges -->
+      <div class="relative h-64 overflow-hidden bg-slate-100">
+        <img src="${prop.image || 'assets/img/logo.png'}" alt="${prop.title}" class="img-zoom w-full h-full object-cover">
+        
+        <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+          ${statusBadge}
+          ${featuredBadge}
+        </div>
+
+        <div class="absolute bottom-4 right-4 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/20">
+          ${prop.propertyType || 'Inmueble'}
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="p-6 flex-1 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-1.5 text-slate-400 text-xs font-medium mb-2">
+            <i class="fas fa-map-marker-alt text-teal-500"></i>
+            <span class="truncate">${locationText || 'Morón, Buenos Aires'}</span>
+          </div>
+
+          <h3 class="text-lg font-bold text-slate-900 group-hover:text-teal-600 transition mb-3 line-clamp-1" title="${prop.title}">
+            ${prop.title}
+          </h3>
+
+          <p class="text-slate-500 text-xs line-clamp-2 mb-4 leading-relaxed">
+            ${prop.description || ''}
+          </p>
+
+          <!-- Key Amenities -->
+          <div class="grid grid-cols-3 gap-2 py-3 border-y border-slate-100 text-slate-600 text-xs font-medium mb-4">
+            <div class="flex items-center gap-1.5">
+              <i class="fas fa-bed text-slate-400"></i>
+              <span>${bedText}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fas fa-bath text-slate-400"></i>
+              <span>${bathText}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fas fa-ruler-combined text-slate-400"></i>
+              <span>${surfaceText}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Price & Action -->
+        <div class="flex items-center justify-between pt-2">
+          <div>
+            <span class="text-xs text-slate-400 block font-medium">Valor de publicación</span>
+            <span class="text-xl font-extrabold text-slate-900">${prop.priceDisplay || 'Consultar'}</span>
+          </div>
+
+          <button onclick="openPropertyModal(${prop.id})" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-teal-600 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm">
+            <span>Ver Detalle</span>
+            <i class="fas fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 // Filter and Render Properties
 function renderProperties() {
   const container = document.getElementById('properties-container');
   const countBadge = document.getElementById('properties-count');
+  const btnContainer = document.getElementById('catalog-button-container');
+  const btnText = document.getElementById('btn-show-all-text');
+  const showingHint = document.getElementById('catalog-showing-hint');
   if (!container) return;
+
+  // Always update 3 featured properties
+  renderFeaturedProperties();
+
+  // Check if any search filter is actively used
+  const hasActiveFilters = Boolean(
+    (activeFilters.searchQuery && activeFilters.searchQuery.trim()) ||
+    activeFilters.location !== 'todos' ||
+    (activeFilters.address && activeFilters.address.trim()) ||
+    activeFilters.propertyType !== 'todos' ||
+    activeFilters.operation !== 'todos' ||
+    activeFilters.rooms !== 'todos' ||
+    activeFilters.bedrooms !== 'todos' ||
+    activeFilters.bathrooms !== 'todos' ||
+    activeFilters.currency !== 'todos' ||
+    (activeFilters.maxPrice !== null && activeFilters.maxPrice > 0) ||
+    activeFilters.credit
+  );
 
   const filtered = propertiesData.filter(prop => {
     // 1. Search Query (keywords in title, address, description, features)
@@ -370,6 +521,9 @@ function renderProperties() {
     countBadge.textContent = `${filtered.length} Inmuebles Encontrados`;
   }
 
+  // Count total properties in sale
+  const totalVenta = propertiesData.filter(p => p.operation === 'Venta' && (p.status || 'Disponible') === 'Disponible').length || propertiesData.filter(p => p.operation === 'Venta').length;
+
   if (filtered.length === 0) {
     container.innerHTML = `
       <div class="col-span-full text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-sm">
@@ -383,93 +537,45 @@ function renderProperties() {
         </button>
       </div>
     `;
+    if (btnContainer) btnContainer.classList.add('hidden');
     return;
   }
 
-  container.innerHTML = filtered.map(prop => `
-    <div class="property-card bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md flex flex-col group">
-      <!-- Image & Badges -->
-      <div class="relative h-64 overflow-hidden bg-slate-100">
-        <img src="${prop.image}" alt="${prop.title}" class="img-zoom w-full h-full object-cover">
-        
-        <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-          ${prop.status === 'Vendido' ? `
-            <span class="px-3 py-1.5 bg-rose-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1">
-              <i class="fas fa-tag"></i> Vendido
-            </span>
-          ` : (prop.status === 'Alquilado' ? `
-            <span class="px-3 py-1.5 bg-sky-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1">
-              <i class="fas fa-key"></i> Alquilado
-            </span>
-          ` : (prop.status === 'Reservado' ? `
-            <span class="px-3 py-1.5 bg-amber-600 text-white font-extrabold text-xs uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1">
-              <i class="fas fa-clock"></i> Reservado
-            </span>
-          ` : `
-          <span class="badge-operation px-3 py-1.5 rounded-lg text-white shadow-md ${prop.operation === 'Venta' ? 'bg-teal-700' : 'bg-emerald-600'}">
-            ${prop.operation}
-          </span>
-          `))}
-          ${prop.featured ? `
-            <span class="px-3 py-1.5 bg-slate-900/80 backdrop-blur-md text-cyan-400 text-xs font-semibold rounded-lg shadow-md flex items-center gap-1">
-              <i class="fas fa-star text-cyan-400"></i> Destacado
-            </span>
-          ` : ''}
-        </div>
+  // Display 6 properties initially, or all if showAllCatalogProperties is true or search is active
+  let toDisplay = filtered;
+  if (!hasActiveFilters && !showAllCatalogProperties) {
+    toDisplay = filtered.slice(0, 6);
+  }
 
-        <div class="absolute bottom-4 right-4 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/20">
-          ${prop.propertyType}
-        </div>
-      </div>
+  container.innerHTML = toDisplay.map(prop => createPropertyCardHtml(prop, false)).join('');
 
-      <!-- Card Body -->
-      <div class="p-6 flex-1 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center gap-1.5 text-slate-400 text-xs font-medium mb-2">
-            <i class="fas fa-map-marker-alt text-teal-500"></i>
-            <span>${prop.address}</span>
-          </div>
+  // Handle Button text and visibility
+  if (btnContainer && btnText) {
+    if (hasActiveFilters) {
+      btnContainer.classList.add('hidden');
+    } else {
+      btnContainer.classList.remove('hidden');
+      if (showAllCatalogProperties) {
+        btnText.textContent = 'Mostrar menos propiedades';
+        if (showingHint) showingHint.textContent = `Mostrando las ${filtered.length} propiedades del catálogo.`;
+      } else {
+        btnText.textContent = `Ver las ${totalVenta} propiedades en venta`;
+        if (showingHint) showingHint.textContent = `Mostrando 6 propiedades. Hacé clic para ver el catálogo completo (${filtered.length} propiedades).`;
+      }
+    }
+  }
+}
 
-          <h3 class="text-lg font-bold text-slate-900 group-hover:text-teal-600 transition mb-3 line-clamp-1" title="${prop.title}">
-            ${prop.title}
-          </h3>
-
-          <p class="text-slate-500 text-xs line-clamp-2 mb-4 leading-relaxed">
-            ${prop.description}
-          </p>
-
-          <!-- Key Amenities -->
-          <div class="grid grid-cols-3 gap-2 py-3 border-y border-slate-100 text-slate-600 text-xs font-medium mb-4">
-            <div class="flex items-center gap-1.5">
-              <i class="fas fa-bed text-slate-400"></i>
-              <span>${prop.bedrooms > 0 ? prop.bedrooms + ' Dorm.' : (prop.environments > 0 ? prop.environments + ' Amb.' : (prop.propertyType === 'Local Comercial' ? 'Comercial' : 'Inmueble'))}</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <i class="fas fa-bath text-slate-400"></i>
-              <span>${prop.bathrooms > 0 ? prop.bathrooms + (prop.bathrooms > 1 ? ' Baños' : ' Baño') : '1 Baño'}</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <i class="fas fa-ruler-combined text-slate-400"></i>
-              <span>${prop.surfaceTotal > 1 ? prop.surfaceTotal + ' m²' : (prop.surfaceCovered > 1 ? prop.surfaceCovered + ' m²' : 'Consultar')}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Price & Action -->
-        <div class="flex items-center justify-between pt-2">
-          <div>
-            <span class="text-xs text-slate-400 block font-medium">Valor de publicación</span>
-            <span class="text-xl font-extrabold text-slate-900">${prop.priceDisplay}</span>
-          </div>
-
-          <button onclick="openPropertyModal(${prop.id})" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-teal-600 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm">
-            <span>Ver Detalle</span>
-            <i class="fas fa-arrow-right text-xs"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  `).join('');
+// Toggle Show All / Show 6 Properties
+function toggleShowAllProperties() {
+  showAllCatalogProperties = !showAllCatalogProperties;
+  renderProperties();
+  if (showAllCatalogProperties) {
+    const target = document.getElementById('propiedades');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 }
 
 // Event Listeners setup
@@ -589,6 +695,7 @@ function setupEventListeners() {
 
 // Reset Filters
 function resetFilters() {
+  showAllCatalogProperties = false;
   activeFilters = {
     searchQuery: '',
     location: 'todos',

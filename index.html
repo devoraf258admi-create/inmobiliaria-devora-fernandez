@@ -359,21 +359,52 @@
     </div>
   </section>
 
-  <!-- PROPERTY CATALOG SECTION -->
-  <section id="propiedades" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+  <!-- FEATURED PROPERTIES SECTION (3 DESTACADAS) -->
+  <section id="destacadas" class="pt-20 pb-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
       <div>
-        <span class="text-teal-600 font-bold text-xs uppercase tracking-widest mb-2 block">Catálogo Exclusivo</span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-600 text-xs font-bold uppercase tracking-wider mb-2">
+          <i class="fas fa-star text-amber-500"></i> Selección Especial
+        </span>
         <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Propiedades Destacadas</h2>
       </div>
-      <p class="text-slate-500 text-sm max-w-md mt-4 md:mt-0">
-        Explora nuestro catálogo de casas, departamentos, PHs y terrenos en venta y alquiler con disponibilidad inmediata.
+      <p class="text-slate-500 text-sm max-w-md mt-3 md:mt-0">
+        Nuestras mejores oportunidades seleccionadas por su excelente ubicación y valor de mercado.
+      </p>
+    </div>
+
+    <!-- 3 FEATURED GRID -->
+    <div id="featured-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- 3 tarjetas destacadas renderizadas dinámicamente por JS -->
+    </div>
+  </section>
+
+  <!-- PROPERTY CATALOG SECTION (6 PROPIEDADES + BOTÓN VER TODAS) -->
+  <section id="propiedades" class="pt-10 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full border-t border-slate-200">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+      <div>
+        <span class="text-teal-600 font-bold text-xs uppercase tracking-widest mb-2 block">Oportunidades Disponibles</span>
+        <h2 id="catalog-section-title" class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Últimas Propiedades Publicadas</h2>
+      </div>
+      <p class="text-slate-500 text-sm max-w-md mt-3 md:mt-0">
+        Explorá casas, departamentos, PHs, terrenos y locales en venta y alquiler con disponibilidad inmediata.
       </p>
     </div>
 
     <!-- PROPERTIES GRID -->
     <div id="properties-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <!-- Properties rendered dynamically via JS -->
+    </div>
+
+    <!-- BOTÓN ROJO EXACTO AL MODELO SOLICITADO (#A7251F) -->
+    <div id="catalog-button-container" class="mt-14 flex flex-col items-center justify-center">
+      <button type="button" id="btn-show-all-properties" onclick="toggleShowAllProperties()" class="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-10 py-4 rounded-xl bg-[#A7251F] hover:bg-[#8D1E19] text-white font-bold text-base sm:text-lg shadow-xl shadow-red-950/20 hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
+        <span id="btn-show-all-text">Ver las 39 propiedades en venta</span>
+        <i class="fas fa-arrow-right text-lg"></i>
+      </button>
+      <p id="catalog-showing-hint" class="text-xs text-slate-500 mt-3 font-medium">
+        Mostrando 6 propiedades. Hacé clic para desplegar todas.
+      </p>
     </div>
   </section>
 

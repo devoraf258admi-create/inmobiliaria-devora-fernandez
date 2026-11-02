@@ -139,6 +139,30 @@
         </div>
       </div>
 
+      <!-- SECCIÓN ESPECIAL: LAS 3 PROPIEDADES DESTACADAS DE PORTADA -->
+      <div class="bg-slate-900/95 border border-amber-500/30 rounded-2xl p-6 mb-8 shadow-2xl relative overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
+              <i class="fas fa-star text-amber-400"></i> Portada Principal
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Las 3 Propiedades Destacadas de la Home</h3>
+            <p class="text-xs text-slate-400 mt-1 max-w-2xl">
+              Estas 3 propiedades son las que se exhiben en el bloque superior de la página web. Podés cambiar la foto principal de cada una directamente desde tu computadora con un clic o seleccionar qué propiedad mostrar en cada puesto.
+            </p>
+          </div>
+          <span class="text-xs text-amber-400 font-mono bg-slate-800/80 px-3.5 py-2 rounded-xl border border-slate-700 whitespace-nowrap self-start md:self-auto flex items-center gap-2">
+            <i class="fas fa-check-circle text-emerald-400"></i>
+            <span>3 Puestos de Portada</span>
+          </span>
+        </div>
+
+        <!-- 3 DESTACADAS GRID -->
+        <div id="admin-featured-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Renderizado dinámicamente por admin.js -->
+        </div>
+      </div>
+
       <!-- Controls & Filter Toolbar -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
         
@@ -152,6 +176,7 @@
         <div class="w-full md:w-auto flex flex-wrap items-center gap-2.5">
           <select id="admin-filter-status" onchange="filterAdminProperties()" class="px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-200 outline-none">
             <option value="todos">Todos los Estados</option>
+            <option value="destacadas">⭐ Solo Destacadas (Portada)</option>
             <option value="Disponible">Solo Disponibles</option>
             <option value="Vendido">Solo Vendidos</option>
             <option value="Alquilado">Solo Alquilados</option>
