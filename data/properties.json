@@ -460,43 +460,6 @@
     "status": "Disponible"
   },
   {
-    "id": 12,
-    "code": "KP530942",
-    "title": "PH. 2 AMBIENTES entrada individual  | Morón Sur | Sobre av. Irigoyen",
-    "location": "Morón",
-    "address": "Irigoyen y guido, Morón",
-    "operation": "Alquiler",
-    "propertyType": "Departamento",
-    "priceUsd": 369,
-    "priceDisplay": "ARS 480.000",
-    "featured": false,
-    "bedrooms": 0,
-    "bathrooms": 1,
-    "environments": 2,
-    "surfaceTotal": 0,
-    "surfaceCovered": 0,
-    "description": "📍 DEPARTAMENTO DOS AMBIENTES EN MORÓN - EN AV. IRIGOYEN-\r\n\r\n\r\n• Ubicado en Planta baja\r\n• 2 Ambientes. con Cocina semi dividida. lo que genera un espacio más funcional.\r\nServicios Luz y Gas\r\n Consultanos para más información.",
-    "features": [
-      "1 Baño",
-      "2 Ambientes",
-      "Servicios Luz y Gas",
-      "Consultanos para más información"
-    ],
-    "image": "https://static.kiteprop.com/kp/properties/530942/c93b5f/lg/c93b5f48f234759df39218fa1d92aaf9.jpg",
-    "gallery": [
-      "https://static.kiteprop.com/kp/properties/530942/c93b5f/lg/c93b5f48f234759df39218fa1d92aaf9.jpg",
-      "https://static.kiteprop.com/kp/properties/530942/fdf293/lg/fdf2934a1332b62105edf4a3f7fed4b8.jpg",
-      "https://static.kiteprop.com/kp/properties/530942/59f26a/lg/59f26a7611b54554fe62e5e39f1dda49.jpg",
-      "https://static.kiteprop.com/kp/properties/530942/aaa22a/lg/aaa22a9420744c99ca0fb028dcd6a3c0.jpg",
-      "https://static.kiteprop.com/kp/properties/530942/0d69fa/lg/0d69fa09dc4e439587efe992ed7811cd.jpg",
-      "https://static.kiteprop.com/kp/properties/530942/d34f3e/lg/d34f3e8099b9f9fae7c07d5976b20fdf.jpg",
-      "https://static.kiteprop.com/kp/properties/530942/bf750a/lg/bf750a83afc58570fb993b3c05d5cecd.jpg",
-      "https://static.kiteprop.com/kp/properties/530942/cde870/lg/cde870a97f667c8f1906cbb461957dc9.jpg"
-    ],
-    "originalUrl": "https://devorafernandezpropiedades.kitepropcrm.com/site/properties/530942/ph-2-ambientes-entrada-individual-moron-sur-sobre-av-irigoyen",
-    "status": "Disponible"
-  },
-  {
     "id": 13,
     "code": "KP530934",
     "title": "Monoambiente entrada individual en PB | Morón Sur | Sobre av. Irigoyen",

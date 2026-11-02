@@ -500,7 +500,7 @@ async function loadPropertiesData() {
 
 // Normalize each property to guarantee default fields like status
 function normalizeProperties() {
-  properties = properties.filter(p => p.id !== 6);
+  properties = properties.filter(p => p.id !== 6 && p.id !== 12);
   properties.forEach(p => {
     if (!p.status) {
       p.status = 'Disponible';
