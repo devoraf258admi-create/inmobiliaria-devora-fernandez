@@ -434,7 +434,15 @@ function renderProperties() {
     activeFilters.credit
   );
 
+  // When no filters are active, exclude featured properties (they appear in the destacadas section)
+  const featuredIds = !hasActiveFilters
+    ? new Set(propertiesData.filter(p => p.featured).map(p => p.id))
+    : new Set();
+
   const filtered = propertiesData.filter(prop => {
+    // Exclude featured properties from catalog when no filters are active
+    if (!hasActiveFilters && featuredIds.has(prop.id)) return false;
+
     // 1. Search Query (keywords in title, address, description, features)
     const q = (activeFilters.searchQuery || '').toLowerCase().trim();
     const matchesQuery = !q ||
