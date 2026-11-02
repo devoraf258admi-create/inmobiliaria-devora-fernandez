@@ -784,9 +784,7 @@ function openPropertyModal(id) {
 
   modalBody.innerHTML = `
     <!-- Extra Large Gallery Container with Autoplay -->
-    <div class="relative bg-slate-950 h-[420px] sm:h-[500px] md:h-[580px] rounded-t-3xl overflow-hidden group select-none flex items-center justify-center"
-         onmouseenter="pauseModalSlideshow()" 
-         onmouseleave="resumeModalSlideshow()">
+    <div class="relative bg-slate-950 h-[420px] sm:h-[500px] md:h-[580px] rounded-t-3xl overflow-hidden group select-none flex items-center justify-center">
       
       <!-- Blurred background for letterbox aesthetics -->
       <img id="modal-bg-img" src="${modalCurrentImages[0]}" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none transition-all duration-500" aria-hidden="true">
@@ -806,11 +804,7 @@ function openPropertyModal(id) {
         <div class="pointer-events-auto inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950/75 backdrop-blur-md text-white border border-white/20 text-xs font-bold shadow-lg">
           <i class="fas fa-camera text-teal-400"></i>
           <span id="modal-photo-counter">1 / ${modalCurrentImages.length}</span>
-          ${modalCurrentImages.length > 1 ? `
-            <span id="modal-auto-badge" class="ml-1.5 px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/80 text-white font-medium inline-flex items-center gap-1 transition">
-              <i class="fas fa-play text-[8px]"></i> <span>Auto</span>
-            </span>
-          ` : ''}
+          
         </div>
 
         <!-- Share & Close Buttons -->
@@ -951,9 +945,7 @@ function startModalSlideshow() {
   stopModalSlideshow();
   if (modalCurrentImages.length <= 1) return;
   modalSlideshowInterval = setInterval(() => {
-    if (!isModalSlideshowPaused) {
-      nextModalImage();
-    }
+    nextModalImage();
   }, 3500);
 }
 
@@ -965,28 +957,7 @@ function stopModalSlideshow() {
   }
 }
 
-// Pause / Resume Slideshow
-function pauseModalSlideshow() {
-  isModalSlideshowPaused = true;
-  updateModalAutoBadge();
-}
 
-function resumeModalSlideshow() {
-  isModalSlideshowPaused = false;
-  updateModalAutoBadge();
-}
-
-function updateModalAutoBadge() {
-  const badge = document.getElementById('modal-auto-badge');
-  if (!badge) return;
-  if (isModalSlideshowPaused) {
-    badge.className = 'ml-1.5 px-2 py-0.5 rounded-full text-[10px] bg-amber-500/80 text-white font-medium inline-flex items-center gap-1 transition';
-    badge.innerHTML = '<i class="fas fa-pause text-[8px]"></i> <span>Pausado</span>';
-  } else {
-    badge.className = 'ml-1.5 px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/80 text-white font-medium inline-flex items-center gap-1 transition';
-    badge.innerHTML = '<i class="fas fa-play text-[8px]"></i> <span>Auto</span>';
-  }
-}
 
 // Next Image
 function nextModalImage(e) {
@@ -1050,10 +1021,124 @@ function updateModalDisplay() {
 // Close Modal
 function closeModal() {
   stopModalSlideshow();
+  closePhotoFullscreen();
   const modal = document.getElementById('property-modal');
   if (modal) modal.classList.add('hidden');
   document.body.style.overflow = 'auto';
 }
+
+// ==========================================
+// LIGHTBOX FULLSCREEN / LUPA FOTOS
+// ==========================================
+let isFullscreenZoomed = false;
+
+function openPhotoFullscreen() {
+  const fsModal = document.getElementById('photo-fullscreen-modal');
+  if (!fsModal || modalCurrentImages.length === 0) return;
+
+  isFullscreenZoomed = false;
+  updateFullscreenPhoto();
+
+  fsModal.classList.remove('hidden');
+}
+
+function closePhotoFullscreen() {
+  const fsModal = document.getElementById('photo-fullscreen-modal');
+  if (fsModal) fsModal.classList.add('hidden');
+  isFullscreenZoomed = false;
+}
+
+function updateFullscreenPhoto() {
+  const fsImg = document.getElementById('fullscreen-img');
+  const fsCounter = document.getElementById('fullscreen-counter');
+  const fsTitle = document.getElementById('fullscreen-title');
+  const fsThumbs = document.getElementById('fullscreen-thumbs');
+  const src = modalCurrentImages[modalCurrentIndex];
+  if (!src) return;
+
+  if (fsImg) {
+    fsImg.src = src;
+    fsImg.className = isFullscreenZoomed 
+      ? 'max-w-none max-h-none scale-150 transition-all duration-300 rounded-lg shadow-2xl cursor-zoom-out'
+      : 'max-w-full max-h-[80vh] object-contain transition-all duration-300 rounded-lg shadow-2xl cursor-zoom-in';
+  }
+  if (fsCounter) fsCounter.textContent = `${modalCurrentIndex + 1} / ${modalCurrentImages.length}`;
+  if (fsTitle && modalCurrentProp) fsTitle.textContent = modalCurrentProp.title || '';
+
+  if (fsThumbs) {
+    fsThumbs.innerHTML = modalCurrentImages.map((img, idx) => `
+      <button type="button" onclick="setFullscreenImage(${idx})" class="shrink-0 w-12 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${idx === modalCurrentIndex ? 'border-teal-400 ring-2 ring-teal-400/50 scale-105 opacity-100' : 'border-white/20 opacity-50 hover:opacity-100'}">
+        <img src="${img}" alt="" class="w-full h-full object-cover">
+      </button>
+    `).join('');
+    
+    const activeBtn = fsThumbs.children[modalCurrentIndex];
+    if (activeBtn) {
+      const scrollPos = activeBtn.offsetLeft - (fsThumbs.clientWidth / 2) + (activeBtn.clientWidth / 2);
+      fsThumbs.scrollTo({ left: Math.max(0, scrollPos), behavior: 'smooth' });
+    }
+  }
+}
+
+function toggleZoomFullscreen(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  isFullscreenZoomed = !isFullscreenZoomed;
+  const fsImg = document.getElementById('fullscreen-img');
+  const zoomIcon = document.getElementById('fullscreen-zoom-icon');
+  const zoomText = document.getElementById('fullscreen-zoom-text');
+  if (fsImg) {
+    if (isFullscreenZoomed) {
+      fsImg.className = 'max-w-none max-h-none scale-150 transition-all duration-300 rounded-lg shadow-2xl cursor-zoom-out';
+      if (zoomIcon) zoomIcon.className = 'fas fa-search-minus text-amber-300';
+      if (zoomText) zoomText.textContent = 'Alejar';
+    } else {
+      fsImg.className = 'max-w-full max-h-[80vh] object-contain transition-all duration-300 rounded-lg shadow-2xl cursor-zoom-in';
+      if (zoomIcon) zoomIcon.className = 'fas fa-search-plus text-teal-300';
+      if (zoomText) zoomText.textContent = 'Zoom';
+    }
+  }
+}
+
+function nextFullscreenImage(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  isFullscreenZoomed = false;
+  modalCurrentIndex = (modalCurrentIndex + 1) % modalCurrentImages.length;
+  updateModalDisplay();
+  updateFullscreenPhoto();
+}
+
+function prevFullscreenImage(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  isFullscreenZoomed = false;
+  modalCurrentIndex = (modalCurrentIndex - 1 + modalCurrentImages.length) % modalCurrentImages.length;
+  updateModalDisplay();
+  updateFullscreenPhoto();
+}
+
+function setFullscreenImage(idx) {
+  isFullscreenZoomed = false;
+  modalCurrentIndex = idx;
+  updateModalDisplay();
+  updateFullscreenPhoto();
+}
+
+// Global Keyboard Navigation (Esc to close, Left/Right to browse)
+document.addEventListener('keydown', (e) => {
+  const fsModal = document.getElementById('photo-fullscreen-modal');
+  if (fsModal && !fsModal.classList.contains('hidden')) {
+    if (e.key === 'Escape') closePhotoFullscreen();
+    if (e.key === 'ArrowRight') nextFullscreenImage(e);
+    if (e.key === 'ArrowLeft') prevFullscreenImage(e);
+    return;
+  }
+  const propModal = document.getElementById('property-modal');
+  if (propModal && !propModal.classList.contains('hidden')) {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowRight') nextModalImage(e);
+    if (e.key === 'ArrowLeft') prevModalImage(e);
+  }
+});
+
 
 // Share Property Logic (Web Share API + Clipboard Copy Fallback)
 async function shareProperty(id) {
