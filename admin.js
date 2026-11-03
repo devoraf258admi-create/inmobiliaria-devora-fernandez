@@ -1115,13 +1115,29 @@ async function renderCarouselAdminList() {
   }
 
   container.innerHTML = slides.map((slide, index) => `
-    <div class="bg-slate-950/80 border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col group hover:border-slate-700 transition">
-      <div class="relative h-44 bg-slate-900 overflow-hidden">
+    <div class="bg-slate-950/80 border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col group hover:border-slate-700 transition cursor-grab active:cursor-grabbing select-none"
+         draggable="true"
+         data-carousel-index="${index}"
+         ondragstart="handleCarouselDragStart(event, ${index})"
+         ondragover="handleCarouselDragOver(event)"
+         ondragenter="handleCarouselDragEnter(event, ${index})"
+         ondragleave="handleCarouselDragLeave(event)"
+         ondrop="handleCarouselDrop(event, ${index})"
+         ondragend="handleCarouselDragEnd(event)">
+      
+      <div class="relative h-44 bg-slate-900 overflow-hidden pointer-events-none">
         <img src="${slide.image}" alt="${slide.tag || ''}" class="w-full h-full object-cover">
-        <span class="absolute top-2 left-2 px-2.5 py-1 bg-slate-900/80 backdrop-blur-md text-cyan-300 text-[11px] font-extrabold rounded-lg border border-white/10">
-          #${index + 1}
-        </span>
+        
+        <div class="absolute top-2 inset-x-2 flex items-center justify-between">
+          <span class="px-2.5 py-1 bg-slate-900/85 backdrop-blur-md text-cyan-300 text-[11px] font-extrabold rounded-lg border border-white/10 shadow">
+            #${index + 1}
+          </span>
+          <span class="px-2.5 py-1 bg-slate-900/85 backdrop-blur-md text-slate-300 text-[10px] font-bold rounded-lg border border-white/10 flex items-center gap-1 shadow">
+            <i class="fas fa-grip-vertical text-teal-400"></i> Arrastrar
+          </span>
+        </div>
       </div>
+
       <div class="p-4 flex-1 flex flex-col justify-between gap-3">
         <div>
           <h5 class="text-xs font-bold text-white truncate">${slide.tag || 'Foto ' + (index + 1)}</h5>
@@ -1129,10 +1145,10 @@ async function renderCarouselAdminList() {
         </div>
         <div class="flex items-center justify-between border-t border-slate-800/80 pt-3">
           <div class="flex items-center gap-1">
-            <button type="button" onclick="moveCarouselSlide(${index}, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center transition" title="Mover arriba" ${index === 0 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''}>
+            <button type="button" onclick="moveCarouselSlide(${index}, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center transition" title="Mover arriba / izquierda" ${index === 0 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''}>
               <i class="fas fa-arrow-up"></i>
             </button>
-            <button type="button" onclick="moveCarouselSlide(${index}, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center transition" title="Mover abajo" ${index === slides.length - 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''}>
+            <button type="button" onclick="moveCarouselSlide(${index}, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center transition" title="Mover abajo / derecha" ${index === slides.length - 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''}>
               <i class="fas fa-arrow-down"></i>
             </button>
           </div>
@@ -1585,4 +1601,74 @@ async function reloadFromCloud() {
   } finally {
     if (btn) btn.innerHTML = origHtml;
   }
+}
+
+
+// ==========================================
+// CAROUSEL DRAG & DROP REORDERING
+// ==========================================
+let draggedCarouselIndex = null;
+
+function handleCarouselDragStart(event, index) {
+  draggedCarouselIndex = index;
+  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.setData('text/plain', String(index));
+  setTimeout(() => {
+    if (event.target) {
+      event.target.classList.add('opacity-40', 'scale-95', 'border-teal-500');
+    }
+  }, 0);
+}
+
+function handleCarouselDragOver(event) {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'move';
+}
+
+function handleCarouselDragEnter(event, index) {
+  event.preventDefault();
+  const card = event.currentTarget;
+  if (card && draggedCarouselIndex !== null && draggedCarouselIndex !== index) {
+    card.classList.add('ring-2', 'ring-teal-400', 'border-teal-400', 'scale-[1.02]');
+  }
+}
+
+function handleCarouselDragLeave(event) {
+  const card = event.currentTarget;
+  if (card) {
+    card.classList.remove('ring-2', 'ring-teal-400', 'border-teal-400', 'scale-[1.02]');
+  }
+}
+
+function handleCarouselDrop(event, targetIndex) {
+  event.preventDefault();
+  const card = event.currentTarget;
+  if (card) {
+    card.classList.remove('ring-2', 'ring-teal-400', 'border-teal-400', 'scale-[1.02]');
+  }
+
+  if (draggedCarouselIndex === null || draggedCarouselIndex === targetIndex) return;
+
+  if (!siteContent) siteContent = {};
+  if (!Array.isArray(siteContent.carousel)) {
+    siteContent.carousel = [...DEFAULT_CAROUSEL_SLIDES];
+  }
+
+  const slides = siteContent.carousel;
+  const item = slides.splice(draggedCarouselIndex, 1)[0];
+  slides.splice(targetIndex, 0, item);
+
+  localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+  renderCarouselAdminList();
+  showToast(`Foto movida a la posición #${targetIndex + 1}. Guardá o publicá para reflejarla.`, 'success');
+}
+
+function handleCarouselDragEnd(event) {
+  draggedCarouselIndex = null;
+  if (event.target) {
+    event.target.classList.remove('opacity-40', 'scale-95', 'border-teal-500');
+  }
+  document.querySelectorAll('#carousel-admin-grid > div').forEach(el => {
+    el.classList.remove('ring-2', 'ring-teal-400', 'border-teal-400', 'scale-[1.02]', 'opacity-40', 'scale-95');
+  });
 }
