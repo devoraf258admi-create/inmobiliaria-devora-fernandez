@@ -880,10 +880,13 @@ async function syncToCloud() {
     }
   }
 
-  let token = localStorage.getItem('devora_gh_token');
+  let token = (localStorage.getItem('devora_gh_token') || '').trim();
   if (!token) {
-    const inputToken = prompt('Para publicar en la web automáticamente, ingresá tu Token de GitHub (solo se pide la primera vez):');
-    if (!inputToken) return;
+    const inputToken = prompt('Para publicar en la web automáticamente, ingresá tu Token de GitHub (solo se pide la primera vez en este navegador):');
+    if (!inputToken) {
+      showToast('Publicación cancelada: se necesita el Token de GitHub', 'info');
+      return;
+    }
     token = inputToken.trim();
     localStorage.setItem('devora_gh_token', token);
   }
@@ -896,7 +899,7 @@ async function syncToCloud() {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Publicando catálogo...</span>';
 
     // 1. Get current SHA from GitHub for properties.json
-    const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+    const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}?ref=main&t=${Date.now()}`;
     const getRes = await fetch(getUrl, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -947,7 +950,7 @@ async function syncToCloud() {
     if (siteContent) {
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Publicando textos...</span>';
       const contentPath = 'data/site-content.json';
-      const getContentUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${contentPath}`;
+      const getContentUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${contentPath}?ref=main&t=${Date.now()}`;
       const getContentRes = await fetch(getContentUrl, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1558,4 +1561,28 @@ function toggleFeaturedProperty(propId) {
   saveToLocal();
   renderAdminDashboard();
   showToast(prop.featured ? `Propiedad #${propId} marcada como Destacada` : `Propiedad #${propId} quitada de destacadas`, 'success');
+}
+
+
+// Download latest properties from GitHub/Cloud to this computer
+async function reloadFromCloud() {
+  if (!confirm('¿Deseás descargar la versión más reciente del catálogo publicada en la nube? Esto actualizará esta computadora con los datos de internet.')) return;
+  const btn = document.getElementById('btn-reload-cloud');
+  const origHtml = btn ? btn.innerHTML : '';
+  if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Descargando...</span>';
+
+  try {
+    const res = await fetch('./data/properties.json?v=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('No se pudo descargar el archivo del servidor');
+    properties = await res.json();
+    normalizeProperties();
+    saveToLocal();
+    renderAdminDashboard();
+    showToast('¡Catálogo descargado y sincronizado desde la nube con éxito!', 'success');
+  } catch (err) {
+    console.error('Error recargando desde la nube:', err);
+    showToast('Error al descargar desde la nube: ' + err.message, 'error');
+  } finally {
+    if (btn) btn.innerHTML = origHtml;
+  }
 }

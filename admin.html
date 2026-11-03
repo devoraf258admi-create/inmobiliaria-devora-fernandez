@@ -76,6 +76,11 @@
             <span class="hidden md:inline">Ver Sitio Web</span>
           </a>
 
+          <button onclick="reloadFromCloud()" id="btn-reload-cloud" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold rounded-xl border border-slate-700 flex items-center gap-1.5 transition" title="Traer la versión publicada en la nube a esta computadora">
+            <i class="fas fa-sync-alt text-cyan-400"></i>
+            <span class="hidden lg:inline">Traer de la Nube</span>
+          </button>
+
           <button onclick="syncToCloud()" id="btn-sync" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center gap-1.5 transition">
             <i class="fas fa-cloud-upload-alt"></i>
             <span>Publicar en Web</span>
@@ -916,6 +921,6 @@
   </div>
 
   <!-- Admin Script Logic -->
-  <script src="admin.js?v=20261102c"></script>
+  <script src="admin.js?v=20261103"></script>
 </body>
 </html>

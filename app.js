@@ -218,14 +218,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   initHeroCarousel();
 });
 
-// Fetch Properties Data
+// Fetch Properties Data (Always prioritized live from server so all computers see cloud updates)
 async function loadProperties() {
-  // Check localStorage first (so admin changes take effect immediately)
+  try {
+    const response = await fetch('./data/properties.json?v=' + Date.now(), { cache: 'no-store' });
+    if (response.ok) {
+      propertiesData = (await response.json()).filter(p => p.id !== 6 && p.id !== 12);
+      // Keep local cache synced
+      localStorage.setItem('devora_properties', JSON.stringify(propertiesData));
+      renderProperties();
+      populateLocationOptions();
+      return;
+    }
+  } catch (error) {
+    console.warn('Servidor no disponible inmediatamente, probando memoria local:', error);
+  }
+
+  // Fallback to local cache if offline
   const localData = localStorage.getItem('devora_properties');
   if (localData) {
     try {
       propertiesData = JSON.parse(localData).filter(p => p.id !== 6 && p.id !== 12);
-      localStorage.setItem('devora_properties', JSON.stringify(propertiesData));
       renderProperties();
       populateLocationOptions();
       return;
@@ -234,20 +247,10 @@ async function loadProperties() {
     }
   }
 
-  try {
-    const response = await fetch('./data/properties.json?v=' + Date.now(), { cache: 'no-store' });
-    if (!response.ok) throw new Error('No se pudo cargar el catálogo');
-    propertiesData = (await response.json()).filter(p => p.id !== 6 && p.id !== 12);
+  if (window.EMBEDDED_PROPERTIES) {
+    propertiesData = window.EMBEDDED_PROPERTIES;
     renderProperties();
     populateLocationOptions();
-  } catch (error) {
-    console.error('Error cargando propiedades:', error);
-    // Fallback if local fetch has CORS issue on file:// protocol
-    if (window.EMBEDDED_PROPERTIES) {
-      propertiesData = window.EMBEDDED_PROPERTIES;
-      renderProperties();
-      populateLocationOptions();
-    }
   }
 }
 
