@@ -44,7 +44,7 @@ function initHeroCarousel() {
 
   container.innerHTML = HERO_SLIDES.map((slide, i) => `
     <div class="hero-slide ${i === 0 ? 'active' : ''}" data-slide="${i}">
-      <img src="${slide.image}" alt="${slide.tag} - ${slide.location}">
+      <img src="${slide.image}" alt="${slide.tag} - ${slide.location}" style="object-position: ${slide.position || 'center 50%'};">
     </div>
   `).join('');
 

@@ -1125,16 +1125,20 @@ async function renderCarouselAdminList() {
          ondrop="handleCarouselDrop(event, ${index})"
          ondragend="handleCarouselDragEnd(event)">
       
-      <div class="relative h-44 bg-slate-900 overflow-hidden pointer-events-none">
-        <img src="${slide.image}" alt="${slide.tag || ''}" class="w-full h-full object-cover">
+      <div class="relative h-44 bg-slate-900 overflow-hidden cursor-pointer group/img" onclick="openCarouselRepositionModal(${index})" title="Hacé clic para encuadrar y reposicionar la foto">
+        <img src="${slide.image}" alt="${slide.tag || ''}" class="w-full h-full object-cover transition-transform group-hover/img:scale-105" style="object-position: ${slide.position || 'center 50%'};">
         
-        <div class="absolute top-2 inset-x-2 flex items-center justify-between">
+        <div class="absolute top-2 inset-x-2 flex items-center justify-between pointer-events-none">
           <span class="px-2.5 py-1 bg-slate-900/85 backdrop-blur-md text-cyan-300 text-[11px] font-extrabold rounded-lg border border-white/10 shadow">
             #${index + 1}
           </span>
-          <span class="px-2.5 py-1 bg-slate-900/85 backdrop-blur-md text-slate-300 text-[10px] font-bold rounded-lg border border-white/10 flex items-center gap-1 shadow">
-            <i class="fas fa-grip-vertical text-teal-400"></i> Arrastrar
+          <span class="px-2 py-1 bg-teal-950/90 backdrop-blur-md text-teal-300 text-[10px] font-bold rounded-lg border border-teal-500/40 flex items-center gap-1 shadow">
+            <i class="fas fa-crop-alt"></i> Encuadrar
           </span>
+        </div>
+
+        <div class="absolute bottom-2 right-2 pointer-events-none bg-slate-950/80 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-mono text-slate-300 border border-white/10">
+          ${slide.position || 'center'}
         </div>
       </div>
 
@@ -1144,7 +1148,11 @@ async function renderCarouselAdminList() {
           <p class="text-[11px] text-slate-400 truncate">${slide.location || 'Dévora Fernández Propiedades'}</p>
         </div>
         <div class="flex items-center justify-between border-t border-slate-800/80 pt-3">
-          <div class="flex items-center gap-1">
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="openCarouselRepositionModal(${index})" class="px-2.5 py-1 rounded-lg bg-teal-950/80 hover:bg-teal-900 text-teal-300 hover:text-white border border-teal-700/60 text-xs font-bold flex items-center gap-1 transition" title="Arrastrar para encuadrar">
+              <i class="fas fa-crop-alt"></i>
+              <span>Encuadrar</span>
+            </button>
             <button type="button" onclick="moveCarouselSlide(${index}, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center transition" title="Mover arriba / izquierda" ${index === 0 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''}>
               <i class="fas fa-arrow-up"></i>
             </button>
@@ -1671,4 +1679,126 @@ function handleCarouselDragEnd(event) {
   document.querySelectorAll('#carousel-admin-grid > div').forEach(el => {
     el.classList.remove('ring-2', 'ring-teal-400', 'border-teal-400', 'scale-[1.02]', 'opacity-40', 'scale-95');
   });
+}
+
+
+// ==========================================
+// DRAG TO REPOSITION (ENCUADRE FOTO CARRUSEL)
+// ==========================================
+let repositionSlideIndex = null;
+let currentRepositionPercent = 50;
+let isRepositionDragging = false;
+let repositionStartY = 0;
+let repositionStartPercent = 50;
+
+function openCarouselRepositionModal(index) {
+  repositionSlideIndex = index;
+  const slides = getCarouselSlides();
+  const slide = slides[index];
+  if (!slide) return;
+
+  const modal = document.getElementById('modal-reposition-carousel');
+  const img = document.getElementById('reposition-img');
+  const slider = document.getElementById('reposition-slider');
+  const label = document.getElementById('reposition-percent-label');
+
+  let initPercent = 50;
+  if (slide.position) {
+    const match = slide.position.match(/(\d+)%/);
+    if (match) initPercent = parseInt(match[1]);
+  } else if (typeof slide.positionY === 'number') {
+    initPercent = slide.positionY;
+  }
+
+  currentRepositionPercent = initPercent;
+  if (img) {
+    img.src = slide.image;
+    img.style.objectPosition = `center ${currentRepositionPercent}%`;
+  }
+  if (slider) slider.value = currentRepositionPercent;
+  if (label) label.textContent = `${currentRepositionPercent}%`;
+
+  if (modal) modal.classList.remove('hidden');
+
+  setupRepositionDragHandlers();
+}
+
+function closeCarouselRepositionModal() {
+  const modal = document.getElementById('modal-reposition-carousel');
+  if (modal) modal.classList.add('hidden');
+  repositionSlideIndex = null;
+}
+
+function setRepositionPercent(val) {
+  currentRepositionPercent = Math.max(0, Math.min(100, Math.round(val)));
+  const img = document.getElementById('reposition-img');
+  const slider = document.getElementById('reposition-slider');
+  const label = document.getElementById('reposition-percent-label');
+
+  if (img) img.style.objectPosition = `center ${currentRepositionPercent}%`;
+  if (slider) slider.value = currentRepositionPercent;
+  if (label) label.textContent = `${currentRepositionPercent}%`;
+}
+
+function onRepositionSliderInput(val) {
+  setRepositionPercent(val);
+}
+
+function setupRepositionDragHandlers() {
+  const box = document.getElementById('reposition-box');
+  if (!box || box.dataset.dragInitialized) return;
+  box.dataset.dragInitialized = 'true';
+
+  const onStart = (clientY) => {
+    isRepositionDragging = true;
+    repositionStartY = clientY;
+    repositionStartPercent = currentRepositionPercent;
+    box.classList.add('cursor-grabbing');
+  };
+
+  const onMove = (clientY) => {
+    if (!isRepositionDragging) return;
+    const deltaY = clientY - repositionStartY;
+    const boxHeight = box.clientHeight || 400;
+    const deltaPercent = (deltaY / boxHeight) * 100;
+    setRepositionPercent(repositionStartPercent - deltaPercent);
+  };
+
+  const onEnd = () => {
+    isRepositionDragging = false;
+    box.classList.remove('cursor-grabbing');
+  };
+
+  box.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    onStart(e.clientY);
+  });
+  window.addEventListener('mousemove', (e) => onMove(e.clientY));
+  window.addEventListener('mouseup', onEnd);
+
+  box.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches[0]) onStart(e.touches[0].clientY);
+  }, { passive: true });
+  window.addEventListener('touchmove', (e) => {
+    if (isRepositionDragging && e.touches && e.touches[0]) onMove(e.touches[0].clientY);
+  }, { passive: true });
+  window.addEventListener('touchend', onEnd);
+}
+
+function saveCarouselReposition() {
+  if (repositionSlideIndex === null) return;
+  if (!siteContent) siteContent = {};
+  if (!Array.isArray(siteContent.carousel)) {
+    siteContent.carousel = [...DEFAULT_CAROUSEL_SLIDES];
+  }
+
+  const slide = siteContent.carousel[repositionSlideIndex];
+  if (slide) {
+    slide.position = `center ${currentRepositionPercent}%`;
+    slide.positionY = currentRepositionPercent;
+    localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+    renderCarouselAdminList();
+    showToast(`¡Encuadre guardado al ${currentRepositionPercent}%! Hacé clic en "Publicar en Web" para reflejarlo.`, 'success');
+  }
+  closeCarouselRepositionModal();
 }
