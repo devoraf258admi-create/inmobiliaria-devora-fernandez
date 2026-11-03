@@ -927,11 +927,11 @@
       <div class="flex items-start justify-between border-b border-slate-800 pb-4">
         <div>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-bold uppercase tracking-wider mb-2">
-            <i class="fas fa-crop-alt"></i> Encuadre Visual
+            <i class="fas fa-crop-alt"></i> Encuadre Libre 2D
           </span>
           <h3 class="text-xl font-extrabold text-white">Arrastrar para Encuadrar la Foto</h3>
           <p class="text-xs text-slate-400 mt-1">
-            Hacé clic y arrastrá la foto verticalmente con el mouse para posicionar la altura exacta que se mostrará en el carrusel de la página.
+            Hacé clic y arrastrá la foto en cualquier dirección (arriba, abajo, izquierda, derecha) para elegir el encuadre exacto del carrusel.
           </p>
         </div>
         <button type="button" onclick="closeCarouselRepositionModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition">
@@ -942,32 +942,62 @@
       <!-- Live Drag & Reposition Banner Box -->
       <div class="flex flex-col gap-3">
         <div id="reposition-box" class="relative w-full h-[320px] sm:h-[400px] md:h-[440px] rounded-2xl overflow-hidden border-2 border-teal-500/70 bg-slate-950 cursor-grab active:cursor-grabbing select-none group shadow-2xl">
-          <img id="reposition-img" src="" alt="Encuadre" class="w-full h-full object-cover pointer-events-none transition-none" style="object-position: center 50%;">
+          <img id="reposition-img" src="" alt="Encuadre" class="w-full h-full object-cover pointer-events-none transition-none" style="object-position: 50% 50%;">
           
           <!-- Helper floating badge -->
           <div class="absolute top-3 left-1/2 -translate-x-1/2 pointer-events-none bg-slate-950/85 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 text-xs font-semibold text-slate-200 shadow-xl flex items-center gap-2">
-            <i class="fas fa-arrows-alt-v text-teal-400"></i>
-            <span>Arrastrá con el mouse arriba / abajo</span>
+            <i class="fas fa-arrows-alt text-teal-400"></i>
+            <span>Arrastrá libremente en cualquier dirección</span>
           </div>
 
-          <!-- Position percentage indicator -->
+          <!-- Position coordinates indicator -->
           <div class="absolute bottom-3 right-3 pointer-events-none bg-slate-950/90 backdrop-blur-md px-3.5 py-1 rounded-xl border border-white/10 text-xs font-mono text-cyan-300 shadow">
-            Altura foco: <span id="reposition-percent-label">50%</span>
+            <span id="reposition-percent-label">X: 50% | Y: 50%</span>
           </div>
         </div>
 
-        <!-- Fine-tuning Slider & Presets -->
-        <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-3 w-full sm:w-auto flex-1">
-            <span class="text-xs text-slate-400 whitespace-nowrap">Ajuste fino:</span>
-            <input type="range" id="reposition-slider" min="0" max="100" value="50" oninput="onRepositionSliderInput(this.value)" class="w-full accent-teal-400 cursor-pointer">
+        <!-- 2D Fine-tuning Sliders & Presets -->
+        <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 flex flex-col gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Horizontal Slider -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center justify-between text-xs text-slate-300">
+                <span class="flex items-center gap-1.5 font-semibold"><i class="fas fa-arrows-alt-h text-cyan-400"></i> Costados (Horizontal):</span>
+                <span id="label-slider-x" class="font-mono text-cyan-300">50%</span>
+              </div>
+              <input type="range" id="reposition-slider-x" min="0" max="100" value="50" oninput="onRepositionSliderX(this.value)" class="w-full accent-cyan-400 cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-500">
+                <span>0% (Izquierda)</span>
+                <span>50% (Centro)</span>
+                <span>100% (Derecha)</span>
+              </div>
+            </div>
+
+            <!-- Vertical Slider -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center justify-between text-xs text-slate-300">
+                <span class="flex items-center gap-1.5 font-semibold"><i class="fas fa-arrows-alt-v text-teal-400"></i> Altura (Vertical):</span>
+                <span id="label-slider-y" class="font-mono text-teal-300">50%</span>
+              </div>
+              <input type="range" id="reposition-slider-y" min="0" max="100" value="50" oninput="onRepositionSliderY(this.value)" class="w-full accent-teal-400 cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-500">
+                <span>0% (Arriba)</span>
+                <span>50% (Centro)</span>
+                <span>100% (Abajo)</span>
+              </div>
+            </div>
           </div>
 
-          <div class="flex items-center gap-2 shrink-0">
-            <span class="text-xs text-slate-400">Atajos:</span>
-            <button type="button" onclick="setRepositionPercent(0)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">Arriba (0%)</button>
-            <button type="button" onclick="setRepositionPercent(50)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">Centro (50%)</button>
-            <button type="button" onclick="setRepositionPercent(100)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">Abajo (100%)</button>
+          <!-- Quick Presets -->
+          <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-800/80 pt-3">
+            <span class="text-xs text-slate-400 font-medium">Atajos rápidos:</span>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button type="button" onclick="setReposition2D(50, 50)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-teal-300 text-xs font-bold rounded-lg border border-slate-700 transition">Centrar Todo (50% 50%)</button>
+              <button type="button" onclick="setReposition2D(currentRepositionX, 0)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">Arriba</button>
+              <button type="button" onclick="setReposition2D(currentRepositionX, 100)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">Abajo</button>
+              <button type="button" onclick="setReposition2D(0, currentRepositionY)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">Izquierda</button>
+              <button type="button" onclick="setReposition2D(100, currentRepositionY)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">Derecha</button>
+            </div>
           </div>
         </div>
       </div>
@@ -992,6 +1022,6 @@
   </div>
 
   <!-- Admin Script Logic -->
-  <script src="admin.js?v=20261103c"></script>
+  <script src="admin.js?v=20261103d"></script>
 </body>
 </html>

@@ -1683,13 +1683,16 @@ function handleCarouselDragEnd(event) {
 
 
 // ==========================================
-// DRAG TO REPOSITION (ENCUADRE FOTO CARRUSEL)
+// DRAG TO REPOSITION 2D (ENCUADRE HORIZONTAL Y VERTICAL)
 // ==========================================
 let repositionSlideIndex = null;
-let currentRepositionPercent = 50;
+let currentRepositionX = 50;
+let currentRepositionY = 50;
 let isRepositionDragging = false;
+let repositionStartX = 0;
 let repositionStartY = 0;
-let repositionStartPercent = 50;
+let repositionStartPercentX = 50;
+let repositionStartPercentY = 50;
 
 function openCarouselRepositionModal(index) {
   repositionSlideIndex = index;
@@ -1699,24 +1702,49 @@ function openCarouselRepositionModal(index) {
 
   const modal = document.getElementById('modal-reposition-carousel');
   const img = document.getElementById('reposition-img');
-  const slider = document.getElementById('reposition-slider');
-  const label = document.getElementById('reposition-percent-label');
 
-  let initPercent = 50;
+  let initX = 50;
+  let initY = 50;
+
   if (slide.position) {
-    const match = slide.position.match(/(\d+)%/);
-    if (match) initPercent = parseInt(match[1]);
-  } else if (typeof slide.positionY === 'number') {
-    initPercent = slide.positionY;
+    const parts = slide.position.trim().split(/\s+/);
+    if (parts.length === 2) {
+      if (parts[0] === 'left') initX = 0;
+      else if (parts[0] === 'right') initX = 100;
+      else if (parts[0] === 'center') initX = 50;
+      else {
+        const mx = parts[0].match(/(\d+)%/);
+        if (mx) initX = parseInt(mx[1]);
+      }
+
+      if (parts[1] === 'top') initY = 0;
+      else if (parts[1] === 'bottom') initY = 100;
+      else if (parts[1] === 'center') initY = 50;
+      else {
+        const my = parts[1].match(/(\d+)%/);
+        if (my) initY = parseInt(my[1]);
+      }
+    } else {
+      const matches = slide.position.match(/(\d+)%/g);
+      if (matches && matches.length >= 2) {
+        initX = parseInt(matches[0]);
+        initY = parseInt(matches[1]);
+      } else if (matches && matches.length === 1) {
+        initY = parseInt(matches[0]);
+      }
+    }
   }
 
-  currentRepositionPercent = initPercent;
+  if (typeof slide.positionX === 'number') initX = slide.positionX;
+  if (typeof slide.positionY === 'number') initY = slide.positionY;
+
+  currentRepositionX = initX;
+  currentRepositionY = initY;
+
   if (img) {
     img.src = slide.image;
-    img.style.objectPosition = `center ${currentRepositionPercent}%`;
   }
-  if (slider) slider.value = currentRepositionPercent;
-  if (label) label.textContent = `${currentRepositionPercent}%`;
+  setReposition2D(currentRepositionX, currentRepositionY);
 
   if (modal) modal.classList.remove('hidden');
 
@@ -1729,19 +1757,31 @@ function closeCarouselRepositionModal() {
   repositionSlideIndex = null;
 }
 
-function setRepositionPercent(val) {
-  currentRepositionPercent = Math.max(0, Math.min(100, Math.round(val)));
+function setReposition2D(x, y) {
+  currentRepositionX = Math.max(0, Math.min(100, Math.round(x)));
+  currentRepositionY = Math.max(0, Math.min(100, Math.round(y)));
+
   const img = document.getElementById('reposition-img');
-  const slider = document.getElementById('reposition-slider');
+  const sliderX = document.getElementById('reposition-slider-x');
+  const sliderY = document.getElementById('reposition-slider-y');
+  const labelX = document.getElementById('label-slider-x');
+  const labelY = document.getElementById('label-slider-y');
   const label = document.getElementById('reposition-percent-label');
 
-  if (img) img.style.objectPosition = `center ${currentRepositionPercent}%`;
-  if (slider) slider.value = currentRepositionPercent;
-  if (label) label.textContent = `${currentRepositionPercent}%`;
+  if (img) img.style.objectPosition = `${currentRepositionX}% ${currentRepositionY}%`;
+  if (sliderX) sliderX.value = currentRepositionX;
+  if (sliderY) sliderY.value = currentRepositionY;
+  if (labelX) labelX.textContent = `${currentRepositionX}%`;
+  if (labelY) labelY.textContent = `${currentRepositionY}%`;
+  if (label) label.textContent = `X: ${currentRepositionX}% | Y: ${currentRepositionY}%`;
 }
 
-function onRepositionSliderInput(val) {
-  setRepositionPercent(val);
+function onRepositionSliderX(val) {
+  setReposition2D(val, currentRepositionY);
+}
+
+function onRepositionSliderY(val) {
+  setReposition2D(currentRepositionX, val);
 }
 
 function setupRepositionDragHandlers() {
@@ -1749,19 +1789,29 @@ function setupRepositionDragHandlers() {
   if (!box || box.dataset.dragInitialized) return;
   box.dataset.dragInitialized = 'true';
 
-  const onStart = (clientY) => {
+  const onStart = (clientX, clientY) => {
     isRepositionDragging = true;
+    repositionStartX = clientX;
     repositionStartY = clientY;
-    repositionStartPercent = currentRepositionPercent;
+    repositionStartPercentX = currentRepositionX;
+    repositionStartPercentY = currentRepositionY;
     box.classList.add('cursor-grabbing');
   };
 
-  const onMove = (clientY) => {
+  const onMove = (clientX, clientY) => {
     if (!isRepositionDragging) return;
+    const deltaX = clientX - repositionStartX;
     const deltaY = clientY - repositionStartY;
+    const boxWidth = box.clientWidth || 800;
     const boxHeight = box.clientHeight || 400;
-    const deltaPercent = (deltaY / boxHeight) * 100;
-    setRepositionPercent(repositionStartPercent - deltaPercent);
+
+    const deltaPercentX = (deltaX / boxWidth) * 100;
+    const deltaPercentY = (deltaY / boxHeight) * 100;
+
+    setReposition2D(
+      repositionStartPercentX - deltaPercentX,
+      repositionStartPercentY - deltaPercentY
+    );
   };
 
   const onEnd = () => {
@@ -1771,16 +1821,16 @@ function setupRepositionDragHandlers() {
 
   box.addEventListener('mousedown', (e) => {
     e.preventDefault();
-    onStart(e.clientY);
+    onStart(e.clientX, e.clientY);
   });
-  window.addEventListener('mousemove', (e) => onMove(e.clientY));
+  window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
   window.addEventListener('mouseup', onEnd);
 
   box.addEventListener('touchstart', (e) => {
-    if (e.touches && e.touches[0]) onStart(e.touches[0].clientY);
+    if (e.touches && e.touches[0]) onStart(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
   window.addEventListener('touchmove', (e) => {
-    if (isRepositionDragging && e.touches && e.touches[0]) onMove(e.touches[0].clientY);
+    if (isRepositionDragging && e.touches && e.touches[0]) onMove(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
   window.addEventListener('touchend', onEnd);
 }
@@ -1794,11 +1844,12 @@ function saveCarouselReposition() {
 
   const slide = siteContent.carousel[repositionSlideIndex];
   if (slide) {
-    slide.position = `center ${currentRepositionPercent}%`;
-    slide.positionY = currentRepositionPercent;
+    slide.position = `${currentRepositionX}% ${currentRepositionY}%`;
+    slide.positionX = currentRepositionX;
+    slide.positionY = currentRepositionY;
     localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
     renderCarouselAdminList();
-    showToast(`¡Encuadre guardado al ${currentRepositionPercent}%! Hacé clic en "Publicar en Web" para reflejarlo.`, 'success');
+    showToast(`¡Encuadre guardado (X: ${currentRepositionX}%, Y: ${currentRepositionY}%)! Hacé clic en "Publicar en Web".`, 'success');
   }
   closeCarouselRepositionModal();
 }
