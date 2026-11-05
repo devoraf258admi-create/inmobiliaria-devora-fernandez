@@ -295,8 +295,9 @@ function renderFeaturedProperties() {
   const container = document.getElementById('featured-container');
   if (!container) return;
 
-  // Prioritize properties marked as featured (limit to 3)
+  // Prioritize properties marked as featured (limit to 3, sorted by user order)
   let featured = propertiesData.filter(p => p.featured);
+  featured.sort((a, b) => (a.featuredOrder || 99) - (b.featuredOrder || 99));
   if (featured.length === 0) {
     featured = propertiesData.slice(0, 3);
   } else if (featured.length > 3) {

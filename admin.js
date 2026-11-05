@@ -98,12 +98,7 @@ function previewMainImageLarge() {
   const input = document.getElementById('prop-image');
   const src = (input ? input.value : '') || document.getElementById('main-image-preview')?.src;
   if (!src) return;
-  const modal = document.getElementById('admin-gallery-lightbox');
-  const img = document.getElementById('admin-lightbox-img');
-  const counter = document.getElementById('admin-lightbox-counter');
-  if (img) img.src = src;
-  if (counter) counter.textContent = 'Foto Principal (Portada)';
-  if (modal) modal.classList.remove('hidden');
+  openAdminImageLightbox([src], 0, 'Foto Principal (Portada)');
 }
 
 // Handle Gallery Files from PC (Multiple)
@@ -226,21 +221,26 @@ function renderGalleryPreviews() {
   });
 }
 
-// Lightbox modal functions for admin
-function openAdminLightbox(index) {
-  if (!currentGalleryImages || currentGalleryImages.length === 0) return;
+// Lightbox modal functions for admin (supporting property gallery, carousel, and featured properties)
+let adminLightboxList = [];
+let adminLightboxTitle = '';
+
+function openAdminImageLightbox(images, index = 0, title = '') {
+  if (!images || images.length === 0) return;
+  adminLightboxList = images.filter(Boolean);
+  if (adminLightboxList.length === 0) return;
   if (index < 0) index = 0;
-  if (index >= currentGalleryImages.length) index = currentGalleryImages.length - 1;
+  if (index >= adminLightboxList.length) index = adminLightboxList.length - 1;
   adminLightboxIndex = index;
+  adminLightboxTitle = title;
 
   const modal = document.getElementById('admin-gallery-lightbox');
-  const img = document.getElementById('admin-lightbox-img');
-  const counter = document.getElementById('admin-lightbox-counter');
-
-  if (img) img.src = currentGalleryImages[adminLightboxIndex];
-  if (counter) counter.textContent = `Foto ${adminLightboxIndex + 1} de ${currentGalleryImages.length}`;
-
+  updateAdminLightboxView();
   if (modal) modal.classList.remove('hidden');
+}
+
+function openAdminLightbox(index) {
+  openAdminImageLightbox(currentGalleryImages, index, 'Galería de la Propiedad');
 }
 
 function closeAdminLightbox() {
@@ -249,22 +249,27 @@ function closeAdminLightbox() {
 }
 
 function adminLightboxPrev() {
-  if (!currentGalleryImages || currentGalleryImages.length <= 1) return;
-  adminLightboxIndex = (adminLightboxIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+  if (!adminLightboxList || adminLightboxList.length <= 1) return;
+  adminLightboxIndex = (adminLightboxIndex - 1 + adminLightboxList.length) % adminLightboxList.length;
   updateAdminLightboxView();
 }
 
 function adminLightboxNext() {
-  if (!currentGalleryImages || currentGalleryImages.length <= 1) return;
-  adminLightboxIndex = (adminLightboxIndex + 1) % currentGalleryImages.length;
+  if (!adminLightboxList || adminLightboxList.length <= 1) return;
+  adminLightboxIndex = (adminLightboxIndex + 1) % adminLightboxList.length;
   updateAdminLightboxView();
 }
 
 function updateAdminLightboxView() {
   const img = document.getElementById('admin-lightbox-img');
   const counter = document.getElementById('admin-lightbox-counter');
-  if (img) img.src = currentGalleryImages[adminLightboxIndex];
-  if (counter) counter.textContent = `Foto ${adminLightboxIndex + 1} de ${currentGalleryImages.length}`;
+  if (img && adminLightboxList[adminLightboxIndex]) {
+    img.src = adminLightboxList[adminLightboxIndex];
+  }
+  if (counter) {
+    const prefix = adminLightboxTitle ? `${adminLightboxTitle} · ` : '';
+    counter.textContent = `${prefix}Foto ${adminLightboxIndex + 1} de ${adminLightboxList.length}`;
+  }
 }
 
 // Keyboard shortcuts for admin lightbox
@@ -1268,16 +1273,21 @@ async function renderCarouselAdminList() {
          ondrop="handleCarouselDrop(event, ${index})"
          ondragend="handleCarouselDragEnd(event)">
       
-      <div class="relative h-44 bg-slate-900 overflow-hidden cursor-pointer group/img" onclick="openCarouselRepositionModal(${index})" title="Hacé clic para encuadrar y reposicionar la foto">
+      <div class="relative h-44 bg-slate-900 overflow-hidden cursor-pointer group/img" onclick="openCarouselRepositionModal(${index})" ondblclick="event.stopPropagation(); openAdminImageLightbox(getCarouselSlides().map(s => s.image), ${index}, 'Carrusel de Portada')" title="Hacé clic para encuadrar o doble clic para ver en grande">
         <img src="${slide.image}" alt="${slide.tag || ''}" class="w-full h-full object-cover transition-transform group-hover/img:scale-105" style="object-position: ${slide.position || 'center 50%'};">
         
         <div class="absolute top-2 inset-x-2 flex items-center justify-between pointer-events-none">
           <span class="px-2.5 py-1 bg-slate-900/85 backdrop-blur-md text-cyan-300 text-[11px] font-extrabold rounded-lg border border-white/10 shadow">
             #${index + 1}
           </span>
-          <span class="px-2 py-1 bg-teal-950/90 backdrop-blur-md text-teal-300 text-[10px] font-bold rounded-lg border border-teal-500/40 flex items-center gap-1 shadow">
-            <i class="fas fa-crop-alt"></i> Encuadrar
-          </span>
+          <div class="flex items-center gap-1.5 pointer-events-auto">
+            <button type="button" onclick="event.stopPropagation(); openAdminImageLightbox(getCarouselSlides().map(s => s.image), ${index}, 'Carrusel de Portada')" class="px-2.5 py-1 bg-slate-900/85 hover:bg-teal-600 text-teal-300 hover:text-white text-[10px] font-bold rounded-lg border border-teal-500/40 flex items-center gap-1 shadow transition cursor-pointer" title="Ver foto grande a pantalla completa">
+              <i class="fas fa-search-plus"></i> Ver grande
+            </button>
+            <span class="px-2 py-1 bg-teal-950/90 backdrop-blur-md text-teal-300 text-[10px] font-bold rounded-lg border border-teal-500/40 flex items-center gap-1 shadow">
+              <i class="fas fa-crop-alt"></i> Encuadrar
+            </span>
+          </div>
         </div>
 
         <div class="absolute bottom-2 right-2 pointer-events-none bg-slate-950/80 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-mono text-slate-300 border border-white/10">
@@ -1292,6 +1302,10 @@ async function renderCarouselAdminList() {
         </div>
         <div class="flex items-center justify-between border-t border-slate-800/80 pt-3">
           <div class="flex items-center gap-1.5">
+            <button type="button" onclick="openAdminImageLightbox(getCarouselSlides().map(s => s.image), ${index}, 'Carrusel de Portada')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-teal-600 text-slate-200 hover:text-white border border-slate-700 text-xs font-bold flex items-center gap-1 transition cursor-pointer" title="Ver foto en pantalla completa">
+              <i class="fas fa-search-plus text-teal-400"></i>
+              <span>Ver</span>
+            </button>
             <button type="button" onclick="openCarouselRepositionModal(${index})" class="px-2.5 py-1 rounded-lg bg-teal-950/80 hover:bg-teal-900 text-teal-300 hover:text-white border border-teal-700/60 text-xs font-bold flex items-center gap-1 transition" title="Arrastrar para encuadrar">
               <i class="fas fa-crop-alt"></i>
               <span>Encuadrar</span>
@@ -1553,13 +1567,166 @@ function getFaqsFromAdminForm() {
 // FEATURED PROPERTIES MANAGEMENT (ADMIN)
 // ==========================================
 
+// Helper to get featured properties sorted by order
+function getFeaturedProperties() {
+  const feat = properties.filter(p => p.featured);
+  feat.sort((a, b) => (a.featuredOrder || 99) - (b.featuredOrder || 99));
+  return feat;
+}
+
+// Move a featured property up/down in the 3 slots
+function moveFeaturedSlot(index, direction) {
+  const featured = getFeaturedProperties();
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= featured.length) return;
+
+  const propA = featured[index];
+  const propB = featured[targetIndex];
+
+  // Swap their order positions
+  const tempOrder = propA.featuredOrder || (index + 1);
+  propA.featuredOrder = propB.featuredOrder || (targetIndex + 1);
+  propB.featuredOrder = tempOrder;
+
+  // Guarantee clean 1, 2, 3 indexing
+  const reordered = [propA, propB];
+  featured.forEach((p, idx) => {
+    if (idx === index) p.featuredOrder = targetIndex + 1;
+    else if (idx === targetIndex) p.featuredOrder = index + 1;
+    else p.featuredOrder = idx + 1;
+  });
+
+  saveToLocal();
+  renderAdminDashboard();
+  showToast(`¡Propiedad movida al Puesto #${targetIndex + 1} de portada!`, 'success');
+}
+
+// Drag & Drop for Featured Properties
+let featuredDragSrcIndex = null;
+
+function handleFeaturedDragStart(e, index) {
+  featuredDragSrcIndex = index;
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleFeaturedDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+
+function handleFeaturedDrop(e, targetIndex) {
+  e.preventDefault();
+  if (featuredDragSrcIndex === null || featuredDragSrcIndex === targetIndex) return;
+  const featured = getFeaturedProperties();
+  if (!featured[featuredDragSrcIndex] || !featured[targetIndex]) return;
+
+  const moved = featured.splice(featuredDragSrcIndex, 1)[0];
+  featured.splice(targetIndex, 0, moved);
+
+  featured.forEach((p, idx) => {
+    p.featuredOrder = idx + 1;
+  });
+
+  featuredDragSrcIndex = null;
+  saveToLocal();
+  renderAdminDashboard();
+  showToast('¡Orden de destacadas actualizado! Tocá "Publicar Web" para reflejarlo.', 'success');
+}
+
+// Quick Gallery Picker for Featured Property (Select any photo from gallery to be main photo)
+function openFeaturedGalleryPicker(propId) {
+  const prop = properties.find(p => p.id === propId);
+  if (!prop) return;
+
+  const images = [];
+  if (prop.image) images.push(prop.image);
+  if (Array.isArray(prop.gallery)) {
+    prop.gallery.forEach(img => {
+      if (img && !images.includes(img)) images.push(img);
+    });
+  }
+
+  if (images.length === 0) {
+    showToast('Esta propiedad no tiene fotos cargadas todavía.', 'info');
+    return;
+  }
+
+  let modal = document.getElementById('featured-gallery-picker-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'featured-gallery-picker-modal';
+    modal.className = 'fixed inset-0 z-[9990] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[85vh] flex flex-col" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div>
+          <h4 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fas fa-images text-amber-400"></i> Elegir foto de portada para la destacada
+          </h4>
+          <p class="text-xs text-slate-400 mt-0.5 line-clamp-1">${prop.title}</p>
+        </div>
+        <button type="button" onclick="closeFeaturedGalleryPicker()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-white flex items-center justify-center transition">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between my-3 text-xs">
+        <span class="text-teal-400 font-semibold"><i class="fas fa-hand-pointer mr-1"></i>Hacé clic sobre la foto que quieras usar de portada:</span>
+        <span class="text-slate-400 font-mono">${images.length} fotos</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 overflow-y-auto flex-1 p-1">
+        ${images.map((imgSrc, idx) => `
+          <div onclick="selectFeaturedPhoto(${prop.id}, '${encodeURIComponent(imgSrc)}')" class="relative h-28 rounded-xl overflow-hidden border-2 cursor-pointer transition-all hover:scale-105 shadow group ${prop.image === imgSrc ? 'border-amber-400 ring-2 ring-amber-400/50' : 'border-slate-700 hover:border-teal-400'}">
+            <img src="${imgSrc}" alt="" class="w-full h-full object-cover">
+            ${prop.image === imgSrc ? '<span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-amber-500 text-slate-950 text-[10px] font-black shadow">ACTUAL</span>' : ''}
+            <div class="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs font-bold text-white">
+              Elegir esta
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="pt-4 mt-2 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <button type="button" onclick="closeFeaturedGalleryPicker(); openModalEdit(${prop.id})" class="text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1.5 font-bold">
+          <i class="fas fa-sort-amount-down"></i> Abrir editor para reordenar todas las fotos de esta propiedad
+        </button>
+        <button type="button" onclick="closeFeaturedGalleryPicker()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+}
+
+function closeFeaturedGalleryPicker() {
+  const modal = document.getElementById('featured-gallery-picker-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function selectFeaturedPhoto(propId, encodedUrl) {
+  const prop = properties.find(p => p.id === propId);
+  if (!prop) return;
+  const newPhoto = decodeURIComponent(encodedUrl);
+  prop.image = newPhoto;
+  saveToLocal();
+  renderAdminDashboard();
+  closeFeaturedGalleryPicker();
+  showToast('¡Foto de portada de la destacada actualizada!', 'success');
+}
+
 // Render Featured Properties Section in Admin
 function renderAdminFeaturedPanel() {
   const grid = document.getElementById('admin-featured-grid');
   if (!grid) return;
 
-  // Get current featured properties
-  const featured = properties.filter(p => p.featured);
+  // Get current featured properties sorted by order
+  const featured = getFeaturedProperties();
   
   // We manage 3 slots for the home page
   const slots = [0, 1, 2];
@@ -1569,7 +1736,7 @@ function renderAdminFeaturedPanel() {
 
     if (!prop) {
       return `
-        <div class="bg-slate-950/70 border border-dashed border-slate-700/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center min-h-[310px] group hover:border-amber-400/50 transition">
+        <div class="bg-slate-950/70 border border-dashed border-slate-700/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center min-h-[340px] group hover:border-amber-400/50 transition">
           <div class="w-12 h-12 rounded-full bg-slate-800 text-amber-400 flex items-center justify-center text-lg mb-3 shadow-inner">
             <i class="fas fa-star"></i>
           </div>
@@ -1583,17 +1750,65 @@ function renderAdminFeaturedPanel() {
       `;
     }
 
+    const hasMultiplePhotos = Array.isArray(prop.gallery) && prop.gallery.length > 0;
+
     return `
-      <div class="bg-slate-950 border border-slate-800 hover:border-amber-500/40 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between transition group">
-        <!-- Photo with Badge -->
-        <div class="relative h-44 bg-slate-900 overflow-hidden">
-          <img id="featured-img-preview-${prop.id}" src="${prop.image || 'assets/img/logo.png'}" alt="${prop.title}" class="w-full h-full object-cover">
-          <span class="absolute top-2 left-2 px-2.5 py-1 bg-slate-900/90 backdrop-blur-md text-amber-400 text-[11px] font-extrabold rounded-lg border border-amber-400/40 flex items-center gap-1 shadow-md">
-            <i class="fas fa-star text-amber-400"></i> Puesto #${index + 1} Destacada
-          </span>
-          <span class="absolute top-2 right-2 px-2 py-0.5 bg-slate-900/80 backdrop-blur-md text-slate-300 text-[10px] font-mono rounded">
-            #${prop.id}
-          </span>
+      <div
+        class="bg-slate-950 border border-slate-800 hover:border-amber-500/50 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between transition group cursor-grab active:cursor-grabbing select-none"
+        draggable="true"
+        ondragstart="handleFeaturedDragStart(event, ${index})"
+        ondragover="handleFeaturedDragOver(event)"
+        ondrop="handleFeaturedDrop(event, ${index})"
+        title="Arrastrá para reordenar este puesto destacado"
+      >
+        <!-- Photo with Badge & Controls -->
+        <div class="relative h-48 bg-slate-900 overflow-hidden cursor-pointer group/img" onclick="openAdminImageLightbox(getFeaturedProperties().map(p => p.image), ${index}, 'Propiedades Destacadas')" title="Hacé clic para ver en grande">
+          <img id="featured-img-preview-${prop.id}" src="${prop.image || 'assets/img/logo.png'}" alt="${prop.title}" class="w-full h-full object-cover transition-transform group-hover/img:scale-105">
+          
+          <!-- Top bar with Slot Badge and Large View Button -->
+          <div class="absolute top-2 inset-x-2 flex items-center justify-between pointer-events-none">
+            <span class="px-2.5 py-1 bg-slate-950/90 backdrop-blur-md text-amber-400 text-xs font-black rounded-lg border border-amber-400/40 flex items-center gap-1 shadow-md">
+              <i class="fas fa-star text-amber-400"></i> Puesto #${index + 1}
+            </span>
+            <div class="flex items-center gap-1 pointer-events-auto">
+              <button
+                type="button"
+                onclick="event.stopPropagation(); openAdminImageLightbox(getFeaturedProperties().map(p => p.image), ${index}, 'Propiedades Destacadas')"
+                class="px-2.5 py-1 bg-slate-950/85 hover:bg-teal-600 text-teal-300 hover:text-white text-[11px] font-bold rounded-lg border border-white/20 flex items-center gap-1 shadow transition cursor-pointer"
+                title="Ver foto grande a pantalla completa"
+              >
+                <i class="fas fa-search-plus"></i> Ver grande
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom bar with ID and Move Arrows -->
+          <div class="absolute bottom-2 inset-x-2 flex items-center justify-between pointer-events-none">
+            <span class="px-2 py-0.5 bg-slate-950/85 backdrop-blur-md text-slate-300 text-[10px] font-mono rounded border border-white/10">
+              #${prop.id}
+            </span>
+            
+            <!-- Quick Move Slot Buttons -->
+            <div class="flex items-center gap-1 pointer-events-auto bg-slate-950/85 backdrop-blur-md p-1 rounded-lg border border-white/15 shadow">
+              <button
+                type="button"
+                onclick="event.stopPropagation(); moveFeaturedSlot(${index}, -1)"
+                ${index === 0 ? 'disabled class="opacity-30 cursor-not-allowed px-1.5 py-0.5 text-slate-400 text-xs"' : 'class="px-2 py-0.5 bg-amber-500/20 hover:bg-amber-500 hover:text-slate-950 text-amber-300 rounded text-xs font-bold transition cursor-pointer"'}
+                title="Mover al puesto anterior (#${index})"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <span class="text-[10px] text-white/70 font-bold px-1">Puesto ${index + 1}</span>
+              <button
+                type="button"
+                onclick="event.stopPropagation(); moveFeaturedSlot(${index}, 1)"
+                ${index === featured.length - 1 ? 'disabled class="opacity-30 cursor-not-allowed px-1.5 py-0.5 text-slate-400 text-xs"' : 'class="px-2 py-0.5 bg-amber-500/20 hover:bg-amber-500 hover:text-slate-950 text-amber-300 rounded text-xs font-bold transition cursor-pointer"'}
+                title="Mover al puesto siguiente (#${index + 2})"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Info Body -->
@@ -1609,22 +1824,31 @@ function renderAdminFeaturedPanel() {
 
           <!-- Direct Photo Change & Property Assign Controls -->
           <div class="space-y-2 border-t border-slate-800 pt-3">
-            <label class="block text-[11px] font-semibold text-cyan-300 flex items-center gap-1">
-              <i class="fas fa-camera"></i> Modificar foto de esta destacada:
-            </label>
+            <div class="flex items-center justify-between text-[11px] font-semibold text-cyan-300">
+              <span class="flex items-center gap-1"><i class="fas fa-camera"></i> Foto de esta destacada:</span>
+              <button type="button" onclick="openModalEdit(${prop.id})" class="text-[10px] text-teal-400 hover:underline flex items-center gap-1 font-bold">
+                <i class="fas fa-sort-amount-down"></i> Ordenar fotos
+              </button>
+            </div>
             
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
               <!-- Upload from PC -->
-              <label class="px-2.5 py-2 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 border border-teal-500/40 text-teal-300 text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition text-center shadow-sm">
+              <label class="px-2 py-1.5 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 border border-teal-500/40 text-teal-300 text-[11px] font-bold flex items-center justify-center gap-1 cursor-pointer transition text-center shadow-sm">
                 <i class="fas fa-upload text-xs"></i>
-                <span>Subir de PC</span>
+                <span>De PC</span>
                 <input type="file" accept="image/*" onchange="handleFeaturedImageUpload(${prop.id}, event)" class="hidden">
               </label>
 
               <!-- Edit URL -->
-              <button type="button" onclick="promptChangeFeaturedUrl(${prop.id})" class="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition text-center">
+              <button type="button" onclick="promptChangeFeaturedUrl(${prop.id})" class="px-2 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-[11px] font-semibold flex items-center justify-center gap-1 transition text-center">
                 <i class="fas fa-link text-xs"></i>
                 <span>Por URL</span>
+              </button>
+
+              <!-- Pick from Gallery -->
+              <button type="button" onclick="openFeaturedGalleryPicker(${prop.id})" class="col-span-2 sm:col-span-1 px-2 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[11px] font-bold flex items-center justify-center gap-1 transition text-center" title="Elegir foto de su galería">
+                <i class="fas fa-images text-xs"></i>
+                <span>Galería</span>
               </button>
             </div>
 
@@ -1694,18 +1918,26 @@ function assignFeaturedSlot(slotIndex, newPropIdStr) {
   const newProp = properties.find(p => p.id === newPropId);
   if (!newProp) return;
 
-  const currentFeatured = properties.filter(p => p.featured);
+  const currentFeatured = getFeaturedProperties();
   const oldPropInSlot = currentFeatured[slotIndex];
 
   if (oldPropInSlot && oldPropInSlot.id !== newPropId) {
     oldPropInSlot.featured = false;
+    delete oldPropInSlot.featuredOrder;
   }
 
   newProp.featured = true;
+  newProp.featuredOrder = slotIndex + 1;
+
+  // Re-index all featured
+  const updated = getFeaturedProperties();
+  updated.forEach((p, idx) => {
+    p.featuredOrder = idx + 1;
+  });
 
   saveToLocal();
   renderAdminDashboard();
-  showToast(`Propiedad #${newProp.id} asignada como Destacada de portada`, 'success');
+  showToast(`Propiedad #${newProp.id} asignada al Puesto #${slotIndex + 1} Destacada`, 'success');
 }
 
 // Remove property from featured
@@ -1714,6 +1946,13 @@ function removeFeaturedProperty(propId) {
   if (!prop) return;
 
   prop.featured = false;
+  delete prop.featuredOrder;
+
+  const remaining = getFeaturedProperties();
+  remaining.forEach((p, idx) => {
+    p.featuredOrder = idx + 1;
+  });
+
   saveToLocal();
   renderAdminDashboard();
   showToast(`Propiedad #${propId} quitada de destacadas`, 'info');
@@ -1725,6 +1964,18 @@ function toggleFeaturedProperty(propId) {
   if (!prop) return;
 
   prop.featured = !prop.featured;
+  if (prop.featured) {
+    const current = getFeaturedProperties();
+    prop.featuredOrder = current.length + 1;
+  } else {
+    delete prop.featuredOrder;
+  }
+
+  const remaining = getFeaturedProperties();
+  remaining.forEach((p, idx) => {
+    p.featuredOrder = idx + 1;
+  });
+
   saveToLocal();
   renderAdminDashboard();
   showToast(prop.featured ? `Propiedad #${propId} marcada como Destacada` : `Propiedad #${propId} quitada de destacadas`, 'success');
