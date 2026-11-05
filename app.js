@@ -135,20 +135,25 @@ function goToNosotrosSlide(i) { goToHeroSlide(i); }
 // Load and Apply Site Text Content
 async function loadSiteContent() {
   let content = null;
-  const local = localStorage.getItem('devora_site_content');
-  if (local) {
-    try {
-      content = JSON.parse(local);
-    } catch(e) {}
+  try {
+    const res = await fetch('./data/site-content.json?v=' + Date.now(), { cache: 'no-store' });
+    if (res.ok) {
+      content = await res.json();
+      localStorage.setItem('devora_site_content', JSON.stringify(content));
+    }
+  } catch(e) {
+    console.warn('Servidor no disponible para site-content, probando memoria local:', e);
   }
+
   if (!content) {
-    try {
-      const res = await fetch('./data/site-content.json?v=' + Date.now(), { cache: 'no-store' });
-      if (res.ok) {
-        content = await res.json();
-      }
-    } catch(e) {}
+    const local = localStorage.getItem('devora_site_content');
+    if (local) {
+      try {
+        content = JSON.parse(local);
+      } catch(e) {}
+    }
   }
+
   if (!content) return;
 
   applySiteContent(content);
