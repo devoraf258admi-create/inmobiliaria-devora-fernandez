@@ -825,8 +825,8 @@
           
           <div class="flex flex-col sm:flex-row gap-3 items-start p-3 bg-slate-800/50 border border-slate-700/80 rounded-2xl">
             <!-- Preview thumbnail -->
-            <div id="main-image-preview-container" class="w-32 h-24 rounded-xl bg-slate-850 border-2 border-dashed border-slate-700 overflow-hidden flex items-center justify-center shrink-0 relative">
-              <img id="main-image-preview" src="" alt="Vista previa" class="w-full h-full object-cover hidden">
+            <div id="main-image-preview-container" class="w-32 h-24 rounded-xl bg-slate-850 border-2 border-dashed border-slate-700 overflow-hidden flex items-center justify-center shrink-0 relative group">
+              <img id="main-image-preview" src="" alt="Vista previa" onclick="previewMainImageLarge()" class="w-full h-full object-cover hidden cursor-zoom-in" title="Hacé clic para ver la foto principal en grande">
               <div id="main-image-placeholder" class="text-center p-2 text-slate-500">
                 <i class="fas fa-image text-xl mb-1"></i>
                 <span class="block text-[10px]">Sin foto</span>
@@ -879,11 +879,11 @@
             </div>
 
             <!-- Visual Gallery Grid -->
-            <div class="flex items-center gap-1.5 text-[10px] text-teal-400 font-semibold mb-1">
-              <i class="fas fa-hand-pointer"></i>
-              <span>Arrastrá las fotos para cambiar el orden en que aparecen</span>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-teal-400 font-semibold mb-2">
+              <span class="flex items-center gap-1.5"><i class="fas fa-hand-pointer"></i> Arrastrá las fotos con el mouse para posicionarlas</span>
+              <span class="text-slate-400 text-[11px]"><i class="fas fa-search-plus text-teal-400 mr-1"></i>Hacé clic en la lupa de cada foto para verla en pantalla completa</span>
             </div>
-            <div id="gallery-previews-grid" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 gap-2.5 min-h-[80px] p-2 bg-slate-900/60 rounded-xl border border-slate-800">
+            <div id="gallery-previews-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 min-h-[140px] p-3 bg-slate-900/60 rounded-xl border border-slate-800">
               <!-- Visual Thumbnails rendered by JS -->
             </div>
           </div>
@@ -1025,7 +1025,38 @@
     <span id="toast-text" class="text-xs font-bold">Operación completada</span>
   </div>
 
+  <!-- Gallery Lightbox (vista grande de fotos en el admin) -->
+  <div id="admin-gallery-lightbox" class="hidden fixed inset-0 z-[9999] bg-black/95 flex flex-col items-center justify-center" onclick="closeAdminLightbox()">
+    <div class="relative max-w-5xl w-full px-4" onclick="event.stopPropagation()">
+      <!-- Contador -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-xs font-bold text-white/70">
+        <span id="admin-lightbox-counter">1 / 1</span>
+      </div>
+
+      <!-- Foto grande -->
+      <img id="admin-lightbox-img" src="" alt="" class="max-h-[80vh] max-w-full object-contain rounded-2xl shadow-2xl mx-auto block">
+
+      <!-- Navegación anterior -->
+      <button type="button" onclick="adminLightboxPrev()" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-11 h-11 rounded-full bg-slate-800/90 hover:bg-teal-600 text-white flex items-center justify-center transition shadow-lg" title="Anterior">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <!-- Navegación siguiente -->
+      <button type="button" onclick="adminLightboxNext()" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-11 h-11 rounded-full bg-slate-800/90 hover:bg-teal-600 text-white flex items-center justify-center transition shadow-lg" title="Siguiente">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+
+      <!-- Info y botón cerrar -->
+      <div class="flex items-center justify-between mt-4 px-2">
+        <span class="text-xs text-teal-400 font-semibold"><i class="fas fa-hand-pointer mr-1"></i>Hacé clic fuera para cerrar · Flechas para navegar</span>
+        <button type="button" onclick="closeAdminLightbox()" class="w-8 h-8 rounded-full bg-slate-700 hover:bg-rose-600 text-white flex items-center justify-center transition text-sm">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Admin Script Logic -->
-  <script src="admin.js?v=20261105c"></script>
+  <script src="admin.js?v=20261105d"></script>
 </body>
 </html>

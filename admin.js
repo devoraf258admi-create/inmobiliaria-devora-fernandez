@@ -93,6 +93,19 @@ function handleMainImageUrlInput(url) {
   setMainImagePreview(url.trim());
 }
 
+// Preview Main Image in Lightbox
+function previewMainImageLarge() {
+  const input = document.getElementById('prop-image');
+  const src = (input ? input.value : '') || document.getElementById('main-image-preview')?.src;
+  if (!src) return;
+  const modal = document.getElementById('admin-gallery-lightbox');
+  const img = document.getElementById('admin-lightbox-img');
+  const counter = document.getElementById('admin-lightbox-counter');
+  if (img) img.src = src;
+  if (counter) counter.textContent = 'Foto Principal (Portada)';
+  if (modal) modal.classList.remove('hidden');
+}
+
 // Handle Gallery Files from PC (Multiple)
 async function handleGalleryFilesUpload(event) {
   const files = Array.from(event.target.files || []);
@@ -114,8 +127,9 @@ async function handleGalleryFilesUpload(event) {
   }
 }
 
-// Render Gallery Previews with drag-to-reorder
+// Render Gallery Previews with drag-to-reorder and click to enlarge
 let galleryDragSrcIndex = null;
+let adminLightboxIndex = 0;
 
 function renderGalleryPreviews() {
   const grid = document.getElementById('gallery-previews-grid');
@@ -127,23 +141,53 @@ function renderGalleryPreviews() {
   }
 
   if (currentGalleryImages.length === 0) {
-    grid.innerHTML = '<div class="col-span-full py-4 text-center text-xs text-slate-500">No hay fotos en la galería todavía. Seleccioná fotos desde tu PC con el botón de arriba.</div>';
+    grid.innerHTML = '<div class="col-span-full py-8 text-center text-xs text-slate-500">No hay fotos en la galería todavía. Seleccioná fotos desde tu PC con el botón de arriba.</div>';
     return;
   }
 
   grid.innerHTML = currentGalleryImages.map((src, index) => `
     <div
-      class="gallery-drag-item relative h-20 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 group shadow-sm cursor-grab active:cursor-grabbing select-none transition-all"
+      class="gallery-drag-item relative h-32 sm:h-36 rounded-2xl overflow-hidden bg-slate-800 border border-slate-700/80 group shadow-md hover:shadow-xl hover:border-slate-500 cursor-grab active:cursor-grabbing select-none transition-all"
       draggable="true"
       data-index="${index}"
-      title="Arrastrá para reordenar"
+      title="Arrastrá para reordenar o hacé doble clic para ver en grande"
+      ondblclick="openAdminLightbox(${index})"
     >
-      <img src="${src}" alt="" class="w-full h-full object-cover pointer-events-none">
-      <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition pointer-events-none flex items-center justify-center">
-        <i class="fas fa-grip-lines text-white/0 group-hover:text-white/60 text-lg transition pointer-events-none"></i>
+      <img src="${src}" alt="" class="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-300">
+      
+      <!-- Overlay decorativo -->
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-slate-950/40 pointer-events-none"></div>
+
+      <!-- Badge Número de orden -->
+      <div class="absolute top-2 left-2 px-2 py-0.5 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/20 text-[11px] font-extrabold text-white pointer-events-none shadow">
+        #${index + 1}
       </div>
-      <span class="absolute bottom-1 left-1 text-[9px] font-bold text-white/70 bg-slate-900/60 rounded px-1 pointer-events-none">${index + 1}</span>
-      <button type="button" onclick="removeGalleryImage(${index})" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-[10px] flex items-center justify-center shadow transition" title="Eliminar foto">
+
+      <!-- Grip Icon en el centro -->
+      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition pointer-events-none">
+        <span class="p-2 rounded-full bg-slate-950/80 backdrop-blur-md border border-white/20 text-teal-300 text-xs shadow-lg">
+          <i class="fas fa-arrows-alt"></i>
+        </span>
+      </div>
+
+      <!-- Botón Lupa / Ver Grande -->
+      <button
+        type="button"
+        onclick="event.stopPropagation(); openAdminLightbox(${index})"
+        class="absolute bottom-2 left-2 px-2.5 py-1 rounded-lg bg-slate-950/85 hover:bg-teal-600 text-white text-[11px] font-bold flex items-center gap-1.5 backdrop-blur-md border border-white/20 transition-all hover:scale-105 shadow cursor-pointer active:scale-95 z-10"
+        title="Ver foto en pantalla completa"
+      >
+        <i class="fas fa-search-plus text-teal-300 text-xs"></i>
+        <span>Ver grande</span>
+      </button>
+
+      <!-- Botón Eliminar -->
+      <button
+        type="button"
+        onclick="event.stopPropagation(); removeGalleryImage(${index})"
+        class="absolute top-2 right-2 w-7 h-7 rounded-full bg-slate-950/85 hover:bg-rose-600 text-white text-xs flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow cursor-pointer active:scale-95 z-10"
+        title="Eliminar foto"
+      >
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -181,6 +225,61 @@ function renderGalleryPreviews() {
     });
   });
 }
+
+// Lightbox modal functions for admin
+function openAdminLightbox(index) {
+  if (!currentGalleryImages || currentGalleryImages.length === 0) return;
+  if (index < 0) index = 0;
+  if (index >= currentGalleryImages.length) index = currentGalleryImages.length - 1;
+  adminLightboxIndex = index;
+
+  const modal = document.getElementById('admin-gallery-lightbox');
+  const img = document.getElementById('admin-lightbox-img');
+  const counter = document.getElementById('admin-lightbox-counter');
+
+  if (img) img.src = currentGalleryImages[adminLightboxIndex];
+  if (counter) counter.textContent = `Foto ${adminLightboxIndex + 1} de ${currentGalleryImages.length}`;
+
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeAdminLightbox() {
+  const modal = document.getElementById('admin-gallery-lightbox');
+  if (modal) modal.classList.add('hidden');
+}
+
+function adminLightboxPrev() {
+  if (!currentGalleryImages || currentGalleryImages.length <= 1) return;
+  adminLightboxIndex = (adminLightboxIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+  updateAdminLightboxView();
+}
+
+function adminLightboxNext() {
+  if (!currentGalleryImages || currentGalleryImages.length <= 1) return;
+  adminLightboxIndex = (adminLightboxIndex + 1) % currentGalleryImages.length;
+  updateAdminLightboxView();
+}
+
+function updateAdminLightboxView() {
+  const img = document.getElementById('admin-lightbox-img');
+  const counter = document.getElementById('admin-lightbox-counter');
+  if (img) img.src = currentGalleryImages[adminLightboxIndex];
+  if (counter) counter.textContent = `Foto ${adminLightboxIndex + 1} de ${currentGalleryImages.length}`;
+}
+
+// Keyboard shortcuts for admin lightbox
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('admin-gallery-lightbox');
+  if (!modal || modal.classList.contains('hidden')) return;
+
+  if (e.key === 'Escape') {
+    closeAdminLightbox();
+  } else if (e.key === 'ArrowLeft') {
+    adminLightboxPrev();
+  } else if (e.key === 'ArrowRight') {
+    adminLightboxNext();
+  }
+});
 
 // Remove Single Image from Gallery
 function removeGalleryImage(index) {
