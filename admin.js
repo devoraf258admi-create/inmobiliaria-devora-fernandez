@@ -219,23 +219,26 @@ function setupAutoSaveContent() {
 
 // Load Site Content for Editor
 async function loadSiteContentData() {
+  // Siempre baja la versión más reciente de la nube primero (para ver cambios de otra computadora)
+  try {
+    const res = await fetch('./data/site-content.json?v=' + Date.now(), { cache: 'no-store' });
+    if (res.ok) {
+      siteContent = await res.json();
+      localStorage.setItem('devora_site_content', JSON.stringify(siteContent));
+      populateContentForm();
+      return;
+    }
+  } catch(e) {
+    console.warn('No se pudo cargar site-content desde la nube, usando caché local:', e);
+  }
+
+  // Fallback: usar caché local si no hay conexión
   const local = localStorage.getItem('devora_site_content');
   if (local) {
     try {
       siteContent = JSON.parse(local);
       populateContentForm();
-      return;
     } catch(e) {}
-  }
-
-  try {
-    const res = await fetch('./data/site-content.json');
-    if (res.ok) {
-      siteContent = await res.json();
-      populateContentForm();
-    }
-  } catch(err) {
-    console.error('Error cargando site-content.json:', err);
   }
 }
 
@@ -470,6 +473,21 @@ function handleLogout() {
 
 // Load Properties Data
 async function loadPropertiesData() {
+  // Siempre baja la versión más reciente de la nube primero (para ver cambios de otra computadora)
+  try {
+    const res = await fetch('./data/properties.json?v=' + Date.now(), { cache: 'no-store' });
+    if (res.ok) {
+      properties = await res.json();
+      normalizeProperties();
+      saveToLocal();
+      renderAdminDashboard();
+      return;
+    }
+  } catch (err) {
+    console.warn('No se pudo cargar properties desde la nube, usando caché local:', err);
+  }
+
+  // Fallback: usar caché local si no hay conexión
   const localData = localStorage.getItem('devora_properties');
   if (localData) {
     try {
@@ -477,24 +495,10 @@ async function loadPropertiesData() {
       normalizeProperties();
       saveToLocal();
       renderAdminDashboard();
-      return;
     } catch (err) {
       console.warn('Error parseando localStorage:', err);
+      showToast('No se pudieron cargar las propiedades', 'error');
     }
-  }
-
-  // Fallback to fetching properties.json
-  try {
-    const res = await fetch('./data/properties.json');
-    if (res.ok) {
-      properties = await res.json();
-      normalizeProperties();
-      saveToLocal();
-      renderAdminDashboard();
-    }
-  } catch (err) {
-    console.error('Error cargando properties.json:', err);
-    showToast('No se pudieron cargar las propiedades', 'error');
   }
 }
 
