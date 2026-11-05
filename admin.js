@@ -114,7 +114,9 @@ async function handleGalleryFilesUpload(event) {
   }
 }
 
-// Render Gallery Previews
+// Render Gallery Previews with drag-to-reorder
+let galleryDragSrcIndex = null;
+
 function renderGalleryPreviews() {
   const grid = document.getElementById('gallery-previews-grid');
   const countEl = document.getElementById('gallery-count');
@@ -130,13 +132,54 @@ function renderGalleryPreviews() {
   }
 
   grid.innerHTML = currentGalleryImages.map((src, index) => `
-    <div class="relative h-20 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 group shadow-sm">
-      <img src="${src}" alt="" class="w-full h-full object-cover">
+    <div
+      class="gallery-drag-item relative h-20 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 group shadow-sm cursor-grab active:cursor-grabbing select-none transition-all"
+      draggable="true"
+      data-index="${index}"
+      title="Arrastrá para reordenar"
+    >
+      <img src="${src}" alt="" class="w-full h-full object-cover pointer-events-none">
+      <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition pointer-events-none flex items-center justify-center">
+        <i class="fas fa-grip-lines text-white/0 group-hover:text-white/60 text-lg transition pointer-events-none"></i>
+      </div>
+      <span class="absolute bottom-1 left-1 text-[9px] font-bold text-white/70 bg-slate-900/60 rounded px-1 pointer-events-none">${index + 1}</span>
       <button type="button" onclick="removeGalleryImage(${index})" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-[10px] flex items-center justify-center shadow transition" title="Eliminar foto">
         <i class="fas fa-times"></i>
       </button>
     </div>
   `).join('');
+
+  // Attach drag events
+  grid.querySelectorAll('.gallery-drag-item').forEach(card => {
+    card.addEventListener('dragstart', (e) => {
+      galleryDragSrcIndex = parseInt(card.dataset.index);
+      card.classList.add('opacity-40', 'scale-95');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('opacity-40', 'scale-95');
+      grid.querySelectorAll('.gallery-drag-item').forEach(c => c.classList.remove('border-teal-400', 'border-2'));
+    });
+    card.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      grid.querySelectorAll('.gallery-drag-item').forEach(c => c.classList.remove('border-teal-400', 'border-2'));
+      card.classList.add('border-teal-400', 'border-2');
+    });
+    card.addEventListener('dragleave', () => {
+      card.classList.remove('border-teal-400', 'border-2');
+    });
+    card.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const targetIndex = parseInt(card.dataset.index);
+      if (galleryDragSrcIndex === null || galleryDragSrcIndex === targetIndex) return;
+      // Reorder array
+      const moved = currentGalleryImages.splice(galleryDragSrcIndex, 1)[0];
+      currentGalleryImages.splice(targetIndex, 0, moved);
+      galleryDragSrcIndex = null;
+      renderGalleryPreviews();
+    });
+  });
 }
 
 // Remove Single Image from Gallery
