@@ -221,6 +221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupMobileMenu();
   setupScrollEffects();
   initHeroCarousel();
+  checkUrlForSharedProperty();
 });
 
 // Fetch Properties Data (Always prioritized live from server so all computers see cloud updates)
@@ -233,6 +234,7 @@ async function loadProperties() {
       localStorage.setItem('devora_properties', JSON.stringify(propertiesData));
       renderProperties();
       populateLocationOptions();
+      checkUrlForSharedProperty();
       return;
     }
   } catch (error) {
@@ -246,6 +248,7 @@ async function loadProperties() {
       propertiesData = JSON.parse(localData).filter(p => p.id !== 6 && p.id !== 12);
       renderProperties();
       populateLocationOptions();
+      checkUrlForSharedProperty();
       return;
     } catch (e) {
       console.warn('Error reading local properties:', e);
@@ -256,6 +259,7 @@ async function loadProperties() {
     propertiesData = window.EMBEDDED_PROPERTIES;
     renderProperties();
     populateLocationOptions();
+    checkUrlForSharedProperty();
   }
 }
 
@@ -764,12 +768,15 @@ let isModalSlideshowPaused = false;
 
 // Open Property Details Modal with Extra Large Images & Autoplay
 function openPropertyModal(id) {
-  const prop = propertiesData.find(p => p.id === id);
+  const prop = propertiesData.find(p => p.id == id || String(p.id) === String(id));
   if (!prop) return;
 
   const modal = document.getElementById('property-modal');
   const modalBody = document.getElementById('modal-body');
   if (!modal || !modalBody) return;
+
+  // Reset scroll position to top
+  modalBody.scrollTop = 0;
 
   // Build complete list of unique images
   const allImages = [];
@@ -945,6 +952,15 @@ function openPropertyModal(id) {
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 
+  // Update browser URL query param cleanly without reloading
+  try {
+    const currentUrl = new URL(window.location.href);
+    if (currentUrl.searchParams.get('prop') !== String(prop.id)) {
+      currentUrl.searchParams.set('prop', prop.id);
+      window.history.replaceState({ propId: prop.id }, '', currentUrl.toString());
+    }
+  } catch (e) {}
+
   // Start automatic slideshow
   startModalSlideshow();
 }
@@ -1034,6 +1050,16 @@ function closeModal() {
   const modal = document.getElementById('property-modal');
   if (modal) modal.classList.add('hidden');
   document.body.style.overflow = 'auto';
+
+  // Remove ?prop parameter from URL cleanly without reloading
+  try {
+    const currentUrl = new URL(window.location.href);
+    if (currentUrl.searchParams.has('prop')) {
+      currentUrl.searchParams.delete('prop');
+      const cleanPath = currentUrl.pathname + (currentUrl.search ? currentUrl.search : '') + currentUrl.hash;
+      window.history.replaceState({}, '', cleanPath);
+    }
+  } catch (e) {}
 }
 
 // ==========================================
@@ -1223,19 +1249,67 @@ function showToast(message, type = 'success') {
   }, 3500);
 }
 
-// Auto open modal if ?prop=ID is in URL
+// Auto open modal if ?prop=ID is in URL or hash
+let sharedPropertyOpened = false;
+
 function checkUrlForSharedProperty() {
-  const params = new URLSearchParams(window.location.search);
-  const propIdStr = params.get('prop');
-  if (propIdStr) {
-    const propId = parseInt(propIdStr);
-    if (!isNaN(propId)) {
-      setTimeout(() => {
-        openPropertyModal(propId);
-      }, 350);
+  if (sharedPropertyOpened) return;
+
+  let propIdStr = null;
+  try {
+    const url = new URL(window.location.href);
+    propIdStr = url.searchParams.get('prop') || url.searchParams.get('id') || url.searchParams.get('propiedad');
+    if (!propIdStr && window.location.hash) {
+      const hashMatch = window.location.hash.match(/(?:prop|id|propiedad)[=-]?(\d+)/i) || window.location.hash.match(/^#(\d+)$/);
+      if (hashMatch) propIdStr = hashMatch[1];
     }
+  } catch (e) {
+    const params = new URLSearchParams(window.location.search);
+    propIdStr = params.get('prop');
   }
+
+  if (!propIdStr) return;
+
+  const tryOpen = () => {
+    if (!Array.isArray(propertiesData) || propertiesData.length === 0) return false;
+    const prop = propertiesData.find(p => p.id == propIdStr || String(p.id) === String(propIdStr));
+    if (prop) {
+      sharedPropertyOpened = true;
+      // Scroll to property catalog or top so view is positioned nicely
+      openPropertyModal(prop.id);
+      return true;
+    }
+    return false;
+  };
+
+  if (tryOpen()) return;
+
+  // If propertiesData is still loading via network, retry every 150ms for up to 3 seconds
+  let retries = 0;
+  const timer = setInterval(() => {
+    retries++;
+    if (tryOpen() || retries > 20) {
+      clearInterval(timer);
+    }
+  }, 150);
 }
+
+// Handle browser Back / Forward buttons with ?prop=ID
+window.addEventListener('popstate', () => {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const propId = params.get('prop');
+    if (propId) {
+      const prop = propertiesData.find(p => p.id == propId || String(p.id) === String(propId));
+      if (prop) openPropertyModal(prop.id);
+    } else {
+      const modal = document.getElementById('property-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        closeModal();
+      }
+    }
+  } catch (e) {}
+});
 
 // Handle Tasacion Request Form (All fields from old CRM site)
 function handleTasacionSubmit(e) {
