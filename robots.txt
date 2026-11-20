@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.inmobiliariadevorafernandez.com.ar/sitemap.xml

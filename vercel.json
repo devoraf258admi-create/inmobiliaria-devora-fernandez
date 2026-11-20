@@ -1,4 +1,31 @@
 {
+  "redirects": [
+    {
+      "source": "/propiedad/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/propiedades/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/propiedades",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/inmueble/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/inmuebles/:path*",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*).html",
