@@ -56,10 +56,11 @@
   },
   "coverage_zones": [
     "Morón Centro, Sur y Norte",
-    "Castelar Norte y Sur",
-    "Hurlingham y Villa Tesei",
+    "Castelar",
+    "El Palomar",
     "Ituzaingó",
-    "Costa Atlántica (Miramar y Las Toninas)"
+    "Capital Federal",
+    "Costa Atlántica"
   ],
   "contact": {
     "office_address": "Cabildo 258, B1708 Morón, Provincia de Buenos Aires, Argentina",
