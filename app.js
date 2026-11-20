@@ -581,7 +581,7 @@ function renderProperties() {
       if (showAllCatalogProperties) {
         btnText.textContent = 'Mostrar menos propiedades';
       } else {
-        btnText.textContent = `Ver las ${totalVenta} propiedades en venta`;
+        btnText.textContent = 'Ver todas las propiedades';
       }
     }
   }
