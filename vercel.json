@@ -111,11 +111,6 @@
       "permanent": true
     },
     {
-      "source": "/propiedad/:path*",
-      "destination": "/",
-      "permanent": true
-    },
-    {
       "source": "/propiedades/:path*",
       "destination": "/",
       "permanent": true
@@ -172,6 +167,22 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/propiedad",
+      "destination": "/api/share"
+    },
+    {
+      "source": "/propiedad/:id",
+      "destination": "/api/share?prop=:id"
+    },
+    {
+      "source": "/p",
+      "destination": "/api/share"
+    },
+    {
+      "source": "/p/:id",
+      "destination": "/api/share?prop=:id"
+    },
     {
       "source": "/",
       "has": [

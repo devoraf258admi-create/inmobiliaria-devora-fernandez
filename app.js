@@ -955,9 +955,8 @@ function openPropertyModal(id) {
   // Update browser URL query param cleanly without reloading
   try {
     const currentUrl = new URL(window.location.href);
-    if (currentUrl.searchParams.get('prop') !== String(prop.id)) {
-      currentUrl.searchParams.set('prop', prop.id);
-      window.history.replaceState({ propId: prop.id }, '', currentUrl.toString());
+    if (currentUrl.searchParams.get('id') !== String(prop.id) && currentUrl.searchParams.get('prop') !== String(prop.id)) {
+      window.history.replaceState({ propId: prop.id }, '', `/propiedad?id=${prop.id}`);
     }
   } catch (e) {}
 
@@ -1051,13 +1050,11 @@ function closeModal() {
   if (modal) modal.classList.add('hidden');
   document.body.style.overflow = 'auto';
 
-  // Remove ?prop parameter from URL cleanly without reloading
+  // Remove ?prop/id parameter from URL cleanly without reloading
   try {
     const currentUrl = new URL(window.location.href);
-    if (currentUrl.searchParams.has('prop')) {
-      currentUrl.searchParams.delete('prop');
-      const cleanPath = currentUrl.pathname + (currentUrl.search ? currentUrl.search : '') + currentUrl.hash;
-      window.history.replaceState({}, '', cleanPath);
+    if (currentUrl.searchParams.has('prop') || currentUrl.searchParams.has('id') || currentUrl.pathname.startsWith('/propiedad') || currentUrl.pathname.startsWith('/p')) {
+      window.history.replaceState({}, '', '/' + currentUrl.hash);
     }
   } catch (e) {}
 }
@@ -1183,7 +1180,7 @@ async function shareProperty(id) {
   const origin = window.location.origin.includes('localhost') 
     ? window.location.origin 
     : 'https://www.inmobiliariadevorafernandez.com.ar';
-  const shareUrl = `${origin}/?prop=${prop.id}`;
+  const shareUrl = `${origin}/propiedad?id=${prop.id}`;
   const shareTitle = `${prop.title} | Dévora Fernández Propiedades`;
   const shareText = `Mirá esta propiedad en Dévora Fernández Propiedades:\n${prop.title} (${prop.operation} - ${prop.priceDisplay})\n`;
 
@@ -1258,14 +1255,18 @@ function checkUrlForSharedProperty() {
   let propIdStr = null;
   try {
     const url = new URL(window.location.href);
-    propIdStr = url.searchParams.get('prop') || url.searchParams.get('id') || url.searchParams.get('propiedad');
+    propIdStr = url.searchParams.get('id') || url.searchParams.get('prop') || url.searchParams.get('propiedad');
+    if (!propIdStr && url.pathname) {
+      const pathMatch = url.pathname.match(/\/(?:propiedad|p)\/([^\/?#]+)/i);
+      if (pathMatch) propIdStr = pathMatch[1];
+    }
     if (!propIdStr && window.location.hash) {
       const hashMatch = window.location.hash.match(/(?:prop|id|propiedad)[=-]?(\d+)/i) || window.location.hash.match(/^#(\d+)$/);
       if (hashMatch) propIdStr = hashMatch[1];
     }
   } catch (e) {
     const params = new URLSearchParams(window.location.search);
-    propIdStr = params.get('prop');
+    propIdStr = params.get('id') || params.get('prop');
   }
 
   if (!propIdStr) return;

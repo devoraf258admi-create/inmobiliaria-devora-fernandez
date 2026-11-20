@@ -100,7 +100,7 @@ module.exports = async (req, res) => {
     .slice(0, 160);
 
   const cleanDescription = `${opInfo}${locInfo}${priceInfo}. ${descSnippet}`;
-  const pageUrl = `https://www.inmobiliariadevorafernandez.com.ar/?prop=${prop.id}`;
+  const pageUrl = `https://www.inmobiliariadevorafernandez.com.ar/propiedad?id=${prop.id}`;
 
   // Helper function to safely escape HTML attributes
   const escapeAttr = (str) => String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
