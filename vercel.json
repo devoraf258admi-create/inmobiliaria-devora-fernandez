@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/*.js": {
+      "includeFiles": "data/**,index.html"
+    }
+  },
   "redirects": [
     {
       "source": "/venta",
@@ -164,6 +169,18 @@
       "source": "/tasaciones",
       "destination": "/",
       "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "prop"
+        }
+      ],
+      "destination": "/api/share"
     }
   ],
   "headers": [
