@@ -1,6 +1,111 @@
 {
   "redirects": [
     {
+      "source": "/venta",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/venta/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/ventas",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/ventas/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/alquiler",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/alquiler/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/alquileres",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/alquileres/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/venta-archivos",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/venta-archivos/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/alquiler-archivos",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/alquiler-archivos/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/categoria/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/categoria-producto/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/category/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/tag/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/etiqueta/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/archivos/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/archivos",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/archives/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/archives",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/propiedad/:path*",
       "destination": "/",
       "permanent": true
@@ -22,6 +127,41 @@
     },
     {
       "source": "/inmuebles/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/inmuebles",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/contacto/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/contacto",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/nosotros/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/nosotros",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/tasaciones/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/tasaciones",
       "destination": "/",
       "permanent": true
     }

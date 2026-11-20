@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dévora Fernández Propiedades | Redirigiendo...</title>
+  <meta http-equiv="refresh" content="0; url=/">
+  <link rel="icon" type="image/png" href="assets/img/logo.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    // Inmediata redirección hacia la página de inicio
+    try {
+      window.location.replace('/');
+    } catch(e) {
+      window.location.href = '/';
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-md w-full bg-slate-800/90 rounded-2xl p-8 border border-slate-700 text-center shadow-2xl">
+    <div class="flex justify-center mb-6">
+      <img src="assets/img/logo.png" alt="Dévora Fernández Propiedades" class="h-16 w-auto object-contain">
+    </div>
+    
+    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/10 text-teal-400 mb-4 animate-spin">
+      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    </div>
+
+    <h1 class="text-xl font-bold text-white mb-2">Redirigiendo a la página principal...</h1>
+    <p class="text-slate-400 text-sm mb-6">Esta dirección ha sido actualizada. Te estamos llevando al nuevo sitio web de Dévora Fernández Propiedades.</p>
+
+    <a href="/" class="inline-block w-full py-3 px-6 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl shadow-lg transition-colors">
+      Ir al inicio ahora
+    </a>
+  </div>
+</body>
+</html>
