@@ -1200,34 +1200,29 @@ function showToast(message, type = 'success') {
 // ==========================================
 const DEFAULT_CAROUSEL_SLIDES = [
   {
-    image: 'https://static.kiteprop.com/kp/properties/588719/96371f/lg/96371f46e01b1eb449bd53842cca9df1.jpg',
-    tag: 'Chalet de Categoría',
-    location: 'Castelar Norte'
+    image: 'assets/img/carousel/slide-1.jpg',
+    tag: 'Dévora Fernández Propiedades',
+    location: 'Morón y Zona Oeste'
   },
   {
-    image: 'https://static.kiteprop.com/kp/properties/564309/76c263/lg/76c263d122244f4e4891a441da18a487.jpg',
-    tag: 'Residencia Familiar',
-    location: 'Hurlingham / Villa Tesei'
-  },
-  {
-    image: 'https://static.kiteprop.com/kp/properties/405103/c77901/lg/c7790139e6f4d194c7dce4f7859e0ce1.jpg',
-    tag: 'Dúplex Moderno',
-    location: 'Morón Sur'
-  },
-  {
-    image: 'https://static.kiteprop.com/kp/properties/577961/d99c5b/lg/d99c5b595017ff4cbb489064e50e4316.jpg',
-    tag: 'Departamento Céntrico',
-    location: 'Morón Centro'
-  },
-  {
-    image: 'https://static.kiteprop.com/kp/properties/548736/e1ae2b/lg/e1ae2b6ac8403ccd24bcdd516cb77b14.jpg',
-    tag: 'Casa Americana',
+    image: 'assets/img/carousel/slide-2.jpg',
+    tag: 'Dévora Fernández Propiedades',
     location: 'Castelar / Morón'
   },
   {
-    image: 'https://static.kiteprop.com/kp/properties/536342/9c9bbb/lg/9c9bbb3e30823140b488fa9314b26171.jpg',
-    tag: 'Edificio Residencial',
-    location: 'Villa Sarmiento / Ramos Mejía'
+    image: 'assets/img/carousel/slide-3.jpg',
+    tag: 'Dévora Fernández Propiedades',
+    location: 'Hurlingham / Villa Tesei'
+  },
+  {
+    image: 'assets/img/carousel/slide-4.jpg',
+    tag: 'Dévora Fernández Propiedades',
+    location: 'Ituzaingó / El Palomar'
+  },
+  {
+    image: 'assets/img/carousel/slide-5.jpg',
+    tag: 'Dévora Fernández Propiedades',
+    location: 'Costa Atlántica'
   }
 ];
 
